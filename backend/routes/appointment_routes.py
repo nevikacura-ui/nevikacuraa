@@ -1528,6 +1528,52 @@ async def patient_cancel_appointment(appointment_id: str, data: PatientCancelReq
         {"$set": update}
     )
 
+    # Send WhatsApp cancellation notifications (non-blocking)
+    try:
+        from services.msg91_whatsapp import send_order_cancelled, send_msg91_whatsapp
+        patient_name = appointment.get("patient_name", "Patient")
+        booking_id = appointment.get("booking_id", appointment.get("id", ""))
+        patient_phone = appointment.get("patient_phone", "")
+        doctor_name = appointment.get("doctor", "Doctor")
+        apt_date = appointment.get("date", "")
+        apt_time = appointment.get("time", "")
+
+        # 1) Notify the patient
+        if patient_phone:
+            try:
+                await send_order_cancelled(
+                    phone=patient_phone,
+                    patient_name=patient_name,
+                    service_name="DiaGyn",
+                    order_id=booking_id,
+                    db=db
+                )
+                logger.info(f"Cancellation WhatsApp sent to patient {patient_phone}")
+            except Exception as e:
+                logger.warning(f"Failed to send cancellation WhatsApp to patient: {e}")
+
+        # 2) Notify staff at 8108500522
+        STAFF_PHONE = "8108500522"
+        try:
+            staff_msg_vars = [
+                f"Staff",
+                "DiaGyn",
+                f"{booking_id} | {patient_name} | {doctor_name} | {apt_date} {apt_time} | Cancelled by patient"
+            ]
+            await send_msg91_whatsapp(
+                recipient_phone=STAFF_PHONE,
+                template_name="order_cancelled",
+                variables=staff_msg_vars,
+                db=db,
+                reference_id=f"staff_cancel_{booking_id}",
+                message_type="staff_cancellation_alert"
+            )
+            logger.info(f"Cancellation WhatsApp sent to staff {STAFF_PHONE}")
+        except Exception as e:
+            logger.warning(f"Failed to send cancellation WhatsApp to staff: {e}")
+    except ImportError:
+        logger.warning("MSG91 WhatsApp not available for cancellation notifications")
+
     return {
         "success": True,
         "message": "Appointment cancelled successfully. The slot is now available for others.",

@@ -65,7 +65,7 @@ const AboutUs = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050510] text-white" data-testid="about-us-page">
+    <div className="dark-page min-h-screen bg-[#050510] text-white" data-testid="about-us-page">
       {/* Header */}
       <header className="bg-[#1A1A1A] border-b border-white/10 sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 py-4">

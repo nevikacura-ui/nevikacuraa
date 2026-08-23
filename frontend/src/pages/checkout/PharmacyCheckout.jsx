@@ -388,7 +388,7 @@ const PharmacyCheckout = () => {
   // Empty cart check — skip if CuraPay animation is active or booking confirmed
   if (pharmacyCart.length === 0 && !showCuraPay && !showBookingConfirmation && !orderDetails) {
     return (
-      <div className="min-h-screen" style={{ background: THEME.bg }}>
+      <div className="dark-page min-h-screen" style={{ background: THEME.bg }}>
         <header className="bg-[#EA580C] text-white p-4 sticky top-0 z-10">
           <div className="max-w-2xl mx-auto flex items-center gap-3">
             <button onClick={() => navigate('/pharmacy')} className="p-2 hover:bg-white/20 rounded-full">

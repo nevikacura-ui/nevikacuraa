@@ -55,25 +55,25 @@ const DOCTOR_THEMES = {
     headerBg: 'linear-gradient(160deg, #8BC34A 0%, #A6FF4D 50%, #9AE83A 100%)',
     headerText: '#0D1F1E',
     headerTextMuted: 'rgba(13,31,30,0.6)',
-    accent: '#A6FF4D',
-    accentDark: '#0D1F1E',
-    cardBg: '#0D1F1E',
-    cardBorder: '#163332',
-    cardText: '#FFFFFF',
-    cardTextMuted: 'rgba(255,255,255,0.55)',
-    ctaGradient: 'linear-gradient(135deg, #A6FF4D, #8AE030)',
-    ctaText: '#0D1F1E',
-    tabActiveBg: '#A6FF4D',
-    tabActiveText: '#0D1F1E',
-    statBg: 'rgba(0,0,0,0.12)',
-    statText: '#0D1F1E',
-    selectedBg: '#A6FF4D',
-    selectedText: '#0D1F1E',
-    neonGlow: 'rgba(166,255,77,0.2)',
-    iconColor: '#A6FF4D',
-    badgeBg: 'rgba(166,255,77,0.15)',
-    badgeText: '#A6FF4D',
-    divider: 'rgba(255,255,255,0.08)',
+    accent: '#4CAF50',
+    accentDark: '#1B5E20',
+    cardBg: '#FFFFFF',
+    cardBorder: '#C8E6C9',
+    cardText: '#1E293B',
+    cardTextMuted: '#64748B',
+    ctaGradient: 'linear-gradient(135deg, #66BB6A, #43A047)',
+    ctaText: '#FFFFFF',
+    tabActiveBg: '#66BB6A',
+    tabActiveText: '#FFFFFF',
+    statBg: 'rgba(76,175,80,0.12)',
+    statText: '#1B5E20',
+    selectedBg: '#66BB6A',
+    selectedText: '#FFFFFF',
+    neonGlow: 'rgba(76,175,80,0.2)',
+    iconColor: '#4CAF50',
+    badgeBg: 'rgba(76,175,80,0.12)',
+    badgeText: '#2E7D32',
+    divider: '#E2E8F0',
     surfaceCard: '#FFFFFF',
     surfaceBorder: '#E2E8F0',
     textPrimary: '#1E293B',
@@ -81,31 +81,31 @@ const DOCTOR_THEMES = {
     textMuted: '#94A3B8',
   },
   'dr_neha': {
-    pageBg: '#F5F3F4',
+    pageBg: '#FDF2F8',
     headerBg: 'linear-gradient(160deg, #F9A8D4 0%, #FFB0C8 50%, #FBCFE8 100%)',
     headerText: '#831843',
     headerTextMuted: 'rgba(131,24,67,0.6)',
     accent: '#EC4899',
-    accentDark: '#1A0A1A',
-    cardBg: '#1A0A1A',
-    cardBorder: '#2D1B2E',
-    cardText: '#FFFFFF',
-    cardTextMuted: 'rgba(255,255,255,0.55)',
+    accentDark: '#831843',
+    cardBg: '#FFFFFF',
+    cardBorder: '#FBCFE8',
+    cardText: '#1E293B',
+    cardTextMuted: '#64748B',
     ctaGradient: 'linear-gradient(135deg, #EC4899, #DB2777)',
     ctaText: '#FFFFFF',
     tabActiveBg: '#EC4899',
     tabActiveText: '#FFFFFF',
-    statBg: 'rgba(0,0,0,0.1)',
+    statBg: 'rgba(236,72,153,0.1)',
     statText: '#831843',
     selectedBg: '#EC4899',
     selectedText: '#FFFFFF',
     neonGlow: 'rgba(236,72,153,0.2)',
     iconColor: '#EC4899',
-    badgeBg: 'rgba(236,72,153,0.15)',
-    badgeText: '#EC4899',
-    divider: 'rgba(255,255,255,0.08)',
+    badgeBg: 'rgba(236,72,153,0.12)',
+    badgeText: '#BE185D',
+    divider: '#FCE7F3',
     surfaceCard: '#FFFFFF',
-    surfaceBorder: '#E2E8F0',
+    surfaceBorder: '#FBCFE8',
     textPrimary: '#1E293B',
     textSecondary: '#64748B',
     textMuted: '#94A3B8',
@@ -188,12 +188,12 @@ const AppointmentCard = ({ apt, onComplete, onBilling, onUploadPrescription, onC
             {source}
           </span>
           {isOnlineConsultation && (
-            <span className="px-2 py-1 rounded-lg text-[10px] font-bold text-blue-300" style={{ background: 'rgba(59,130,246,0.2)' }}>
+            <span className="px-2 py-1 rounded-lg text-[10px] font-bold text-blue-700" style={{ background: 'rgba(59,130,246,0.12)' }}>
               VIDEO
             </span>
           )}
           {isPaid && (
-            <span className="px-2 py-1 rounded-lg text-[10px] font-bold text-green-300" style={{ background: 'rgba(34,197,94,0.2)' }}>
+            <span className="px-2 py-1 rounded-lg text-[10px] font-bold text-green-700" style={{ background: 'rgba(34,197,94,0.12)' }}>
               PAID
             </span>
           )}
@@ -203,7 +203,7 @@ const AppointmentCard = ({ apt, onComplete, onBilling, onUploadPrescription, onC
 
       {/* Patient Name — Large, Bold */}
       <div className="px-4 pb-2">
-        <h3 className="text-xl font-black text-white leading-tight">{apt.patient_name}</h3>
+        <h3 className="text-xl font-black leading-tight" style={{ color: T.cardText }}>{apt.patient_name}</h3>
         <div className="flex items-center gap-2 mt-1">
           <Stethoscope className="w-3.5 h-3.5" style={{ color: T.accent }} />
           <span className="text-sm" style={{ color: T.accent }}>{apt.doctor || profile?.name || 'Doctor'}</span>
@@ -238,43 +238,43 @@ const AppointmentCard = ({ apt, onComplete, onBilling, onUploadPrescription, onC
           <div className="pt-3 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
             <div>
               <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Phone</span>
-              <p className="text-white font-medium">{apt.patient_phone || '—'}</p>
+              <p className="font-medium" style={{ color: T.cardText }}>{apt.patient_phone || '—'}</p>
             </div>
             <div>
               <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Time</span>
-              <p className="text-white font-medium">{apt.time || '—'}</p>
+              <p className="font-medium" style={{ color: T.cardText }}>{apt.time || '—'}</p>
             </div>
             <div>
               <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Doctor</span>
-              <p className="text-white font-medium">{apt.doctor || '—'}</p>
+              <p className="font-medium" style={{ color: T.cardText }}>{apt.doctor || '—'}</p>
             </div>
             <div>
               <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Clinic</span>
-              <p className="text-white font-medium">{apt.clinic || '—'}</p>
+              <p className="font-medium" style={{ color: T.cardText }}>{apt.clinic || '—'}</p>
             </div>
             <div>
               <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Booking ID</span>
-              <p className="text-white font-medium text-xs" style={{ fontFamily: "'Courier New', monospace" }}>{apt.booking_id || apt.id || '—'}</p>
+              <p className="font-medium text-xs" style={{ color: T.cardText, fontFamily: "'Courier New', monospace" }}>{apt.booking_id || apt.id || '—'}</p>
             </div>
             <div>
               <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Date</span>
-              <p className="text-white font-medium">{apt.date || '—'}</p>
+              <p className="font-medium" style={{ color: T.cardText }}>{apt.date || '—'}</p>
             </div>
             {apt.session && (
               <div>
                 <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Session</span>
-                <p className="text-white font-medium">{apt.session}</p>
+                <p className="font-medium" style={{ color: T.cardText }}>{apt.session}</p>
               </div>
             )}
             {apt.patient_age && (
               <div>
                 <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Age</span>
-                <p className="text-white font-medium">{apt.patient_age} yrs</p>
+                <p className="font-medium" style={{ color: T.cardText }}>{apt.patient_age} yrs</p>
               </div>
             )}
             <div>
               <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Source</span>
-              <p className="text-white font-medium">{apt.booking_source === 'website' ? 'Website' : apt.appointment_type === 'WALK_IN' ? 'Walk-in' : apt.appointment_type === 'EMERGENCY' ? 'Emergency' : apt.booking_source || 'Booked'}</p>
+              <p className="font-medium" style={{ color: T.cardText }}>{apt.booking_source === 'website' ? 'Website' : apt.appointment_type === 'WALK_IN' ? 'Walk-in' : apt.appointment_type === 'EMERGENCY' ? 'Emergency' : apt.booking_source || 'Booked'}</p>
             </div>
             <div>
               <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Payment</span>
@@ -291,25 +291,25 @@ const AppointmentCard = ({ apt, onComplete, onBilling, onUploadPrescription, onC
             {apt.fee_code && (
               <div>
                 <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Fee Code</span>
-                <p className="text-white font-medium">{apt.fee_code}</p>
+                <p className="font-medium" style={{ color: T.cardText }}>{apt.fee_code}</p>
               </div>
             )}
             {apt.chief_complaint && (
               <div className="col-span-2">
                 <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Chief Complaint</span>
-                <p className="text-white font-medium">{apt.chief_complaint}</p>
+                <p className="font-medium" style={{ color: T.cardText }}>{apt.chief_complaint}</p>
               </div>
             )}
             {apt.notes && (
               <div className="col-span-2">
                 <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Notes</span>
-                <p className="text-white font-medium">{apt.notes}</p>
+                <p className="font-medium" style={{ color: T.cardText }}>{apt.notes}</p>
               </div>
             )}
             {apt.patient_email && (
               <div className="col-span-2">
                 <span style={{ color: T.cardTextMuted }} className="text-[10px] uppercase tracking-wider font-semibold">Email</span>
-                <p className="text-white font-medium text-xs">{apt.patient_email}</p>
+                <p className="font-medium text-xs" style={{ color: T.cardText }}>{apt.patient_email}</p>
               </div>
             )}
           </div>
@@ -1216,7 +1216,7 @@ const DoctorPortalRedesigned = () => {
               <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: `1px solid ${T.surfaceBorder}` }}>
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5 text-amber-400" />
-                  <span className="text-white font-bold">Running Late</span>
+                  <span className="font-bold" style={{ color: T.textPrimary }}>Running Late</span>
                 </div>
                 <button onClick={() => setShowRunningLate(false)} className="p-1 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
                   <X className="w-5 h-5" style={{ color: T.textMuted }} />
@@ -1292,12 +1292,12 @@ const DoctorPortalRedesigned = () => {
         {/* Ratings Overview Section */}
         {ratingsData && (
           <div className="mt-6 rounded-2xl p-4" style={{ background: T.surfaceCard, border: `1px solid ${T.surfaceBorder}` }}>
-            <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+            <h3 className="font-bold mb-3 flex items-center gap-2" style={{ color: T.textPrimary }}>
               <Star className="w-5 h-5 text-amber-400 fill-amber-400" /> Patient Ratings
             </h3>
             <div className="flex items-center gap-4 mb-4">
               <div className="text-center">
-                <p className="text-3xl font-bold text-amber-400">{ratingsData.overall?.avg_rating || '—'}</p>
+                <p className="text-3xl font-bold text-amber-500">{ratingsData.overall?.avg_rating || '—'}</p>
                 <div className="flex gap-0.5 mt-1 justify-center">
                   {[1,2,3,4,5].map(s => (
                     <Star key={s} className={`w-3 h-3 ${s <= Math.round(ratingsData.overall?.avg_rating || 0) ? 'text-amber-400 fill-amber-400' : 'text-gray-600'}`} />
@@ -1349,7 +1349,7 @@ const DoctorPortalRedesigned = () => {
         {/* ============ DAILY SUMMARY VIEW ============ */}
         {activeTab === 'summary' && (
           <div className="space-y-4 pb-4" data-testid="doctor-daily-summary">
-            <h2 className="text-lg font-bold text-white">Daily Summary — {selectedDate}</h2>
+            <h2 className="text-lg font-bold" style={{ color: T.textPrimary }}>Daily Summary — {selectedDate}</h2>
 
             {/* Stats Grid */}
             {(() => {
@@ -1368,19 +1368,19 @@ const DoctorPortalRedesigned = () => {
                   {/* Main Stat Cards */}
                   <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-2xl p-4" style={{ background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.2)' }}>
-                      <p className="text-3xl font-black text-violet-400">{total}</p>
+                      <p className="text-3xl font-black text-violet-600">{total}</p>
                       <p className="text-xs mt-1" style={{ color: T.textMuted }}>Total Patients</p>
                     </div>
                     <div className="rounded-2xl p-4" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.2)' }}>
-                      <p className="text-3xl font-black text-green-400">{completed}</p>
+                      <p className="text-3xl font-black text-green-600">{completed}</p>
                       <p className="text-xs mt-1" style={{ color: T.textMuted }}>Completed</p>
                     </div>
                     <div className="rounded-2xl p-4" style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.2)' }}>
-                      <p className="text-3xl font-black text-blue-400">{checkedIn}</p>
+                      <p className="text-3xl font-black text-blue-600">{checkedIn}</p>
                       <p className="text-xs mt-1" style={{ color: T.textMuted }}>Waiting / In</p>
                     </div>
                     <div className="rounded-2xl p-4" style={{ background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.2)' }}>
-                      <p className="text-3xl font-black text-amber-400">{booked}</p>
+                      <p className="text-3xl font-black text-amber-600">{booked}</p>
                       <p className="text-xs mt-1" style={{ color: T.textMuted }}>Yet to Arrive</p>
                     </div>
                   </div>
@@ -1390,13 +1390,13 @@ const DoctorPortalRedesigned = () => {
                     <div className="flex items-center justify-between mb-3">
                       <div>
                         <p className="text-xs uppercase tracking-wider" style={{ color: T.textMuted }}>Today's Revenue</p>
-                        <p className="text-2xl font-black text-white mt-1">
+                        <p className="text-2xl font-black mt-1" style={{ color: T.textPrimary }}>
                           <IndianRupee className="w-5 h-5 inline" />{revenue.toLocaleString()}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="text-xs" style={{ color: T.textMuted }}>Avg per patient</p>
-                        <p className="text-lg font-bold text-green-400">{'\u20B9'}{avgFee}</p>
+                        <p className="text-lg font-bold text-green-600">{'\u20B9'}{avgFee}</p>
                       </div>
                     </div>
                     <button onClick={() => navigate('/revenue-dashboard')} className="text-xs text-violet-400 font-semibold hover:text-violet-300 mt-1" data-testid="view-revenue-dashboard">View Full Dashboard &rarr;</button>
@@ -1435,7 +1435,7 @@ const DoctorPortalRedesigned = () => {
                           <div className="w-2.5 h-2.5 rounded-full" style={{ background: item.color }} />
                           <span className="text-sm" style={{ color: T.textSecondary }}>{item.label}</span>
                         </div>
-                        <span className="text-sm font-bold text-white">{item.count}</span>
+                        <span className="text-sm font-bold" style={{ color: T.textPrimary }}>{item.count}</span>
                       </div>
                     ))}
                   </div>
@@ -1444,7 +1444,7 @@ const DoctorPortalRedesigned = () => {
                   <div className="rounded-2xl p-4" style={{ background: T.surfaceCard, border: `1px solid ${T.surfaceBorder}`,  }}>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs text-gray-500">Completion Rate</span>
-                      <span className="text-sm font-bold text-green-400">{total > 0 ? Math.round(completed / total * 100) : 0}%</span>
+                      <span className="text-sm font-bold text-green-600">{total > 0 ? Math.round(completed / total * 100) : 0}%</span>
                     </div>
                     <div className="h-2.5 rounded-full bg-gray-50 overflow-hidden">
                       <div className="h-full rounded-full transition-all duration-700"
@@ -1505,17 +1505,17 @@ const DoctorPortalRedesigned = () => {
                       <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Patient Details ({appointments.length})</h3>
                       <div className="space-y-2 max-h-64 overflow-y-auto">
                         {appointments.sort((a, b) => (a.time || '').localeCompare(b.time || '')).map((apt, i) => {
-                          const st = apt.status === 'Completed' ? { bg: 'bg-emerald-500/15', text: 'text-green-400' }
-                            : apt.status === 'Cancelled' ? { bg: 'bg-red-500/15', text: 'text-red-500' }
-                            : apt.status === 'CheckedIn' || apt.status === 'WithDoctor' ? { bg: 'bg-amber-500/15', text: 'text-amber-400' }
-                            : { bg: 'bg-blue-500/15', text: 'text-blue-400' };
+                          const st = apt.status === 'Completed' ? { bg: 'bg-emerald-500/15', text: 'text-green-600' }
+                            : apt.status === 'Cancelled' ? { bg: 'bg-red-500/15', text: 'text-red-600' }
+                            : apt.status === 'CheckedIn' || apt.status === 'WithDoctor' ? { bg: 'bg-amber-500/15', text: 'text-amber-600' }
+                            : { bg: 'bg-blue-500/15', text: 'text-blue-600' };
                           return (
                             <div key={apt.booking_id || i} className="flex items-center gap-3 p-2 rounded-xl bg-gray-50 border border-white/[0.04]">
                               <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center flex-shrink-0">
-                                <span className="text-xs font-bold text-violet-400">{i + 1}</span>
+                                <span className="text-xs font-bold text-violet-600">{i + 1}</span>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-white truncate">{apt.patient_name || 'Patient'}</p>
+                                <p className="text-sm font-semibold truncate" style={{ color: T.textPrimary }}>{apt.patient_name || 'Patient'}</p>
                                 <p className="text-[10px] text-gray-500">
                                   {apt.time || 'N/A'} {apt.appointment_type === 'WALK_IN' ? '· Walk-in' : apt.appointment_type === 'EMERGENCY' ? '· Emergency' : ''}
                                 </p>
@@ -1523,7 +1523,7 @@ const DoctorPortalRedesigned = () => {
                               <div className="text-right flex-shrink-0">
                                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${st.bg} ${st.text}`}>{apt.status}</span>
                                 {(apt.total_fee || apt.fee) > 0 && (
-                                  <p className="text-[10px] text-green-400 mt-0.5">₹{apt.total_fee || apt.fee}</p>
+                                  <p className="text-[10px] text-green-600 mt-0.5">₹{apt.total_fee || apt.fee}</p>
                                 )}
                               </div>
                             </div>
@@ -1541,7 +1541,7 @@ const DoctorPortalRedesigned = () => {
                           <Star className="w-7 h-7 text-amber-400 fill-amber-400" />
                         </div>
                         <div>
-                          <p className="text-2xl font-black text-white">{ratingsData.average?.toFixed(1)}</p>
+                          <p className="text-2xl font-black" style={{ color: T.textPrimary }}>{ratingsData.average?.toFixed(1)}</p>
                           <p className="text-xs text-gray-500">{ratingsData.total_ratings || 0} patient ratings</p>
                         </div>
                       </div>
@@ -1697,8 +1697,8 @@ const DoctorPortalRedesigned = () => {
                           : 'border-gray-100 hover:border-violet-500/50'
                       }`}>
                       <div className="flex justify-between items-center">
-                        <span className="font-bold text-violet-400">{code}</span>
-                        <span className="font-bold text-green-400">₹{info.amount}</span>
+                        <span className="font-bold text-violet-600">{code}</span>
+                        <span className="font-bold text-green-600">₹{info.amount}</span>
                       </div>
                       <p className="text-xs text-gray-500 mt-1">{info.label}</p>
                     </button>
@@ -1719,7 +1719,7 @@ const DoctorPortalRedesigned = () => {
                             ? 'border-violet-500 bg-violet-500/20' 
                             : 'border-gray-100 hover:border-violet-500/50'
                         }`}>
-                        <span className="font-bold text-sm text-violet-400">{code}</span>
+                        <span className="font-bold text-sm text-violet-600">{code}</span>
                         <p className="text-xs text-gray-500">₹{info.amount}</p>
                       </button>
                     ))}
@@ -1732,7 +1732,7 @@ const DoctorPortalRedesigned = () => {
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-green-400" />
                   <div>
-                    <span className="text-sm text-white font-medium">Send Invoice via WhatsApp</span>
+                    <span className="text-sm font-medium" style={{ color: T.textPrimary }}>Send Invoice via WhatsApp</span>
                     <p className="text-xs text-gray-500">Patient will receive PDF invoice</p>
                   </div>
                 </div>
@@ -1752,7 +1752,7 @@ const DoctorPortalRedesigned = () => {
                   value={notes} 
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Add notes..." 
-                  className="h-10 rounded-xl bg-gray-50 border-gray-100 text-white placeholder:text-gray-500" 
+                  className="h-10 rounded-xl bg-gray-50 border-gray-100 text-gray-900 placeholder:text-gray-500" 
                 />
               </div>
 
@@ -1764,7 +1764,7 @@ const DoctorPortalRedesigned = () => {
                   value={followUpDate}
                   min={getIndianDate()}
                   onChange={(e) => setFollowUpDate(e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl bg-gray-50 border border-gray-100 text-white text-sm"
+                  className="w-full h-10 px-3 rounded-xl bg-gray-50 border border-gray-100 text-gray-900 text-sm"
                 />
               </div>
 
@@ -1806,7 +1806,7 @@ const DoctorPortalRedesigned = () => {
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-xl font-bold text-white">Upload Prescription</h3>
+                <h3 className="text-xl font-bold" style={{ color: T.textPrimary }}>Upload Prescription</h3>
                 <p className="text-gray-500 text-sm mt-1">
                   For {prescriptionApt.patient_name}
                 </p>
@@ -1827,7 +1827,7 @@ const DoctorPortalRedesigned = () => {
                   <User className="w-6 h-6 text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-white font-medium">{prescriptionApt.patient_name}</p>
+                  <p className="font-medium" style={{ color: T.textPrimary }}>{prescriptionApt.patient_name}</p>
                   <p className="text-gray-500 text-sm">{prescriptionApt.patient_phone}</p>
                 </div>
               </div>
@@ -1899,8 +1899,8 @@ const DoctorPortalRedesigned = () => {
                 onChange={(e) => setPrescriptionNotes(e.target.value)}
                 placeholder="Follow-up instructions, diet advice, etc."
                 rows={3}
-                className="w-full px-4 py-3 rounded-xl text-white placeholder:text-gray-500 resize-none"
-                style={{ background: T.cardBg, border: `1px solid ${isListening ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.1)'}` }}
+                className="w-full px-4 py-3 rounded-xl placeholder:text-gray-500 resize-none"
+                style={{ background: T.cardBg, color: T.cardText, border: `1px solid ${isListening ? 'rgba(239,68,68,0.3)' : T.cardBorder}` }}
               />
             </div>
             
@@ -1915,8 +1915,8 @@ const DoctorPortalRedesigned = () => {
                     onChange={(e) => setSendViaWhatsApp(e.target.checked)}
                     className="w-5 h-5 rounded accent-green-500"
                   />
-                  <span className="flex items-center gap-2 text-white">
-                    <svg className="w-5 h-5 text-green-400" viewBox="0 0 24 24" fill="currentColor">
+                  <span className="flex items-center gap-2" style={{ color: T.textPrimary }}>
+                    <svg className="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                     </svg>
                     WhatsApp ({prescriptionApt.patient_phone})
@@ -1930,8 +1930,8 @@ const DoctorPortalRedesigned = () => {
                       onChange={(e) => setSendViaEmail(e.target.checked)}
                       className="w-5 h-5 rounded accent-blue-500"
                     />
-                    <span className="flex items-center gap-2 text-white">
-                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span className="flex items-center gap-2" style={{ color: T.textPrimary }}>
+                      <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                       Email ({prescriptionApt.patient_email})

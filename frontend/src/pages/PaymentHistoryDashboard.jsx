@@ -261,7 +261,7 @@ const PaymentHistoryDashboard = () => {
   const refundedAmount = payments.filter(p => p.status === 'refunded').reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="min-h-screen bg-[#050510]">
+    <div className="dark-page min-h-screen bg-[#050510]">
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 sticky top-0 z-10">
         <div className="max-w-lg mx-auto flex items-center gap-3">

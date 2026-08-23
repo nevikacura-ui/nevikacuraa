@@ -136,7 +136,7 @@ const PatientProfile = () => {
   ];
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#050510' }} data-testid="patient-profile-page">
+    <div className="dark-page min-h-screen pb-24" style={{ background: '#050510' }} data-testid="patient-profile-page">
       {/* Header */}
       <div className="sticky top-0 z-50 px-4 pt-4 pb-3" style={{ background: 'rgba(5,5,16,0.9)', backdropFilter: 'blur(20px)' }}>
         <div className="flex items-center gap-3">

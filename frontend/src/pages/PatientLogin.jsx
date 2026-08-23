@@ -305,7 +305,7 @@ const PatientLogin = () => {
   // ============ RENDER ============
 
   return (
-    <div className="min-h-screen bg-[#050510] flex items-center justify-center p-4">
+    <div className="dark-page min-h-screen bg-[#050510] flex items-center justify-center p-4">
       {/* Glassmorphism Card */}
       <div className="relative w-full max-w-md">
         {/* Glow effects */}

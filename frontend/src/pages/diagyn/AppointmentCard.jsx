@@ -142,13 +142,21 @@ const AppointmentCard = ({ apt, onCheckIn, onWithDoctor, onCloseBilling, onCance
           {apt.patient_name}
         </h3>
 
-        {/* Doctor + Code */}
-        <div className="flex items-center gap-2">
+        {/* Doctor + Code + Slot Time */}
+        <div className="flex items-center gap-2 flex-wrap">
           <p className="text-white/70 text-sm font-medium flex items-center gap-1.5">
             <Stethoscope className="w-3.5 h-3.5 text-white/45" />
             {apt.doctor}
           </p>
           <span className="text-white/40 text-[10px] font-mono font-bold tracking-wide">#{bookingCode}</span>
+          {(apt.time || apt.slot) && (
+            <span className="flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg ml-auto"
+              style={{ background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.85)' }}
+              data-testid={`slot-time-${apt.booking_id}`}>
+              <Clock className="w-3 h-3" />
+              {apt.time || apt.slot}
+            </span>
+          )}
         </div>
 
         {/* Wait Timer */}

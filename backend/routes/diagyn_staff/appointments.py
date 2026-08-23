@@ -287,6 +287,21 @@ async def update_appointment_status(
         update_data["cancelled_by"] = staff.get("name", "Staff")
         if data.notes:
             update_data["cancellation_reason"] = data.notes
+        # Send WhatsApp cancellation to patient
+        patient_phone = appointment.get("patient_phone") or appointment.get("phone")
+        if patient_phone:
+            try:
+                from services.msg91_whatsapp import send_order_cancelled
+                await send_order_cancelled(
+                    phone=patient_phone,
+                    patient_name=appointment.get("patient_name", "Patient"),
+                    service_name="DiaGyn",
+                    order_id=appointment.get("booking_id", appointment_id),
+                    db=shared.db
+                )
+                logger.info(f"Staff cancellation WhatsApp sent to patient {patient_phone}")
+            except Exception as e:
+                logger.warning(f"Failed to send staff cancellation WhatsApp: {e}")
 
     if data.status == "WithDoctor":
         update_data["with_doctor_at"] = datetime.now(timezone.utc).isoformat()

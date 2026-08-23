@@ -8,6 +8,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { useRatingPrompt } from '@/components/RatingModal';
+import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { successPattern } from '@/utils/haptics';
 import BottomNav from '@/components/BottomNav';
 import ServiceHeader from '@/components/ServiceHeader';
@@ -48,6 +49,7 @@ const whyChooseUs = [
 const DiaGynRedesigned = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isDarkMode } = useThemeLanguage();
   const [searchParams] = useSearchParams();
   
   // Intro animation state
@@ -545,25 +547,31 @@ const DiaGynRedesigned = () => {
   return (
     <div className="min-h-screen" style={{ background: '#F5F5F2' }}>
       {/* DARK SECTION — Hero area with warm hue transition at boundary */}
-      <div style={{ background: 'linear-gradient(180deg, #050510 0%, #0B1220 85%, #1A1418 91%, #3D2E2A 94%, #9E8A7D 97%, #D8CCC4 99%, #F5F5F2 100%)' }}>
+      <div style={{ background: isDarkMode ? 'linear-gradient(180deg, #050510 0%, #0B1220 85%, #1A1418 91%, #3D2E2A 94%, #9E8A7D 97%, #D8CCC4 99%, #F5F5F2 100%)' : '#F0EBE3' }}>
       <ServiceHeader />
 
-      {/* Ad Banner — top of page */}
+      {/* Ad Banner — top of page (dark mode only) */}
+      {isDarkMode && (
       <div className="max-w-5xl mx-auto px-4 pt-3 pb-1">
         <div className="rounded-2xl overflow-hidden shadow-lg" data-testid="diagyn-ad-banner">
           <img src="https://customer-assets.emergentagent.com/job_33550bff-be33-4f96-8c06-b3892ff115da/artifacts/eahve6ha_file_000000002bc071faa39418c13b0ae0e4.png" alt="DiaGyn Healthcare - Book your Doctor Anytime Anywhere" className="w-full h-auto" loading="lazy" />
         </div>
       </div>
+      )}
 
       {/* How to Book — Big Interactive Card with 3 animated steps */}
       <div className="px-4 pt-2 pb-1">
         <button
           onClick={() => setShowTutorial(true)}
           className="w-full rounded-[22px] p-4 active:scale-[0.97] transition-all group overflow-hidden relative"
-          style={{
+          style={isDarkMode ? {
             background: 'linear-gradient(145deg, rgba(6,182,212,0.20) 0%, rgba(14,116,144,0.30) 40%, rgba(6,182,212,0.14) 100%)',
             border: '1.5px solid rgba(6,182,212,0.35)',
             boxShadow: '0 0 25px rgba(6,182,212,0.12), inset 0 1px 0 rgba(255,255,255,0.06)',
+          } : {
+            background: 'rgba(255,255,255,0.7)',
+            border: '1px solid rgba(255,255,255,0.8)',
+            boxShadow: '8px 8px 20px rgba(166,160,154,0.18), -6px -6px 16px rgba(255,255,255,0.85), inset 2px 2px 4px rgba(255,255,255,0.6)',
           }}
           data-testid="how-to-book-banner"
         >
@@ -577,12 +585,12 @@ const DiaGynRedesigned = () => {
               <CalendarDays className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1 text-left">
-              <span className="text-base font-black text-white block leading-tight tracking-tight">How to Book</span>
-              <span className="text-[11px] text-cyan-300/60 font-medium">Book consultations in 3 simple steps</span>
+              <span className="text-base font-black block leading-tight tracking-tight" style={{ color: isDarkMode ? '#fff' : '#1C1917' }}>How to Book</span>
+              <span className="text-[11px] font-medium" style={{ color: isDarkMode ? 'rgba(103,232,249,0.6)' : '#0891B2' }}>Book consultations in 3 simple steps</span>
             </div>
             <div className="w-8 h-8 rounded-full flex items-center justify-center"
-              style={{ background: 'rgba(6,182,212,0.25)', border: '1px solid rgba(6,182,212,0.3)' }}>
-              <svg className="w-4 h-4 text-cyan-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+              style={{ background: isDarkMode ? 'rgba(6,182,212,0.25)' : 'rgba(6,182,212,0.12)', border: '1px solid rgba(6,182,212,0.3)' }}>
+              <svg className="w-4 h-4" style={{ color: isDarkMode ? '#67E8F9' : '#0891B2' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -593,9 +601,12 @@ const DiaGynRedesigned = () => {
             ].map((s, i) => (
               <React.Fragment key={i}>
                 <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl"
-                  style={{ background: `rgba(6,182,212,${0.08 + i * 0.04})`, border: '1px solid rgba(6,182,212,0.15)' }}>
+                  style={isDarkMode
+                    ? { background: `rgba(6,182,212,${0.08 + i * 0.04})`, border: '1px solid rgba(6,182,212,0.15)' }
+                    : { background: 'rgba(6,182,212,0.08)', border: '1px solid rgba(6,182,212,0.15)' }
+                  }>
                   <span className="text-sm">{s.icon}</span>
-                  <span className="text-[10px] font-bold text-cyan-300/80">{s.text}</span>
+                  <span className="text-[10px] font-bold" style={{ color: isDarkMode ? 'rgba(103,232,249,0.8)' : '#0891B2' }}>{s.text}</span>
                 </div>
                 {i < 2 && <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#06B6D4', opacity: 0.4, animation: `dgDot ${2 + i * 0.3}s ease-in-out infinite` }} />}
               </React.Fragment>
@@ -719,28 +730,30 @@ const DiaGynRedesigned = () => {
       <div className="max-w-5xl mx-auto px-4 pt-4 pb-6">
         <div className="text-center mb-2">
           <div className="mb-5 flex flex-col items-center">
+            {isDarkMode && (
             <img loading="lazy" src="https://customer-assets.emergentagent.com/job_4625448c-b743-44eb-9c92-5eb654622ad3/artifacts/mo04g1pk_file_0000000032dc720798054d00d20ce907%20%281%29.png" alt="DiaGyn" className="h-24 md:h-32 w-auto object-contain" style={{ mixBlendMode: 'screen', filter: 'contrast(1.3) brightness(1.1)' }} data-testid="diagyn-logo" />
+            )}
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mt-2" style={{ background: 'rgba(20,184,166,0.08)', border: '1px solid rgba(20,184,166,0.15)' }}>
               <span className="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
               <span className="text-[10px] text-teal-400/80 font-medium tracking-wide">A Nevika Cura Company</span>
             </span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>Book Your Doctor<br/><span style={{ color: '#E11D48' }}>Any Time</span> <span style={{ color: '#06B6D4' }}>Any Where!</span></h1>
-          <p className="text-slate-400 max-w-sm mx-auto relative z-10" style={{ fontFamily: 'DM Sans, sans-serif' }}>Expert consultations at your fingertips. Select from our trusted doctors and book instantly.</p>
+          <h1 className="text-3xl md:text-4xl font-bold mb-2" style={{ fontFamily: 'Outfit, sans-serif', color: isDarkMode ? '#fff' : '#1C1917' }}>Book Your Doctor<br/><span style={{ color: '#E11D48' }}>Any Time</span> <span style={{ color: '#06B6D4' }}>Any Where!</span></h1>
+          <p className="max-w-sm mx-auto relative z-10" style={{ fontFamily: 'DM Sans, sans-serif', color: isDarkMode ? '#94a3b8' : '#57534E' }}>Expert consultations at your fingertips. Select from our trusted doctors and book instantly.</p>
         </div>
       </div>
 
       </div>{/* END DARK SECTION */}
 
-      <main className="max-w-5xl mx-auto px-4 py-6 pb-20">
+      <main className="max-w-5xl mx-auto px-4 py-6 pb-20" style={{ background: isDarkMode ? '#0B1220' : '#F0EBE3' }}>
         <ZoomScrollContainer mode="smooth">
 
         {/* Today's Schedule Mini-Timeline — LIGHT SECTION STARTS HERE */}
         <ZoomSection>
         <div className="mb-6" data-testid="todays-schedule-timeline">
           <div className="flex items-center gap-2 mb-3">
-            <CalendarDays className="w-4 h-4 text-gray-600" />
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Upcoming Schedule</span>
+            <CalendarDays className="w-4 h-4" style={{ color: isDarkMode ? '#67E8F9' : '#4B5563' }} />
+            <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: isDarkMode ? 'rgba(255,255,255,0.5)' : '#6B7280' }}>Upcoming Schedule</span>
           </div>
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
             {scheduleTimeline.map((day, i) => (
@@ -750,20 +763,20 @@ const DiaGynRedesigned = () => {
                 className="flex-shrink-0 rounded-2xl p-3 min-w-[80px] text-center transition-all hover:scale-105 active:scale-95"
                 style={{
                   background: day.isToday
-                    ? 'linear-gradient(135deg, rgba(20,184,166,0.12), rgba(20,184,166,0.05))'
-                    : '#fff',
+                    ? (isDarkMode ? 'linear-gradient(135deg, rgba(20,184,166,0.15), rgba(20,184,166,0.06))' : 'linear-gradient(135deg, rgba(20,184,166,0.12), rgba(20,184,166,0.05))')
+                    : (isDarkMode ? 'rgba(255,255,255,0.04)' : '#fff'),
                   border: day.isToday
                     ? '1.5px solid rgba(20,184,166,0.35)'
-                    : '1.5px solid #E5E7EB',
+                    : (isDarkMode ? '1.5px solid rgba(255,255,255,0.08)' : '1.5px solid #E5E7EB'),
                   opacity: day.totalSlots === 0 ? 0.45 : 1,
                 }}
                 data-testid={`schedule-day-${i}`}
               >
-                <p className={`text-[10px] font-bold uppercase tracking-wide ${day.isToday ? 'text-teal-600' : 'text-gray-400'}`}>
+                <p className={`text-[10px] font-bold uppercase tracking-wide ${day.isToday ? 'text-teal-600' : (isDarkMode ? 'text-white/40' : 'text-gray-400')}`}>
                   {day.label}
                 </p>
-                <p className="text-xl font-black text-gray-900 mt-0.5">{day.dayNum}</p>
-                <p className="text-[9px] text-gray-400">{day.month}</p>
+                <p className={`text-xl font-black mt-0.5 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{day.dayNum}</p>
+                <p className={`text-[9px] ${isDarkMode ? 'text-white/40' : 'text-gray-400'}`}>{day.month}</p>
                 {day.totalSlots > 0 ? (
                   <div className="mt-1.5 flex items-center justify-center gap-1">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />

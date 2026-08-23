@@ -219,12 +219,12 @@ const DoctorDetailModal = ({
   const cBg = theme.cardBg;
   const cBorder = theme.cardBorder;
   const cText = isDark ? '#FFFFFF' : theme.headerText;
-  const cTextMuted = isDark ? 'rgba(255,255,255,0.7)' : '#9CA3AF';
-  const cTextSub = isDark ? 'rgba(255,255,255,0.85)' : '#6B7280';
+  const cTextMuted = isDark ? 'rgba(255,255,255,0.8)' : '#6B7280';
+  const cTextSub = isDark ? 'rgba(255,255,255,0.9)' : '#374151';
   const darkCard = 'rounded-[24px] overflow-hidden';
   const neonShadow = theme.neonGlowShadow || '0 4px 20px rgba(0,0,0,0.1)';
-  const glassBg = 'rgba(255,255,255,0.05)';
-  const glassBorder = 'rgba(255,255,255,0.08)';
+  const glassBg = 'rgba(255,255,255,0.06)';
+  const glassBorder = 'rgba(255,255,255,0.1)';
 
   return (
     <div className="fixed inset-0 z-[10000] overflow-hidden" style={{ background: theme.darkBg || theme.pageBg }} data-testid="doctor-detail-modal">
@@ -304,7 +304,7 @@ const DoctorDetailModal = ({
                   className="flex-1 px-3 py-2.5 rounded-full text-xs font-bold capitalize transition-all whitespace-nowrap"
                   style={activeTab === tab
                     ? { background: theme.tabActive, color: theme.tabActiveText || '#0D1F1E', boxShadow: `0 4px 16px ${theme.tabActiveShadow}` }
-                    : { color: 'rgba(255,255,255,0.6)' }}
+                    : { color: 'rgba(255,255,255,0.75)' }}
                   data-testid={`tab-${tab}`}>
                   {tab}
                 </button>
@@ -329,13 +329,13 @@ const DoctorDetailModal = ({
                           background: theme.accent, color: theme.selectedText || '#0D1F1E',
                           boxShadow: `0 0 12px ${theme.accent}40`,
                         } : {
-                          background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.35)',
-                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.55)',
+                          border: '1px solid rgba(255,255,255,0.15)',
                         }}>
                         {s.done ? '✓' : i + 1}
                       </div>
                       <span className="text-[11px] font-bold transition-colors duration-300"
-                        style={{ color: s.done ? theme.accent : 'rgba(255,255,255,0.35)' }}>
+                        style={{ color: s.done ? theme.accent : 'rgba(255,255,255,0.55)' }}>
                         {s.label}
                       </span>
                     </div>
@@ -350,31 +350,60 @@ const DoctorDetailModal = ({
               {/* Clinic Toggle — Glassmorphic segmented control */}
               <div className={`p-4 ${darkCard}`} style={{ background: glassBg, border: `1px solid ${glassBorder}`, backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', boxShadow: neonShadow }}>
                 <p className="text-[10px] uppercase tracking-wider font-extrabold mb-2.5" style={{ color: theme.accent }}>Visit at</p>
-                <div className="relative p-1 rounded-full" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                  {/* Sliding indicator */}
-                  <div className="absolute top-1 bottom-1 rounded-full transition-all duration-300 ease-out" style={{
-                    width: `calc(50% - 4px)`,
-                    left: selectedClinic === availableClinics.filter(c => !c.isOnline)[1]?.id ? 'calc(50% + 2px)' : '4px',
-                    background: (selectedClinic && selectedClinic !== 'online') ? theme.accent : 'transparent',
-                    boxShadow: (selectedClinic && selectedClinic !== 'online') ? `0 4px 16px ${theme.ctaShadow}` : 'none',
-                  }} />
-                  <div className="relative flex">
-                    {availableClinics.filter(c => !c.isOnline).map((clinic, idx) => {
-                      const isSel = selectedClinic === clinic.id;
-                      return (
-                        <button key={clinic.id} onClick={() => { onClinicChange(clinic.id); onDateSelect(null); onSlotSelect(null); }}
-                          className="flex-1 py-3 rounded-full text-sm font-bold transition-all active:scale-[0.97] relative z-10"
-                          style={{ color: isSel ? (theme.selectedText || '#0D1F1E') : 'rgba(255,255,255,0.7)' }}
-                          data-testid={`clinic-btn-${clinic.id}`}>
-                          <div className="flex items-center justify-center gap-2">
-                            <MapPin className="w-3.5 h-3.5" style={{ opacity: isSel ? 1 : 0.5 }} />
-                            {clinic.name.replace(' Clinic', '')}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                {(() => {
+                  const physicalClinics = availableClinics.filter(c => !c.isOnline);
+                  if (physicalClinics.length === 1) {
+                    // Single clinic — render full-width selected button, no toggle
+                    const clinic = physicalClinics[0];
+                    const isSel = selectedClinic === clinic.id;
+                    return (
+                      <button onClick={() => { onClinicChange(clinic.id); onDateSelect(null); onSlotSelect(null); }}
+                        className="w-full py-3.5 rounded-full text-sm font-bold transition-all active:scale-[0.98]"
+                        style={{
+                          background: isSel ? theme.accent : 'rgba(255,255,255,0.08)',
+                          color: isSel ? (theme.selectedText || '#0D1F1E') : '#fff',
+                          boxShadow: isSel ? `0 4px 16px ${theme.ctaShadow}` : 'none',
+                          border: isSel ? 'none' : '1px solid rgba(255,255,255,0.12)',
+                        }}
+                        data-testid={`clinic-btn-${clinic.id}`}>
+                        <div className="flex items-center justify-center gap-2">
+                          <MapPin className="w-3.5 h-3.5" />
+                          {clinic.name.replace(' Clinic', '')} Clinic
+                        </div>
+                      </button>
+                    );
+                  }
+                  // Multiple clinics — segmented toggle
+                  return (
+                    <div className="relative p-1 rounded-full" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                      <div className="absolute top-1 bottom-1 rounded-full transition-all duration-300 ease-out" style={{
+                        width: `calc(${100 / physicalClinics.length}% - 4px)`,
+                        left: (() => {
+                          const idx = physicalClinics.findIndex(c => c.id === selectedClinic);
+                          return idx > 0 ? `calc(${(idx / physicalClinics.length) * 100}% + 2px)` : '4px';
+                        })(),
+                        background: (selectedClinic && selectedClinic !== 'online') ? theme.accent : 'transparent',
+                        boxShadow: (selectedClinic && selectedClinic !== 'online') ? `0 4px 16px ${theme.ctaShadow}` : 'none',
+                      }} />
+                      <div className="relative flex">
+                        {physicalClinics.map((clinic, idx) => {
+                          const isSel = selectedClinic === clinic.id;
+                          return (
+                            <button key={clinic.id} onClick={() => { onClinicChange(clinic.id); onDateSelect(null); onSlotSelect(null); }}
+                              className="flex-1 py-3 rounded-full text-sm font-bold transition-all active:scale-[0.97] relative z-10"
+                              style={{ color: isSel ? (theme.selectedText || '#0D1F1E') : 'rgba(255,255,255,0.7)' }}
+                              data-testid={`clinic-btn-${clinic.id}`}>
+                              <div className="flex items-center justify-center gap-2">
+                                <MapPin className="w-3.5 h-3.5" style={{ opacity: isSel ? 1 : 0.5 }} />
+                                {clinic.name.replace(' Clinic', '')}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Online Consultation — Glassmorphic toggle card */}

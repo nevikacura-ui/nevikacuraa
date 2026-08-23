@@ -158,7 +158,7 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#050510]">
+      <div className="dark-page min-h-screen bg-[#050510]">
         <div className="bg-[#1A1A1A] sticky top-0 z-50 border-b border-white/10 px-4 py-3"><div className="h-5 w-32 bg-white/10 rounded animate-pulse" /></div>
         <div className="max-w-lg mx-auto px-4 py-6 space-y-4">
           <div className="flex items-center gap-4"><div className="w-16 h-16 rounded-full bg-white/10 animate-pulse" /><div className="space-y-2 flex-1"><div className="h-5 w-36 bg-white/10 rounded animate-pulse" /><div className="h-3 w-28 bg-white/10 rounded animate-pulse" /></div></div>
@@ -171,7 +171,7 @@ const Profile = () => {
 
   return (
     <ProfileContext.Provider value={ctx}>
-      <div className="min-h-screen bg-[#050510]">
+      <div className="dark-page min-h-screen bg-[#050510]">
         {/* Header */}
         <div className="bg-[#1A1A1A] sticky top-0 z-50 border-b border-white/10">
           <div className="flex items-center justify-between px-4 py-3">

@@ -635,7 +635,7 @@ const MyAppointmentsPage = () => {
   const currentList = data[activeTab] || [];
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#050510' }} data-testid="my-appointments-page">
+    <div className="dark-page min-h-screen pb-24" style={{ background: '#050510' }} data-testid="my-appointments-page">
       {/* Ambient BG */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute w-[300px] h-[300px] rounded-full blur-[120px] opacity-[0.06]" style={{ background: '#14b8a6', top: '-8%', right: '-12%' }} />

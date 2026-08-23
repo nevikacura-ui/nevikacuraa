@@ -407,7 +407,7 @@ const Proton = () => {
   // ===== Main render =====
   return (
     <MangoContext.Provider value={ctx}>
-      <div className="min-h-screen w-full bg-[#050510]" style={{ contain: 'layout style', willChange: 'auto' }}>
+      <div className="dark-page min-h-screen w-full bg-[#050510]" style={{ contain: 'layout style', willChange: 'auto' }}>
         {/* Background glow */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10" style={{ transform: 'translateZ(0)' }}>
           <div className="absolute top-[-10%] left-[20%] w-[500px] h-[500px] bg-gradient-to-br from-[#C8F56A]/8 via-[#A3D944]/4 to-transparent rounded-full blur-[150px]"></div>

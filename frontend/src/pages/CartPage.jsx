@@ -211,7 +211,7 @@ const CartPage = () => {
   // Empty Cart State
   if (isEmpty) {
     return (
-      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #0D0D12 0%, #111118 100%)' }}>
+      <div className="dark-page min-h-screen" style={{ background: 'linear-gradient(180deg, #0D0D12 0%, #111118 100%)' }}>
         {/* Header */}
         <div className="sticky top-0 z-10" style={{ background: 'rgba(13,13,18,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <div className="max-w-lg mx-auto flex items-center gap-3 px-4 py-3">
@@ -249,7 +249,7 @@ const CartPage = () => {
   }
 
   return (
-    <div className="min-h-screen pb-40" style={{ background: 'linear-gradient(180deg, #0D0D12 0%, #111118 100%)' }}>
+    <div className="dark-page min-h-screen pb-40" style={{ background: 'linear-gradient(180deg, #0D0D12 0%, #111118 100%)' }}>
       {/* Frosted Glass Header */}
       <div className="sticky top-0 z-10" style={{ background: 'rgba(13,13,18,0.85)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="max-w-lg mx-auto flex items-center gap-3 px-4 py-3">

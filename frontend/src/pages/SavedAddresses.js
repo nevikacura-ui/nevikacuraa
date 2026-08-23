@@ -55,7 +55,7 @@ const SavedAddresses = () => {
   const LABEL_ICONS = { home: HomeIcon, work: Briefcase, other: Building2 };
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#050510' }} data-testid="saved-addresses-page">
+    <div className="dark-page min-h-screen pb-24" style={{ background: '#050510' }} data-testid="saved-addresses-page">
       <div className="sticky top-0 z-50 px-4 pt-4 pb-3" style={{ background: 'rgba(5,5,16,0.9)', backdropFilter: 'blur(20px)' }}>
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>

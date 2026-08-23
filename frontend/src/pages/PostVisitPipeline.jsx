@@ -49,7 +49,7 @@ export default function PostVisitPipeline() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050510] text-white pb-32" data-testid="post-visit-pipeline">
+    <div className="dark-page min-h-screen bg-[#050510] text-white pb-32" data-testid="post-visit-pipeline">
       {/* Header */}
       <div className="glass-crystal sticky top-0 z-50 px-4 py-3 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-2xl flex items-center justify-center bg-white/5 btn-press" data-testid="pvp-back-btn">

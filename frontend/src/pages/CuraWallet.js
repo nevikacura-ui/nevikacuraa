@@ -163,7 +163,7 @@ const CuraWallet = () => {
   ];
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #0f1628 50%, #0a1e1c 100%)' }} data-testid="curapay-wallet-page">
+    <div className="dark-page min-h-screen pb-24" style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #0f1628 50%, #0a1e1c 100%)' }} data-testid="curapay-wallet-page">
       {/* Floating orbs */}
       <div className="fixed top-20 right-[-50px] w-40 h-40 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(76,29,149,0.3) 0%, transparent 70%)' }} />
       <div className="fixed bottom-40 left-[-30px] w-32 h-32 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(22,163,74,0.2) 0%, transparent 70%)' }} />

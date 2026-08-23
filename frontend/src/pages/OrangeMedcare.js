@@ -4,6 +4,7 @@ import { mediumTap, lightTap } from '@/utils/haptics';
 import { ShoppingBag, ArrowRight, ChevronRight, Package, Heart, Pill, Search, ShieldCheck, Truck, Clock, Mic } from 'lucide-react';
 import ServiceHeader from '@/components/ServiceHeader';
 import OrangeTutorial from '@/components/OrangeTutorial';
+import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 
 const PHARMACY_BANNER = 'https://customer-assets.emergentagent.com/job_ca7a3b6a-e4a4-4b10-b689-83baf03b0d17/artifacts/izzbzjdw_file_000000002b6471faac6222060e87b7d0%20%281%29.png';
 const HEALTHPLUS_BANNER = 'https://customer-assets.emergentagent.com/job_ca7a3b6a-e4a4-4b10-b689-83baf03b0d17/artifacts/j78bu9ea_file_00000000c03c71fab28c874cb0fdbd41.png';
@@ -58,15 +59,22 @@ const TRUST_STATS = [
   { value: '24/7', label: 'Support', icon: Clock, color: '#A855F7', gradBg: 'linear-gradient(180deg, rgba(168,85,247,0.18) 0%, rgba(168,85,247,0.05) 100%)', border: 'rgba(168,85,247,0.35)' },
 ];
 
-const PharmaBrandCard = ({ d, navigate }) => (
+const PharmaBrandCard = ({ d, navigate, isDark }) => (
   <button
     onClick={() => { mediumTap(); navigate(d.path); }}
     className="w-full rounded-[22px] mb-4 overflow-hidden active:scale-[0.98] transition-all duration-300 text-left group"
-    style={{
-      background: d.cardBg,
-      border: `1.5px solid ${d.cardBorder}`,
-      boxShadow: `0 4px 30px rgba(0,0,0,0.3), inset 0 1px 0 ${d.cardBorder}`,
-    }}
+    style={isDark
+      ? {
+          background: d.cardBg,
+          border: `1.5px solid ${d.cardBorder}`,
+          boxShadow: `0 4px 30px rgba(0,0,0,0.3), inset 0 1px 0 ${d.cardBorder}`,
+        }
+      : {
+          background: 'rgba(255,255,255,0.7)',
+          border: '1px solid rgba(255,255,255,0.8)',
+          boxShadow: '8px 8px 20px rgba(166,160,154,0.18), -6px -6px 16px rgba(255,255,255,0.85), inset 2px 2px 4px rgba(255,255,255,0.6)',
+        }
+    }
     data-testid={`pharma-card-${d.id}`}
   >
     {/* Banner image */}
@@ -111,18 +119,28 @@ const PharmaBrandCard = ({ d, navigate }) => (
 
 const OrangeMedcare = () => {
   const navigate = useNavigate();
+  const { isDarkMode } = useThemeLanguage();
   const [showTutorial, setShowTutorial] = useState(false);
 
+  const txt = isDarkMode ? '#fff' : '#1C1917';
+  const txtMuted = isDarkMode ? 'rgba(255,255,255,0.55)' : '#78716C';
+  const txtSub = isDarkMode ? 'rgba(255,255,255,0.7)' : '#57534E';
+  const pageBg = isDarkMode ? 'linear-gradient(180deg, #0B1220 0%, #0F172A 100%)' : '#F0EBE3';
+  const glassCard = isDarkMode
+    ? { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }
+    : { background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.8)', boxShadow: '8px 8px 20px rgba(166,160,154,0.18), -6px -6px 16px rgba(255,255,255,0.85), inset 2px 2px 4px rgba(255,255,255,0.6)' };
+
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #0B1220 0%, #0F172A 100%)' }} data-testid="orange-medcare-page">
+    <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ background: pageBg }} data-testid="orange-medcare-page">
       <ServiceHeader currentService="orange" />
 
-      {/* ===== PREMIUM HERO — Smart Medcare Hub ===== */}
+      {/* ===== HERO — Smart Medcare Hub ===== */}
       <div className="relative px-5 pt-6 pb-2 text-center">
-        {/* Radial glow behind CTA */}
-        <div className="absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 w-[340px] h-[200px] pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(249,115,22,0.08) 0%, rgba(234,88,12,0.04) 40%, transparent 70%)' }} />
+        {isDarkMode && (
+          <div className="absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 w-[340px] h-[200px] pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(249,115,22,0.08) 0%, rgba(234,88,12,0.04) 40%, transparent 70%)' }} />
+        )}
 
-        {/* Nevika Cura Logo */}
+        {/* Logo */}
         <div className="flex items-center justify-center gap-2.5 mb-6" data-testid="hero-logo">
           <img src="/nevika-light-logo.png" alt="" className="h-10 w-10" />
           <div className="flex items-baseline gap-0.5">
@@ -131,21 +149,19 @@ const OrangeMedcare = () => {
           </div>
         </div>
 
-        {/* Main Title */}
         <h1
-          className="text-[28px] sm:text-[36px] font-black text-white leading-[1.1] tracking-tight mb-3"
-          style={{ fontFamily: 'Outfit, sans-serif' }}
+          className="text-[28px] sm:text-[36px] font-black leading-[1.1] tracking-tight mb-3"
+          style={{ fontFamily: 'Outfit, sans-serif', color: txt }}
           data-testid="pharmacy-hub-title"
         >
           Smart Medcare Hub
         </h1>
 
-        {/* Subtext */}
-        <p className="text-[13px] text-white/55 mb-7" data-testid="hero-subtext">
+        <p className="text-[13px] mb-7" style={{ color: txtMuted }} data-testid="hero-subtext">
           Genuine medicines &bull; Wellness products &bull; Delivered to your door
         </p>
 
-        {/* Primary CTA — Orange Gradient Pill Button */}
+        {/* CTA */}
         <button
           onClick={() => { mediumTap(); navigate('/pharmacy'); }}
           className="relative mx-auto flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full text-white font-bold text-base active:scale-[0.96] transition-all mb-7"
@@ -159,92 +175,93 @@ const OrangeMedcare = () => {
           Shop Medicines
         </button>
 
-        {/* Glassmorphism Search Bar */}
+        {/* Search Bar */}
         <div
           onClick={() => navigate('/pharmacy')}
           className="flex items-center gap-3 px-4 py-3.5 rounded-2xl mb-6 cursor-pointer"
-          style={{
-            background: 'rgba(255,255,255,0.06)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(255,255,255,0.1)',
-          }}
+          style={glassCard}
           data-testid="pharmacy-search-bar"
         >
-          <Search className="w-4 h-4 text-white/35 flex-shrink-0" />
-          <span className="flex-1 text-sm text-white/35 text-left">Search medicines, health products...</span>
-          <Mic className="w-4 h-4 text-white/30 flex-shrink-0" />
+          <Search className="w-4 h-4 flex-shrink-0" style={{ color: txtMuted }} />
+          <span className="flex-1 text-sm text-left" style={{ color: txtMuted }}>Search medicines, health products...</span>
+          <Mic className="w-4 h-4 flex-shrink-0" style={{ color: txtMuted }} />
         </div>
 
-        {/* Trust Stats — Colorful Individual Cards */}
+        {/* Trust Stats */}
         <div className="grid grid-cols-4 gap-2 mb-2" data-testid="pharmacy-trust-stats">
           {TRUST_STATS.map((stat, i) => (
             <div
               key={i}
               className="rounded-2xl py-4 px-2 text-center"
-              style={{ background: stat.gradBg, border: `1.5px solid ${stat.border}` }}
+              style={isDarkMode
+                ? { background: stat.gradBg, border: `1.5px solid ${stat.border}` }
+                : { background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.7)', boxShadow: '4px 4px 10px rgba(166,160,154,0.12), -3px -3px 8px rgba(255,255,255,0.7)' }
+              }
             >
               <stat.icon className="w-6 h-6 mx-auto mb-2" style={{ color: stat.color }} />
-              <p className="text-white text-sm font-bold">{stat.value}</p>
+              <p className="text-sm font-bold" style={{ color: txt }}>{stat.value}</p>
               <p className="text-[10px] mt-0.5 font-semibold" style={{ color: stat.color }}>{stat.label}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* How to Order — Detailed Two-Row Card */}
+      {/* How to Order */}
       <div className="px-5 py-3 relative z-10">
         <button
           onClick={() => { lightTap(); setShowTutorial(true); }}
           className="w-full rounded-2xl overflow-hidden active:scale-[0.98] transition-all text-left"
-          style={{ background: 'linear-gradient(145deg, rgba(249,115,22,0.1) 0%, rgba(234,88,12,0.06) 100%)', border: '1.5px solid rgba(249,115,22,0.2)' }}
+          style={isDarkMode
+            ? { background: 'linear-gradient(145deg, rgba(249,115,22,0.1) 0%, rgba(234,88,12,0.06) 100%)', border: '1.5px solid rgba(249,115,22,0.2)' }
+            : { background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(249,115,22,0.15)', boxShadow: '6px 6px 16px rgba(166,160,154,0.15), -4px -4px 12px rgba(255,255,255,0.8)' }
+          }
           data-testid="how-to-order-banner"
         >
-          {/* Top row */}
           <div className="flex items-center gap-3 px-4 pt-4 pb-2">
             <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #F97316, #EA580C)' }}>
               <ShoppingBag className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1">
-              <span className="text-base font-bold text-white block">How to Order</span>
-              <span className="text-[11px] text-white/50">Order medicines in 3 simple steps</span>
+              <span className="text-base font-bold block" style={{ color: txt }}>How to Order</span>
+              <span className="text-[11px]" style={{ color: txtMuted }}>Order medicines in 3 simple steps</span>
             </div>
             <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'rgba(249,115,22,0.15)' }}>
               <ChevronRight className="w-5 h-5 text-orange-400" />
             </div>
           </div>
-          {/* Bottom row — 3 step cards */}
           <div className="flex gap-2 px-4 pb-4 pt-2">
-            <div className="flex-1 rounded-xl py-2.5 px-2 text-center" style={{ background: 'rgba(249,115,22,0.08)', border: '1px solid rgba(249,115,22,0.12)' }}>
-              <Search className="w-5 h-5 mx-auto mb-1 text-orange-400" />
-              <span className="text-[10px] font-semibold text-white/70 block leading-tight">Search<br/>Medicine</span>
-            </div>
-            <div className="flex-1 rounded-xl py-2.5 px-2 text-center" style={{ background: 'rgba(249,115,22,0.08)', border: '1px solid rgba(249,115,22,0.12)' }}>
-              <ShoppingBag className="w-5 h-5 mx-auto mb-1 text-orange-400" />
-              <span className="text-[10px] font-semibold text-white/70 block leading-tight">Add to<br/>Cart</span>
-            </div>
-            <div className="flex-1 rounded-xl py-2.5 px-2 text-center" style={{ background: 'rgba(249,115,22,0.08)', border: '1px solid rgba(249,115,22,0.12)' }}>
-              <Truck className="w-5 h-5 mx-auto mb-1 text-orange-400" />
-              <span className="text-[10px] font-semibold text-white/70 block leading-tight">Get<br/>Delivered</span>
-            </div>
+            {[
+              { Icon: Search, label: 'Search\nMedicine' },
+              { Icon: ShoppingBag, label: 'Add to\nCart' },
+              { Icon: Truck, label: 'Get\nDelivered' },
+            ].map((step, i) => (
+              <div key={i} className="flex-1 rounded-xl py-2.5 px-2 text-center"
+                style={isDarkMode
+                  ? { background: 'rgba(249,115,22,0.08)', border: '1px solid rgba(249,115,22,0.12)' }
+                  : { background: 'rgba(249,115,22,0.06)', border: '1px solid rgba(249,115,22,0.1)' }
+                }>
+                <step.Icon className="w-5 h-5 mx-auto mb-1 text-orange-400" />
+                <span className="text-[10px] font-semibold block leading-tight whitespace-pre-line" style={{ color: txtSub }}>{step.label}</span>
+              </div>
+            ))}
           </div>
         </button>
       </div>
 
       {/* Brand Cards */}
       <div className="px-5 pb-6 relative z-10">
-        <h2 className="text-lg font-bold text-white mb-4" style={{ fontFamily: 'Outfit, sans-serif' }} data-testid="our-brands-heading">Our Brands</h2>
+        <h2 className="text-lg font-bold mb-4" style={{ fontFamily: 'Outfit, sans-serif', color: txt }} data-testid="our-brands-heading">Our Brands</h2>
         {brands.map((d) => (
-          <PharmaBrandCard key={d.id} d={d} navigate={navigate} />
+          <PharmaBrandCard key={d.id} d={d} navigate={navigate} isDark={isDarkMode} />
         ))}
       </div>
 
       {/* Bottom Branding */}
       <div className="px-5 pb-20 relative z-10">
         <div className="flex items-center gap-3 pt-1 pb-2">
-          <div className="flex-1 h-px bg-white/6" />
-          <span className="text-[9px] text-white/20 font-medium tracking-widest uppercase whitespace-nowrap">A Nevika Cura Company</span>
-          <div className="flex-1 h-px bg-white/6" />
+          <div className="flex-1 h-px" style={{ background: isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }} />
+          <span className="text-[9px] font-medium tracking-widest uppercase whitespace-nowrap" style={{ color: txtMuted }}>A Nevika Cura Company</span>
+          <div className="flex-1 h-px" style={{ background: isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }} />
         </div>
       </div>
 

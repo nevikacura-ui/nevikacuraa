@@ -101,7 +101,7 @@ export default function CuraBonus() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#050510' }}>
+      <div className="dark-page min-h-screen flex items-center justify-center" style={{ background: '#050510' }}>
         <div className="flex flex-col items-center gap-3">
           <div className="w-12 h-12 rounded-full border-2 border-orange-500 border-t-transparent animate-spin" />
           <p className="text-white/40 text-sm">Loading CuraBonus...</p>

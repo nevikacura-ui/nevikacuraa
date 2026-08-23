@@ -95,7 +95,8 @@ const PatientInfoModal = ({ isOpen, onClose, onSubmit, loading, isOnlineConsulta
 
   if (!isOpen) return null;
 
-  const isVerifiedUser = isAlreadyVerified && patientInfo.phone === verifiedPhone && patientInfo.name;
+  // Don't use patientInfo.name here — it flips canDirectBook mid-typing, unmounting the input
+  const isVerifiedUser = isAlreadyVerified && patientInfo.phone === verifiedPhone;
   const canDirectBook = isVerifiedUser || isEmailAuth;
 
   const formatSlot = (s) => {

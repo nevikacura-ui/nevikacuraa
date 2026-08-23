@@ -234,7 +234,7 @@ const Nutricare = () => {
   }, [products, filterSearch, filters, sortBy]);
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#050510' }} data-testid="nutricare-page">
+    <div className="dark-page min-h-screen pb-24" style={{ background: '#050510' }} data-testid="nutricare-page">
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
         .prod-card { animation: fadeUp .4s ease-out both; }

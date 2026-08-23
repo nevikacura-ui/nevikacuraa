@@ -15,6 +15,7 @@ import { QuickReorderButton } from '@/components/QuickReorder';
  * Popular medicines, sticky action bar, free delivery banner, etc.
  */
 const PharmacyDarkZone = ({
+  isDarkMode,
   searchQuery,
   setSearchQuery,
   searchResults,
@@ -83,12 +84,14 @@ const PharmacyDarkZone = ({
         </button>
       </div>
 
-      {/* Ad Banner */}
+      {/* Ad Banner (dark mode only) */}
+      {isDarkMode !== false && (
       <div className="max-w-7xl mx-auto px-4 pb-2" data-testid="pharmacy-ad-banner">
         <div className="rounded-2xl overflow-hidden shadow-lg">
           <img src="https://customer-assets.emergentagent.com/job_5f77c833-80cb-4ed5-a62e-988f56319661/artifacts/vnz8b3hq_file_00000000d7cc720b80088442d9c28a55.png" alt="Orange Pharmacy" className="w-full h-auto" loading="lazy" />
         </div>
       </div>
+      )}
 
       {/* Quick Action Cards */}
       <div className="max-w-7xl mx-auto px-4 py-5">

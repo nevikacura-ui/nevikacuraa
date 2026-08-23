@@ -88,13 +88,14 @@ const HeroTrackingCard = ({ appointments, pharmacyOrders, labOrders, isDarkMode,
   const totalActive = appointments.length + pharmacyOrders.length + labOrders.length;
   if (totalActive === 0) return null;
 
-  const bg = isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.85)';
-  const border = isDarkMode ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(0,0,0,0.06)';
+  const bg = isDarkMode ? 'rgba(255,255,255,0.04)' : clay.card.background;
+  const border = isDarkMode ? '1px solid rgba(255,255,255,0.06)' : clay.card.border;
+  const shadow = isDarkMode ? 'none' : clay.card.boxShadow;
   const textPrimary = isDarkMode ? '#fff' : '#111827';
   const textSecondary = isDarkMode ? 'rgba(255,255,255,0.5)' : '#6B7280';
 
   return (
-    <div className="mb-4 rounded-2xl overflow-hidden" style={{ background: bg, border, backdropFilter: 'blur(16px)' }}
+    <div className="mb-4 rounded-2xl overflow-hidden" style={{ background: bg, border, boxShadow: shadow, backdropFilter: 'blur(16px)' }}
       data-testid="hero-tracking-card">
 
       {/* Header */}
@@ -169,7 +170,10 @@ const HeroTrackingCard = ({ appointments, pharmacyOrders, labOrders, isDarkMode,
 const QuickServiceBtn = ({ icon: Icon, label, color, bgColor, onClick, isDarkMode, testId }) => (
   <button onClick={onClick}
     className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl active:scale-95 transition-transform"
-    style={{ background: isDarkMode ? 'rgba(255,255,255,0.04)' : bgColor, border: isDarkMode ? '1px solid rgba(255,255,255,0.06)' : `1px solid ${color}20` }}
+    style={isDarkMode
+      ? { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }
+      : { ...clay.btn, borderRadius: '16px' }
+    }
     data-testid={testId}>
     <Icon className="w-5 h-5" style={{ color }} />
     <span className="text-[10px] font-semibold" style={{ color: isDarkMode ? '#fff' : '#374151' }}>{label}</span>
@@ -248,11 +252,12 @@ const Home = () => {
 
   const textPrimary = isDarkMode ? '#fff' : '#111827';
   const textSecondary = isDarkMode ? 'rgba(255,255,255,0.5)' : '#6B7280';
-  const cardBg = isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.85)';
-  const cardBorder = isDarkMode ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(0,0,0,0.06)';
+  const cardStyle = isDarkMode
+    ? { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }
+    : { ...clay.card };
 
   return (
-    <div className={`min-h-screen relative font-body transition-colors duration-300 ${isDarkMode ? 'bg-[#050510]' : 'bg-[#F8FAFB]'}`}>
+    <div className={`min-h-screen relative font-body transition-colors duration-300 ${isDarkMode ? 'bg-[#050510]' : 'bg-[#F0EBE3]'}`}>
 
       {/* Background */}
       {isDarkMode ? (
@@ -262,8 +267,8 @@ const Home = () => {
         </div>
       ) : (
         <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-          <div className="absolute top-[-10%] left-[10%] w-[500px] h-[500px] bg-gradient-to-br from-teal-50/60 via-cyan-50/40 to-transparent rounded-full blur-[100px]" />
-          <div className="absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] bg-gradient-to-br from-orange-50/40 to-transparent rounded-full blur-[80px]" />
+          <div className="absolute top-[-5%] left-[5%] w-[500px] h-[500px] bg-gradient-to-br from-amber-100/40 via-orange-50/30 to-transparent rounded-full blur-[120px]" />
+          <div className="absolute bottom-[5%] right-[-10%] w-[450px] h-[450px] bg-gradient-to-br from-teal-50/30 via-cyan-50/20 to-transparent rounded-full blur-[100px]" />
         </div>
       )}
 
@@ -274,7 +279,7 @@ const Home = () => {
 
         {/* Toggle: Home | My Portal | CuraOne */}
         <div className="px-4 pt-2 pb-1">
-          <div className="flex p-1 rounded-2xl" style={{ background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)' }}>
+          <div className="flex p-1 rounded-2xl" style={isDarkMode ? { background: 'rgba(255,255,255,0.05)' } : { ...clay.pill, borderRadius: '16px' }}>
             {[
               { id: 'home', label: 'Home', icon: null },
               { id: 'portal', label: 'My Portal', icon: Compass },
@@ -287,13 +292,10 @@ const Home = () => {
                   setActiveTab(tab.id);
                 }}
                 className="flex-1 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
-                style={activeTab === tab.id ? {
-                  background: isDarkMode ? 'rgba(255,255,255,0.1)' : '#fff',
-                  color: isDarkMode ? '#fff' : '#0d9488',
-                  boxShadow: isDarkMode ? 'none' : '0 1px 3px rgba(0,0,0,0.08)',
-                } : {
-                  color: textSecondary,
-                }}
+                style={activeTab === tab.id ? (isDarkMode
+                  ? { background: 'rgba(255,255,255,0.1)', color: '#fff' }
+                  : { ...clay.activePill, color: '#0d9488', borderRadius: '12px' }
+                ) : { color: textSecondary }}
                 data-testid={`home-tab-${tab.id}`}>
                 {tab.icon && <tab.icon className="w-3.5 h-3.5" />}
                 {tab.label}
@@ -337,7 +339,7 @@ const Home = () => {
           <BrandShowcase />
 
           {/* Quick Links */}
-          <div className="grid grid-cols-2 gap-2 mb-4">
+          <div className="grid grid-cols-2 gap-3 mb-4">
             {[
               { label: 'My Orders', desc: 'Track all orders', icon: Package, path: '/my-orders', color: '#F59E0B' },
               { label: 'Prescriptions', desc: 'View Rx history', icon: Stethoscope, path: '/prescriptions', color: '#10B981' },
@@ -345,8 +347,11 @@ const Home = () => {
               { label: 'Profile', desc: 'Your health data', icon: User, path: '/patient-profile', color: '#3B82F6' },
             ].map((item, i) => (
               <div key={i} onClick={() => navigate(item.path)}
-                className="px-3 py-3 rounded-xl cursor-pointer active:scale-[0.97] transition-transform"
-                style={{ background: cardBg, border: cardBorder, backdropFilter: 'blur(12px)' }}
+                className="px-3 py-3 rounded-2xl cursor-pointer active:scale-[0.97] transition-transform"
+                style={isDarkMode
+                  ? { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(12px)' }
+                  : { ...clay.card, borderRadius: '16px' }
+                }
                 data-testid={`quick-link-${item.label.toLowerCase().replace(/\s/g, '-')}`}>
                 <div className="flex items-center gap-2 mb-1">
                   <item.icon className="w-4 h-4" style={{ color: item.color }} />

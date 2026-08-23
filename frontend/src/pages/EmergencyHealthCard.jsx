@@ -97,7 +97,7 @@ export default function EmergencyHealthCard() {
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-[#050510] flex items-center justify-center">
+    <div className="dark-page min-h-screen bg-[#050510] flex items-center justify-center">
       <div className="w-8 h-8 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
     </div>
   );

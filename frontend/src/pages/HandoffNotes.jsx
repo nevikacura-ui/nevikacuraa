@@ -103,7 +103,7 @@ const HandoffNotes = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#050510] flex items-center justify-center">
+      <div className="dark-page min-h-screen bg-[#050510] flex items-center justify-center">
         <div className="text-center">
           <RefreshCw className="w-8 h-8 text-teal-400 animate-spin mx-auto mb-3" />
           <p className="text-gray-400">Loading handoff notes...</p>

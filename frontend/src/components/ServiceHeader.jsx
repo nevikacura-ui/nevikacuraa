@@ -116,11 +116,20 @@ export const ServiceHeader = () => {
     <>
     <header 
       className="sticky top-0 z-50 glass-crystal"
-      style={{ 
-        background: lightMode ? 'rgba(255,248,240,0.85)' : 'rgba(10,11,20,0.6)',
+      style={lightMode ? { 
+        background: 'rgba(240,235,227,0.8)',
         backdropFilter: 'blur(24px) saturate(1.3)',
         WebkitBackdropFilter: 'blur(24px) saturate(1.3)',
-        borderBottom: lightMode ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(255,255,255,0.06)',
+        borderBottom: '1px solid rgba(255,255,255,0.5)',
+        boxShadow: '0 4px 16px rgba(166,160,154,0.1)',
+        transition: 'background 0.5s ease, box-shadow 0.5s ease',
+        transform: 'translateZ(0)', 
+        backfaceVisibility: 'hidden',
+      } : { 
+        background: 'rgba(10,11,20,0.6)',
+        backdropFilter: 'blur(24px) saturate(1.3)',
+        WebkitBackdropFilter: 'blur(24px) saturate(1.3)',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
         transition: 'background 0.5s ease, border-bottom 0.5s ease',
         transform: 'translateZ(0)', 
         backfaceVisibility: 'hidden',
@@ -145,8 +154,11 @@ export const ServiceHeader = () => {
             <button
               onClick={() => { selectionTap(); toggleDarkMode(); }}
               className="relative p-2 rounded-full transition-all duration-300"
-              style={{
-                background: lightMode ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.08)',
+              style={lightMode ? {
+                background: 'rgba(255,255,255,0.6)',
+                boxShadow: '3px 3px 8px rgba(166,160,154,0.15), -2px -2px 6px rgba(255,255,255,0.8), inset 1px 1px 2px rgba(255,255,255,0.5)',
+              } : {
+                background: 'rgba(255,255,255,0.08)',
               }}
               data-testid="theme-toggle-btn"
               aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -188,10 +200,15 @@ export const ServiceHeader = () => {
                 style={{
                   background: isActive
                     ? (lightMode ? tab.lightActiveGradient : tab.activeGradient)
-                    : (lightMode ? 'rgba(0,0,0,0.02)' : 'rgba(0,0,0,0.65)'),
+                    : (lightMode ? 'rgba(240,235,227,0.7)' : 'rgba(0,0,0,0.65)'),
                   border: isActive
                     ? `1.5px solid ${tab.iconColor}40`
-                    : (lightMode ? '1.5px solid rgba(0,0,0,0.04)' : '1.5px solid rgba(255,255,255,0.08)'),
+                    : (lightMode ? '1.5px solid rgba(200,190,180,0.4)' : '1.5px solid rgba(255,255,255,0.08)'),
+                  boxShadow: lightMode
+                    ? (isActive
+                      ? `4px 4px 12px rgba(166,160,154,0.18), -3px -3px 8px rgba(255,255,255,0.7), inset 1px 1px 2px rgba(255,255,255,0.4)`
+                      : `3px 3px 8px rgba(166,160,154,0.1), -2px -2px 6px rgba(255,255,255,0.6)`)
+                    : 'none',
                   padding: '12px 4px 10px',
                   transition: 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
                 }}
@@ -208,7 +225,7 @@ export const ServiceHeader = () => {
                   style={{
                     background: isActive
                       ? `linear-gradient(135deg, ${tab.iconColor}30, ${tab.iconColor}15)`
-                      : (lightMode ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.1)'),
+                      : (lightMode ? 'rgba(120,110,100,0.08)' : 'rgba(255,255,255,0.1)'),
                     border: isActive ? `1px solid ${tab.iconColor}35` : 'none',
                     boxShadow: isActive ? `0 0 16px ${tab.iconColor}20` : 'none',
                     transition: 'all 0.35s ease',
@@ -217,7 +234,7 @@ export const ServiceHeader = () => {
                   <Icon
                     className="w-[18px] h-[18px]"
                     style={{
-                      color: isActive ? (lightMode ? tab.iconColor : tab.iconColor) : (lightMode ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.45)'),
+                      color: isActive ? (lightMode ? tab.iconColor : tab.iconColor) : (lightMode ? 'rgba(100,90,80,0.55)' : 'rgba(255,255,255,0.45)'),
                       fill: tab.fillIcon && isActive ? tab.iconColor : 'none',
                       filter: isActive ? `drop-shadow(0 0 6px ${tab.iconColor})` : 'none',
                       transition: 'all 0.3s ease',
@@ -231,7 +248,7 @@ export const ServiceHeader = () => {
                     style={{
                       color: isActive
                         ? (lightMode ? `${tab.iconColor}90` : `${tab.iconColor}80`)
-                        : (lightMode ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.35)'),
+                        : (lightMode ? 'rgba(100,90,80,0.4)' : 'rgba(255,255,255,0.35)'),
                       transition: 'color 0.4s ease',
                     }}>
                     NEVIKA
@@ -240,7 +257,7 @@ export const ServiceHeader = () => {
                     style={{
                       color: isActive
                         ? (lightMode ? '#1c1917' : '#fff')
-                        : (lightMode ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.55)'),
+                        : (lightMode ? 'rgba(80,70,60,0.7)' : 'rgba(255,255,255,0.55)'),
                       transition: 'color 0.4s ease',
                     }}>
                     {tab.label}

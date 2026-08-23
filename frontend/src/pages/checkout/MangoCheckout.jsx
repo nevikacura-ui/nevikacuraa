@@ -426,7 +426,7 @@ const MangoCheckout = () => {
   // Empty cart — skip if CuraPay animation is active or booking is confirmed
   if (labCart.length === 0 && !showCuraPay && !showBookingConfirmation && !orderDetails) {
     return (
-      <div className="min-h-screen" style={{ background: THEME.bg }}>
+      <div className="dark-page min-h-screen" style={{ background: THEME.bg }}>
         <header className="text-white p-4 sticky top-0 z-10" style={{ background: THEME.accent }}>
           <div className="max-w-2xl mx-auto flex items-center gap-3">
             <button onClick={() => navigate('/mango')} className="p-2 hover:bg-white/20 rounded-full text-gray-900">

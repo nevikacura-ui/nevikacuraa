@@ -132,21 +132,9 @@ html[data-theme="light"] .grain-texture::before {
 [data-theme="light"] .lt-bg-card { background: rgba(255,255,255,0.72) !important; border: 1px solid rgba(0,0,0,0.06) !important; }
 [data-theme="light"] .lt-bg-elevated { background: rgba(255,255,255,0.88) !important; }
 
-/* Broad light-mode text overrides - Home page content */
+/* Broad light-mode text overrides — Home page and light-themed content */
 html[data-theme="light"] .App .text-white:not([class*="bg-gradient"]):not([class*="bg-teal"]):not([class*="bg-orange"]):not([class*="bg-blue"]):not([class*="bg-purple"]):not([class*="bg-rose"]):not([class*="bg-red"]):not(button[class*="bg-"]) {
   color: #1a1a2e !important;
-}
-
-/* EXCLUDE: Membership page keeps its own dark theme */
-html[data-theme="light"] [data-testid="membership-page"] .text-white,
-html[data-theme="light"] [data-testid="membership-page"] .text-white\/80,
-html[data-theme="light"] [data-testid="membership-page"] .text-white\/70,
-html[data-theme="light"] [data-testid="membership-page"] .text-white\/60,
-html[data-theme="light"] [data-testid="membership-page"] .text-white\/50,
-html[data-theme="light"] [data-testid="membership-page"] .text-white\/40,
-html[data-theme="light"] [data-testid="membership-page"] .text-white\/30,
-html[data-theme="light"] [data-testid="membership-page"] .text-white\/20 {
-  color: inherit !important;
 }
 html[data-theme="light"] .App .text-white\/80 { color: #3f3f46 !important; }
 html[data-theme="light"] .App .text-white\/70 { color: #52525b !important; }
@@ -156,6 +144,37 @@ html[data-theme="light"] .App .text-white\/40 { color: #a1a1aa !important; }
 html[data-theme="light"] .App .text-white\/30 { color: #a1a1aa !important; }
 html[data-theme="light"] .App .text-gray-500 { color: #71717a !important; }
 html[data-theme="light"] .App .text-gray-400 { color: #a1a1aa !important; }
+
+/* === DARK-PAGE OPT-OUT: pages with dark backgrounds keep white text in light mode === */
+/* Higher specificity (.App .dark-page = 0-3-1) beats global (.App = 0-2-1) */
+html[data-theme="light"] .App .dark-page .text-white,
+html[data-theme="light"] .App .dark-page.text-white { color: #FFFFFF !important; }
+html[data-theme="light"] .App .dark-page .text-white\/90 { color: rgba(255,255,255,0.9) !important; }
+html[data-theme="light"] .App .dark-page .text-white\/80 { color: rgba(255,255,255,0.8) !important; }
+html[data-theme="light"] .App .dark-page .text-white\/70 { color: rgba(255,255,255,0.7) !important; }
+html[data-theme="light"] .App .dark-page .text-white\/60 { color: rgba(255,255,255,0.6) !important; }
+html[data-theme="light"] .App .dark-page .text-white\/50 { color: rgba(255,255,255,0.5) !important; }
+html[data-theme="light"] .App .dark-page .text-white\/40 { color: rgba(255,255,255,0.4) !important; }
+html[data-theme="light"] .App .dark-page .text-white\/30 { color: rgba(255,255,255,0.3) !important; }
+html[data-theme="light"] .App .dark-page .text-white\/20 { color: rgba(255,255,255,0.2) !important; }
+html[data-theme="light"] .App .dark-page .text-gray-500 { color: #9CA3AF !important; }
+html[data-theme="light"] .App .dark-page .text-gray-400 { color: #9CA3AF !important; }
+html[data-theme="light"] .App .dark-page .text-gray-300 { color: #D1D5DB !important; }
+html[data-theme="light"] .App .dark-page .text-gray-200 { color: #E5E7EB !important; }
+html[data-theme="light"] .App .dark-page .text-gray-900 { color: #FFFFFF !important; }
+html[data-theme="light"] .App .dark-page .text-gray-800 { color: #F3F4F6 !important; }
+html[data-theme="light"] .App .dark-page .text-gray-700 { color: #E5E7EB !important; }
+html[data-theme="light"] .App .dark-page .text-slate-400 { color: #94A3B8 !important; }
+html[data-theme="light"] .App .dark-page .text-slate-300 { color: #CBD5E1 !important; }
+html[data-theme="light"] .App .dark-page .border-white\/10,
+html[data-theme="light"] .App .dark-page .border-white\/5,
+html[data-theme="light"] .App .dark-page .border-white\/8 { border-color: rgba(255,255,255,0.1) !important; }
+html[data-theme="light"] .App .dark-page .bg-white\/5,
+html[data-theme="light"] .App .dark-page .bg-white\/4,
+html[data-theme="light"] .App .dark-page .bg-white\/\[0\.04\],
+html[data-theme="light"] .App .dark-page .bg-white\/\[0\.05\] {
+  background-color: rgba(255,255,255,0.05) !important;
+}
 
 /* Preserve white text inside colored service banners */
 html[data-theme="light"] .App [style*="gradient"] .text-white,
@@ -283,19 +302,19 @@ html[data-theme="light"] .App .bg-white\/\[0\.05\] {
   color: #71717a !important;
 }
 
-/* Light mode - inline styled dark backgrounds */
-html[data-theme="light"] .App .bg-\[\#111827\],
-html[data-theme="light"] .App .bg-\[\#0D0D0D\],
-html[data-theme="light"] .App .bg-\[\#0A0A0A\],
-html[data-theme="light"] .App .bg-\[\#0a0a0a\],
-html[data-theme="light"] .App .bg-\[\#050510\],
-html[data-theme="light"] .App .bg-\[\#1A1A2E\],
-html[data-theme="light"] .App .bg-slate-900 {
+/* Light mode - inline styled dark backgrounds (NOT dark-page containers) */
+html[data-theme="light"] .App .bg-\[\#111827\]:not(.dark-page),
+html[data-theme="light"] .App .bg-\[\#0D0D0D\]:not(.dark-page),
+html[data-theme="light"] .App .bg-\[\#0A0A0A\]:not(.dark-page),
+html[data-theme="light"] .App .bg-\[\#0a0a0a\]:not(.dark-page),
+html[data-theme="light"] .App .bg-\[\#050510\]:not(.dark-page),
+html[data-theme="light"] .App .bg-\[\#1A1A2E\]:not(.dark-page),
+html[data-theme="light"] .App .bg-slate-900:not(.dark-page) {
   background-color: rgba(255,255,255,0.85) !important;
 }
 
-/* Light mode - dark card backgrounds */
-html[data-theme="light"] .App .bg-\[\#0A0A0F\] {
+/* Light mode - dark card backgrounds (NOT dark-page) */
+html[data-theme="light"] .App .bg-\[\#0A0A0F\]:not(.dark-page) {
   background-color: #F8FAFB !important;
 }
 

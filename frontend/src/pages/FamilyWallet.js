@@ -57,7 +57,7 @@ const FamilyWallet = () => {
   );
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: '#050510' }}>
+    <div className="dark-page min-h-screen flex items-center justify-center" style={{ background: '#050510' }}>
       <Loader2 className="w-6 h-6 animate-spin text-white/20" />
     </div>
   );

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
+import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import MembershipLinkBanner from '@/components/MembershipLinkBanner';
 import OrangeTutorial from '@/components/OrangeTutorial';
 import ServiceHeader from '@/components/ServiceHeader';
@@ -43,6 +44,7 @@ const API_URL = process.env.REACT_APP_BACKEND_URL;
 const Pharmacy = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isDarkMode } = useThemeLanguage();
   const { pharmacyCart, addToPharmacyCart, removeFromPharmacyCart, updatePharmacyQuantity } = useCart();
 
   // State
@@ -213,7 +215,7 @@ const Pharmacy = () => {
   }, [medicines, pharmaFilterSearch, pharmaFilters, pharmaSort]);
 
   return (
-    <div className="min-h-screen bg-[#050510] pb-32">
+    <div className="dark-page min-h-screen bg-[#050510] pb-32">
       <ServiceHeader currentService="orange" lightMode={headerLightMode} />
       <DeliveryBar lightMode={headerLightMode} />
 
@@ -236,6 +238,7 @@ const Pharmacy = () => {
        <div>
         {/* Dark Zone — Logo, search, quick actions, popular meds */}
         <PharmacyDarkZone
+          isDarkMode={isDarkMode}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           searchResults={searchResults}

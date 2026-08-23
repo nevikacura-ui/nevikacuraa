@@ -157,21 +157,24 @@ const MyOrders = () => {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-[#050510]' : 'bg-gradient-to-b from-orange-50 to-white'}`}>
+    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-[#050510]' : 'bg-[#F0EBE3]'}`}>
       {/* Header */}
-      <div className={`p-4 sticky top-0 z-10 ${isDarkMode ? '' : 'bg-gradient-to-r from-orange-500 to-orange-600'}`}
-        style={isDarkMode ? { background: 'rgba(10,11,20,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.06)' } : {}}>
+      <div className={`p-4 sticky top-0 z-10 ${isDarkMode ? '' : ''}`}
+        style={isDarkMode
+          ? { background: 'rgba(10,11,20,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }
+          : { background: 'rgba(240,235,227,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.5)', boxShadow: '0 4px 16px rgba(166,160,154,0.1)' }
+        }>
         <div className="max-w-4xl mx-auto flex items-center gap-4">
           <button 
             onClick={() => navigate(-1)}
             className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-white/10' : 'hover:bg-white/20'}`}
             data-testid="back-button"
           >
-            <ArrowLeft className={`w-5 h-5 ${isDarkMode ? 'text-white' : 'text-white'}`} />
+            <ArrowLeft className={`w-5 h-5 ${isDarkMode ? 'text-white' : 'text-gray-800'}`} />
           </button>
           <div>
-            <h1 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-white'}`}>My Orders</h1>
-            <p className={`text-sm ${isDarkMode ? 'text-white/50' : 'opacity-90 text-white'}`}>Track your medicine & lab orders</p>
+            <h1 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>My Orders</h1>
+            <p className={`text-sm ${isDarkMode ? 'text-white/50' : 'text-gray-500'}`}>Track your medicine & lab orders</p>
           </div>
         </div>
       </div>
@@ -189,9 +192,13 @@ const MyOrders = () => {
               onClick={() => setActiveFilter(tab.key)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                 activeFilter === tab.key 
-                  ? (isDarkMode ? 'bg-orange-500/90 text-white shadow-sm' : 'bg-orange-500 text-white shadow-sm')
-                  : (isDarkMode ? 'bg-white/5 text-white/60 border border-white/10' : 'bg-white text-gray-600 border border-gray-200')
+                  ? (isDarkMode ? 'bg-orange-500/90 text-white shadow-sm' : 'text-white')
+                  : (isDarkMode ? 'bg-white/5 text-white/60 border border-white/10' : 'text-gray-600')
               }`}
+              style={activeFilter === tab.key
+                ? (isDarkMode ? {} : { background: '#EA580C', boxShadow: '3px 3px 8px rgba(166,160,154,0.15), -2px -2px 6px rgba(255,255,255,0.7)' })
+                : (isDarkMode ? {} : { background: 'rgba(255,255,255,0.55)', border: '1px solid rgba(255,255,255,0.6)', boxShadow: '3px 3px 8px rgba(166,160,154,0.1), -2px -2px 6px rgba(255,255,255,0.6)' })
+              }
               data-testid={`filter-${tab.key}`}
             >
               {tab.label} {tab.count > 0 && `(${tab.count})`}
@@ -203,9 +210,12 @@ const MyOrders = () => {
         <button 
           onClick={() => navigate('/order-tracking')}
           className={`w-full mb-4 flex items-center gap-3 p-4 rounded-2xl active:scale-[0.98] transition-all ${
-            isDarkMode ? 'border border-white/8' : 'bg-white shadow-sm border border-orange-100'
+            isDarkMode ? 'border border-white/8' : ''
           }`}
-          style={isDarkMode ? { background: 'rgba(255,255,255,0.04)' } : {}}
+          style={isDarkMode
+            ? { background: 'rgba(255,255,255,0.04)' }
+            : { background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.8)', boxShadow: '6px 6px 16px rgba(166,160,154,0.15), -4px -4px 12px rgba(255,255,255,0.8), inset 1px 1px 3px rgba(255,255,255,0.5)' }
+          }
           data-testid="track-order-btn"
         >
           <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-orange-500/15' : 'bg-orange-50'}`}>
@@ -246,9 +256,17 @@ const MyOrders = () => {
                 <div 
                   key={order.id || index}
                   className={`rounded-2xl overflow-hidden transition-shadow ${
-                    isDarkMode ? 'border border-white/6 hover:border-white/12' : 'bg-white border border-gray-100 shadow-sm hover:shadow-md'
+                    isDarkMode ? 'border border-white/6 hover:border-white/12' : ''
                   }`}
-                  style={isDarkMode ? { background: 'rgba(255,255,255,0.03)' } : {}}
+                  style={isDarkMode
+                    ? { background: 'rgba(255,255,255,0.03)' }
+                    : {
+                        background: 'rgba(255,255,255,0.7)',
+                        border: '1px solid rgba(255,255,255,0.8)',
+                        borderRadius: '20px',
+                        boxShadow: '8px 8px 20px rgba(166,160,154,0.18), -6px -6px 16px rgba(255,255,255,0.85), inset 2px 2px 4px rgba(255,255,255,0.6), inset -1px -1px 3px rgba(0,0,0,0.02)',
+                      }
+                  }
                   data-testid={`order-card-${index}`}
                 >
                   {/* Order Header */}
