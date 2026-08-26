@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["python311", "python311Packages.pip", "python311Packages.virtualenv", "nodejs_20", "yarn"]
+nixPkgs = ["python311", "python311Packages.pip", "python311Packages.virtualenv", "nodejs-20_x", "yarn"]
 
 [phases.install]
 cmds = [
