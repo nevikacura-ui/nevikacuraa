@@ -1,5 +1,10 @@
+providers = ["node"]
+
+[variables]
+NIXPACKS_NODE_VERSION = "20"
+
 [phases.setup]
-nixPkgs = ["python311", "python311Packages.pip", "python311Packages.virtualenv", "nodejs-20_x", "yarn"]
+nixPkgs = ["...", "python311", "python311Packages.pip", "python311Packages.virtualenv", "yarn"]
 
 [phases.install]
 cmds = [
