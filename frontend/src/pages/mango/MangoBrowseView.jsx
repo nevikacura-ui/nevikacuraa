@@ -13,21 +13,24 @@ import { WellnessPackages } from '@/components/mango';
 import { getTestIcon } from '@/components/mango';
 import { ZoomScrollContainer, ZoomSection } from '@/components/ui/ZoomScrollContainer';
 import SearchFilterSheet from '@/components/SearchFilterSheet';
+import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+import { clay } from '@/utils/clayStyles';
 import { popularTests } from '@/data/mangoData';
 
 const MangoBrowseView = () => {
   const m = useMango();
+  const { isDarkMode } = useThemeLanguage();
 
   return (
     <>
       <ZoomScrollContainer mode="smooth">
-      <div style={{ background: '#050510' }}>
+      <div style={{ background: isDarkMode ? '#050510' : '#F0EBE3' }}>
 
       {/* Search Bar */}
       <ZoomSection>
-      <div className="py-6 border-b border-[#1A1A1A]">
+      <div className={`py-6 ${isDarkMode ? 'border-b border-[#1A1A1A]' : 'border-b border-stone-200/40'}`}>
         <div className="max-w-5xl mx-auto px-4">
-          <div className="bg-white/95 rounded-2xl p-1 border border-white/10 shadow-sm">
+          <div className="rounded-2xl p-1 shadow-sm" style={isDarkMode ? { background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(255,255,255,0.1)' } : clay.card}>
             <div className="relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-emerald-500 w-5 h-5" />
               <Input
@@ -60,9 +63,9 @@ const MangoBrowseView = () => {
       </div>
 
       {/* Quick Upload Prescription */}
-      <div className="py-4 border-b border-[#1A1A1A]">
+      <div className={`py-4 ${isDarkMode ? 'border-b border-[#1A1A1A]' : 'border-b border-stone-200/40'}`}>
         <div className="max-w-5xl mx-auto px-4">
-          <div className="bg-white/95 rounded-2xl p-4 border border-white/10 shadow-sm flex items-center justify-between">
+          <div className="rounded-2xl p-4 shadow-sm flex items-center justify-between" style={isDarkMode ? { background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(255,255,255,0.1)' } : clay.card}>
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl flex items-center justify-center border border-emerald-200/40">
                 <Upload className="w-6 h-6 text-emerald-600" />
@@ -87,7 +90,7 @@ const MangoBrowseView = () => {
           </div>
           
           {/* Add Custom Test */}
-          <div className="mt-4 bg-white/95 rounded-2xl p-4 border border-white/10 shadow-sm">
+          <div className="mt-4 rounded-2xl p-4 shadow-sm" style={isDarkMode ? { background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(255,255,255,0.1)' } : clay.card}>
             <div className="flex items-center gap-2 mb-3">
               <Plus className="w-5 h-5 text-emerald-600" />
               <p className="font-semibold text-base text-stone-800">Add Custom Test</p>
@@ -106,8 +109,9 @@ const MangoBrowseView = () => {
         </div>
       </div>
 
-      {/* Mango Labs Ad */}
+      {/* Mango Labs Ad — dark mode only */}
       </ZoomSection>
+      {isDarkMode && (
       <ZoomSection>
       <div className="mt-4 px-4" data-testid="mango-ad-banner">
         <div className="rounded-2xl overflow-hidden shadow-lg">
@@ -115,9 +119,10 @@ const MangoBrowseView = () => {
         </div>
       </div>
       </ZoomSection>
+      )}
 
       {/* Dark → Warm Cream Transition */}
-      <div style={{ background: 'linear-gradient(180deg, #050510, #FFF8F0)', height: '100px' }} data-testid="mango-theme-transition" />
+      <div style={{ background: isDarkMode ? 'linear-gradient(180deg, #050510, #FFF8F0)' : 'linear-gradient(180deg, #F0EBE3, #FFF8F0)', height: '100px' }} data-testid="mango-theme-transition" />
 
       {/* LIGHT ZONE — Lab Test Browsing */}
       <div className="bg-[#FFF8F0] pb-8" ref={m.mangoLightZoneRef} data-testid="mango-light-zone">

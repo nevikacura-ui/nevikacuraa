@@ -19,8 +19,8 @@ logging.basicConfig(
 logger = logging.getLogger("nevika_scheduler")
 
 # Configuration
-API_URL = os.environ.get("API_URL", "https://premium-rx-portal.preview.emergentagent.com")
-CRON_SECRET = os.environ.get("CRON_SECRET", "nevika_cron_2026")
+API_URL = os.environ.get("API_URL")
+CRON_SECRET = os.environ.get("CRON_SECRET")
 
 # Scheduler intervals (in seconds)
 REMINDER_CHECK_INTERVAL = 15 * 60  # Every 15 minutes

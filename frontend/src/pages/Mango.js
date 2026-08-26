@@ -27,6 +27,8 @@ import MangoBookingStep from './mango/MangoBookingStep';
 import MangoCheckoutInlineStep from './mango/MangoCheckoutInlineStep';
 import MangoCheckoutDedicated from './mango/MangoCheckoutDedicated';
 import MangoModals from './mango/MangoModals';
+import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+import { clay } from '@/utils/clayStyles';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -38,6 +40,7 @@ const Proton = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
+  const { isDarkMode } = useThemeLanguage();
   const { labCart, addToLabCart, removeFromLabCart, clearLabCart, getLabCartCount, labMembers, labTestAssignments, getTestMember, getMemberById } = useCart();
   
   const getStepFromParams = () => {
@@ -407,7 +410,7 @@ const Proton = () => {
   // ===== Main render =====
   return (
     <MangoContext.Provider value={ctx}>
-      <div className="dark-page min-h-screen w-full bg-[#050510]" style={{ contain: 'layout style', willChange: 'auto' }}>
+      <div className={`min-h-screen w-full ${isDarkMode ? 'dark-page bg-[#050510]' : 'bg-[#F0EBE3]'}`} style={{ contain: 'layout style', willChange: 'auto' }}>
         {/* Background glow */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10" style={{ transform: 'translateZ(0)' }}>
           <div className="absolute top-[-10%] left-[20%] w-[500px] h-[500px] bg-gradient-to-br from-[#C8F56A]/8 via-[#A3D944]/4 to-transparent rounded-full blur-[150px]"></div>
@@ -417,63 +420,67 @@ const Proton = () => {
         <ServiceHeader lightMode={currentStep === 0 && mangoHeaderLight} />
 
         {/* Hero Section */}
-        <div className="bg-gradient-to-b from-[#111111] to-[#0A0A0A] relative overflow-hidden w-full border-b border-[#1A1A1A]">
+        <div className={`relative overflow-hidden w-full ${isDarkMode ? 'bg-gradient-to-b from-[#111111] to-[#0A0A0A] border-b border-[#1A1A1A]' : 'bg-[#F0EBE3] border-b border-stone-200/60'}`}>
           <div className="max-w-5xl mx-auto px-4 py-8">
             <div className="flex items-center gap-8">
               <div className="flex-shrink-0">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-2xl bg-[#050510] shadow-lg shadow-[#C8F56A]/10 flex items-center justify-center overflow-hidden border border-[#C8F56A]/20">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-2xl shadow-lg flex items-center justify-center overflow-hidden"
+                  style={isDarkMode ? { background: '#050510', boxShadow: '0 4px 20px rgba(200,245,106,0.1)', border: '1px solid rgba(200,245,106,0.2)' } : { ...clay.card, padding: 0 }}>
                   <img loading="lazy" src="https://customer-assets.emergentagent.com/job_4625448c-b743-44eb-9c92-5eb654622ad3/artifacts/tz9gzbot_file_00000000e58c720bb27d92d685f442c3.png" alt="Mango Health Labs" className="w-full h-full object-cover scale-110" />
                 </div>
               </div>
               <div className="flex-1 text-center">
-                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-1 sm:mb-2 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>Blood Test At Home</h1>
+                <h1 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2 tracking-tight ${isDarkMode ? 'text-white' : 'text-stone-800'}`} style={{ fontFamily: 'Outfit, sans-serif' }}>Blood Test At Home</h1>
                 <div className="flex items-center justify-center gap-1 sm:gap-2 mb-3 sm:mb-6">
-                  <span className="text-[#C8F56A] text-sm sm:text-lg md:text-xl whitespace-nowrap font-semibold">Sample Collection in 60 Mins</span>
-                  <span className="text-[#C8F56A] text-lg sm:text-2xl">{'\u21DD'}</span>
+                  <span className="text-[#C8F56A] text-sm sm:text-lg md:text-xl whitespace-nowrap font-semibold" style={isDarkMode ? {} : { color: '#059669' }}>Sample Collection in 60 Mins</span>
+                  <span className="text-lg sm:text-2xl" style={{ color: isDarkMode ? '#C8F56A' : '#059669' }}>{'\u21DD'}</span>
                 </div>
                 <div className="flex justify-center gap-4 sm:gap-8">
                   {[{ icon: Clock, title: 'Reports', sub: 'in 6 Hours' }, { icon: Home, title: 'Home', sub: 'Collection' }, { icon: Shield, title: 'NABL', sub: 'Certified' }].map((b, i) => (
                     <div key={i} className="flex flex-col items-center">
-                      <div className="w-8 h-8 sm:w-12 sm:h-12 bg-[#1A1A1A] rounded-xl sm:rounded-2xl flex items-center justify-center mb-1 sm:mb-2 border border-[#2A2A2A]"><b.icon className="w-4 h-4 sm:w-6 sm:h-6 text-[#C8F56A]" /></div>
-                      <span className="text-white text-xs sm:text-sm font-medium">{b.title}</span>
-                      <span className="text-gray-500 text-[10px] sm:text-xs">{b.sub}</span>
+                      <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center mb-1 sm:mb-2"
+                        style={isDarkMode ? { background: '#1A1A1A', border: '1px solid #2A2A2A' } : clay.btn}>
+                        <b.icon className="w-4 h-4 sm:w-6 sm:h-6" style={{ color: isDarkMode ? '#C8F56A' : '#059669' }} />
+                      </div>
+                      <span className={`text-xs sm:text-sm font-medium ${isDarkMode ? 'text-white' : 'text-stone-700'}`}>{b.title}</span>
+                      <span className={`text-[10px] sm:text-xs ${isDarkMode ? 'text-gray-500' : 'text-stone-400'}`}>{b.sub}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
           </div>
-          <div className="bg-[#111111] py-3 border-t border-[#1A1A1A]">
+          <div className={`py-3 ${isDarkMode ? 'bg-[#111111] border-t border-[#1A1A1A]' : 'border-t border-stone-200/40'}`}>
             <div className="max-w-5xl mx-auto px-4 flex items-center justify-center gap-6">
-              <button onClick={() => setShowWishlist(true)} className="flex items-center gap-2 text-gray-400 hover:text-[#C8F56A] transition-all" data-testid="open-wishlist-btn">
+              <button onClick={() => setShowWishlist(true)} className={`flex items-center gap-2 transition-all ${isDarkMode ? 'text-gray-400 hover:text-[#C8F56A]' : 'text-stone-500 hover:text-emerald-600'}`} data-testid="open-wishlist-btn">
                 <Heart className={`w-5 h-5 ${wishlist.length > 0 ? 'fill-[#C8F56A] text-[#C8F56A]' : ''}`} />
                 <span className="text-sm font-medium">Wishlist</span>
                 {wishlist.length > 0 && <span className="bg-[#C8F56A] text-black text-xs px-2 py-0.5 rounded-full font-bold">{wishlist.length}</span>}
               </button>
-              <span className="text-[#2A2A2A]">|</span>
-              <span className="text-sm text-gray-500 font-medium"><span className="text-[#C8F56A] font-bold">FREE</span> home sample collection</span>
+              <span className={isDarkMode ? 'text-[#2A2A2A]' : 'text-stone-300'}>|</span>
+              <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-500' : 'text-stone-400'}`}><span className="font-bold" style={{ color: isDarkMode ? '#C8F56A' : '#059669' }}>FREE</span> home sample collection</span>
             </div>
           </div>
         </div>
 
         {/* How to Book Banner */}
-        <div className="bg-[#111111] px-4 pt-3 pb-1">
+        <div className={`px-4 pt-3 pb-1 ${isDarkMode ? 'bg-[#111111]' : ''}`}>
           <button onClick={() => setShowMangoTutorial(true)} className="w-full flex items-center gap-2.5 py-2 px-3.5 rounded-xl active:scale-[0.98] transition-all"
-            style={{ background: 'rgba(200,245,106,0.06)', border: '1px solid rgba(200,245,106,0.15)' }} data-testid="how-to-book-mango">
+            style={isDarkMode ? { background: 'rgba(200,245,106,0.06)', border: '1px solid rgba(200,245,106,0.15)' } : { ...clay.cardSmall, background: 'rgba(5,150,105,0.06)' }} data-testid="how-to-book-mango">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #C8F56A, #10B981)' }}><FlaskConical className="w-3.5 h-3.5 text-black" /></div>
-            <span className="text-xs font-bold text-[#C8F56A] flex-1 text-left">How to Book</span>
-            <span className="text-[9px] text-[#C8F56A]/50 font-medium">3 steps</span>
-            <svg className="w-3.5 h-3.5 text-[#C8F56A]/50 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+            <span className={`text-xs font-bold flex-1 text-left ${isDarkMode ? 'text-[#C8F56A]' : 'text-emerald-600'}`}>How to Book</span>
+            <span className={`text-[9px] font-medium ${isDarkMode ? 'text-[#C8F56A]/50' : 'text-emerald-500/50'}`}>3 steps</span>
+            <svg className={`w-3.5 h-3.5 flex-shrink-0 ${isDarkMode ? 'text-[#C8F56A]/50' : 'text-emerald-500/50'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
           </button>
         </div>
 
         {/* Build Your Own Package Banner */}
-        <div className="bg-[#111111] text-white border-b border-[#1A1A1A]" data-testid="package-builder-banner-top">
+        <div className={`${isDarkMode ? 'bg-[#111111] text-white border-b border-[#1A1A1A]' : 'border-b border-stone-200/40'}`} data-testid="package-builder-banner-top">
           <div className="w-full px-4 py-4">
             <div className="flex items-center justify-between gap-4 max-w-5xl mx-auto">
               <div className="flex items-center gap-4">
-                <div className="bg-[#1A1A1A] rounded-2xl p-3 flex-shrink-0 border border-[#2A2A2A]"><FlaskConical className="w-6 h-6 text-[#C8F56A]" /></div>
-                <div><p className="font-semibold text-base text-white">Build Your Own Package</p><p className="text-sm text-[#C8F56A]">Select tests &bull; Customize your checkup</p></div>
+                <div className="rounded-2xl p-3 flex-shrink-0" style={isDarkMode ? { background: '#1A1A1A', border: '1px solid #2A2A2A' } : clay.btn}><FlaskConical className="w-6 h-6" style={{ color: isDarkMode ? '#C8F56A' : '#059669' }} /></div>
+                <div><p className={`font-semibold text-base ${isDarkMode ? 'text-white' : 'text-stone-800'}`}>Build Your Own Package</p><p style={{ color: isDarkMode ? '#C8F56A' : '#059669' }} className="text-sm">Select tests &bull; Customize your checkup</p></div>
               </div>
               <Button onClick={() => setShowPackageBuilder(true)} variant="secondary" size="sm"
                 className="bg-[#C8F56A] text-black hover:bg-[#D4E157] rounded-full font-bold px-6 py-2 shadow-lg shadow-[#C8F56A]/10" data-testid="package-builder-btn">Build</Button>

@@ -147,6 +147,11 @@ async def startup_db_client():
         # Initialize booking reliability services
         reliability_services = init_reliability_services(db)
         logger.info("Booking reliability services initialized")
+
+        # Initialize push notification service db reference
+        from services.push import set_db as set_push_db
+        set_push_db(db)
+        logger.info("Push notification service initialized")
         
         # Initialize daily health reporter
         from services.msg91_whatsapp import send_msg91_whatsapp
@@ -293,8 +298,55 @@ async def run_cleanup_scheduler():
 
 
 async def run_automated_cleanup():
-    """Execute the cleanup logic directly (no HTTP call)"""
+    """Archive old completed records via soft-delete flag (never hard-deletes real data)."""
     now_utc = datetime.now(timezone.utc)
+    results = {"diagyn": 0, "orange": 0, "mango": 0}
+
+    try:
+        diagyn_cutoff = now_utc - timedelta(hours=24)
+        diagyn_res = await db.appointments.update_many(
+            {
+                "status": "Completed",
+                "completed_at": {"$exists": True, "$lt": diagyn_cutoff.isoformat()},
+                "is_archived": {"$ne": True},
+            },
+            {"$set": {"is_archived": True, "archived_at": now_utc.isoformat(), "archive_reason": "auto_cleanup_24h"}},
+        )
+        results["diagyn"] = diagyn_res.modified_count
+
+        orange_cutoff = now_utc - timedelta(hours=48)
+        orange_res = await db.pharmacy_orders.update_many(
+            {
+                "status": {"$in": ["completed", "delivered", "Completed", "Delivered"]},
+                "is_archived": {"$ne": True},
+                "$or": [
+                    {"completed_at": {"$exists": True, "$lt": orange_cutoff.isoformat()}},
+                    {"created_at": {"$lt": orange_cutoff.isoformat()}},
+                ],
+            },
+            {"$set": {"is_archived": True, "archived_at": now_utc.isoformat(), "archive_reason": "auto_cleanup_48h"}},
+        )
+        results["orange"] = orange_res.modified_count
+
+        mango_cutoff = now_utc - timedelta(hours=72)
+        mango_res = await db.diagnostic_orders.update_many(
+            {
+                "status": {"$in": ["completed", "Completed", "report_ready", "delivered"]},
+                "is_archived": {"$ne": True},
+                "$or": [
+                    {"completed_at": {"$exists": True, "$lt": mango_cutoff.isoformat()}},
+                    {"created_at": {"$lt": mango_cutoff.isoformat()}},
+                ],
+            },
+            {"$set": {"is_archived": True, "archived_at": now_utc.isoformat(), "archive_reason": "auto_cleanup_72h"}},
+        )
+        results["mango"] = mango_res.modified_count
+
+        total = results["diagyn"] + results["orange"] + results["mango"]
+        logger.info(f"Automated cleanup complete: {total} items archived (DiaGyn: {results['diagyn']}, Orange: {results['orange']}, Mango: {results['mango']})")
+
+    except Exception as e:
+        logger.error(f"Automated cleanup failed: {e}")
 
 
 async def run_smart_reminder_scheduler():
@@ -400,68 +452,6 @@ async def run_medicine_reminder_scheduler():
         except Exception as e:
             logger.error(f"Medicine reminder scheduler error: {e}")
             await asyncio.sleep(60)
-
-    results = {"diagyn": 0, "orange": 0, "mango": 0}
-    
-    try:
-        # DiaGyn: Archive completed appointments older than 24 hours
-        diagyn_cutoff = now_utc - timedelta(hours=24)
-        diagyn_completed = await db.appointments.find({
-            "status": "Completed",
-            "completed_at": {"$exists": True, "$lt": diagyn_cutoff.isoformat()}
-        }).to_list(500)
-        
-        for apt in diagyn_completed:
-            apt.pop("_id", None)
-            apt["archived_at"] = now_utc.isoformat()
-            apt["archive_reason"] = "auto_cleanup_24h"
-            await db.appointments_archive.insert_one(apt)
-            await db.appointments.delete_one({"id": apt.get("id")})
-            results["diagyn"] += 1
-        
-        # Orange Pharmacy: Archive completed orders older than 48 hours
-        orange_cutoff = now_utc - timedelta(hours=48)
-        orange_completed = await db.pharmacy_orders.find({
-            "status": {"$in": ["completed", "delivered", "Completed", "Delivered"]},
-            "$or": [
-                {"completed_at": {"$exists": True, "$lt": orange_cutoff.isoformat()}},
-                {"created_at": {"$lt": orange_cutoff.isoformat()}}
-            ]
-        }).to_list(500)
-        
-        for order in orange_completed:
-            order.pop("_id", None)
-            order["archived_at"] = now_utc.isoformat()
-            order["archive_reason"] = "auto_cleanup_48h"
-            await db.pharmacy_orders_archive.insert_one(order)
-            order_id = order.get("order_id") or order.get("id")
-            await db.pharmacy_orders.delete_one({"$or": [{"order_id": order_id}, {"id": order_id}]})
-            results["orange"] += 1
-        
-        # Mango Labs: Archive completed tests older than 72 hours
-        mango_cutoff = now_utc - timedelta(hours=72)
-        mango_completed = await db.diagnostic_orders.find({
-            "status": {"$in": ["completed", "Completed", "report_ready", "delivered"]},
-            "$or": [
-                {"completed_at": {"$exists": True, "$lt": mango_cutoff.isoformat()}},
-                {"created_at": {"$lt": mango_cutoff.isoformat()}}
-            ]
-        }).to_list(500)
-        
-        for order in mango_completed:
-            order.pop("_id", None)
-            order["archived_at"] = now_utc.isoformat()
-            order["archive_reason"] = "auto_cleanup_72h"
-            await db.diagnostic_orders_archive.insert_one(order)
-            order_id = order.get("order_id") or order.get("id")
-            await db.diagnostic_orders.delete_one({"$or": [{"order_id": order_id}, {"id": order_id}]})
-            results["mango"] += 1
-        
-        total = results["diagyn"] + results["orange"] + results["mango"]
-        logger.info(f"Automated cleanup complete: {total} items archived (DiaGyn: {results['diagyn']}, Orange: {results['orange']}, Mango: {results['mango']})")
-        
-    except Exception as e:
-        logger.error(f"Automated cleanup failed: {e}")
 
 
 # ── Patient Dashboard Endpoint → Extracted to routes/patient_dashboard.py ──

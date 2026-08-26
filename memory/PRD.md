@@ -39,11 +39,19 @@ Build a production-ready healthcare super-app (Nevika Cura) with:
 - Applied `dark-page` to 25+ pages: CartPage, Pharmacy, Mango, Profile, AboutUs, CuraBonus, CuraXCoins, FamilyWallet, FamilyMembers, MyFavorites, Nutricare, PatientProfile, SavedAddresses, TrackOrder, PaymentMethods, MedicineScanner, EmergencyHealthCard, ExpressRxTracker, HealthTimeline, MyAppointmentsPage, PaymentHistoryDashboard, PostVisitPipeline, HandoffNotes, PatientLogin, PharmacyCheckout, MangoCheckout, CuraWallet
 - Background override CSS exempts `.dark-page` containers from light-mode bg changes
 
+### Railway Deployment Readiness Fixes (Aug 26, 2026)
+- FIXED BLOCKER: dead/orphaned code after `run_medicine_reminder_scheduler`'s while-loop was hard-deleting `appointments`/`pharmacy_orders`/`diagnostic_orders` on task cancellation (server restarts). Only prevented by a `NameError` bug (never actually fired in this env, but would have on any code fix). Removed entirely.
+- Rewrote `run_automated_cleanup()` (24h scheduler) to properly soft-delete via `is_archived` flag (`update_many`) instead of copy-then-delete. No data is ever hard-deleted now.
+- Fixed duplicate `CORS_ORIGINS` key in `backend/.env` (second entry was silently overriding `*`). Verified via curl: `access-control-allow-origin: *`.
+- Fixed missing `services.push.set_db(db)` call in `startup_db_client()` — push notifications (medicine/smart reminders) were silently failing with "Database not initialized". Confirmed fixed via logs.
+- Removed hardcoded preview URLs/secrets from `backend/scheduler.py` (no more URL fallback) and `backend/cron_reminders.sh` (now requires `API_URL`, `CRON_SECRET`, `MEDICINE_CRON_SECRET`, `ADMIN_TOKEN` as env vars, errors if missing). Neither script is wired into supervisor (manual/cron use only).
+- Final deployment_agent scan: **PASS** (no blockers). Remaining non-blocking item: Resend sender domain `nevikacura.com` is not verified on resend.com/domains — admin report emails fail until verified (external, not code).
+- `/app/COMPLETE_RAILWAY_DEPLOYMENT_GUIDE.md` remains the step-by-step guide. Per Emergent support: no direct Railway integration exists — user must use "Save to Github" to export code, then configure MongoDB Atlas + env vars + custom domain DNS entirely on Railway's side.
+
 ## P2 Backlog (User Priority Order)
-1. Claymorphism styling for light mode cards
-2. Domain setup (nevikacura.com)
-3. Railway production deployment
-4. Push notifications for status updates
+1. Claymorphism styling for light mode cards — verification still pending (blocked on prior ask_human, not yet re-approved)
+2. Domain setup (nevikacura.com) + Railway deployment — code is deployment-ready; remaining steps are user-side (GitHub export, Railway/MongoDB Atlas setup, DNS, Resend domain verification)
+3. Push notifications for status updates
 
 ## 3rd Party Integrations
 - OpenAI GPT-4o (Emergent LLM Key)

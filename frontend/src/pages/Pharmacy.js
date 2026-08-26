@@ -215,7 +215,7 @@ const Pharmacy = () => {
   }, [medicines, pharmaFilterSearch, pharmaFilters, pharmaSort]);
 
   return (
-    <div className="dark-page min-h-screen bg-[#050510] pb-32">
+    <div className={`min-h-screen pb-32 ${isDarkMode ? 'dark-page bg-[#050510]' : 'bg-[#F0EBE3]'}`}>
       <ServiceHeader currentService="orange" lightMode={headerLightMode} />
       <DeliveryBar lightMode={headerLightMode} />
 
