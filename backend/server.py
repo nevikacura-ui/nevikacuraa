@@ -2484,20 +2484,6 @@ if _build_dir.is_dir():
         app.mount("/static", StaticFiles(directory=str(_static_dir)), name="react_static")
         logger.info(f"Mounted React static assets from {_static_dir}")
 
-    # Serve root-level build files (favicon.ico, manifest.json, robots.txt, icons, etc.)
-    # These are individual file routes so they don't conflict with API or SPA fallback
-    @app.get("/favicon.ico")
-    @app.get("/manifest.json")
-    @app.get("/robots.txt")
-    @app.get("/logo192.png")
-    @app.get("/logo512.png")
-    @app.get("/asset-manifest.json")
-    async def serve_build_root_file(request: Request):
-        file_path = _build_dir / request.url.path.lstrip("/")
-        if file_path.is_file():
-            return FileResponse(str(file_path))
-        return JSONResponse(status_code=404, content={"detail": "Not found"})
-
     # Serve files from /icons/ and /images/ subdirectories in build
     for subdir in ["icons", "images", "fonts"]:
         sub_path = _build_dir / subdir
@@ -2511,10 +2497,15 @@ else:
 
 @app.get("/{full_path:path}")
 async def spa_fallback(full_path: str):
-    """Catch-all for React Router. Serves index.html for non-API routes.
-    API paths get a proper JSON 404 so they never return HTML."""
+    """Catch-all for React Router. Serves any existing build file directly
+    (images, service-worker.js, etc.) — otherwise falls back to index.html
+    for client-side routing. API paths get a proper JSON 404, never HTML."""
     if full_path.startswith("api/") or full_path == "api":
         return JSONResponse(status_code=404, content={"detail": "Not found", "path": f"/{full_path}"})
+    if _build_dir.is_dir():
+        candidate = (_build_dir / full_path).resolve()
+        if candidate.is_file() and _build_dir.resolve() in candidate.parents:
+            return FileResponse(str(candidate))
     if _spa_index.is_file():
         return FileResponse(str(_spa_index))
     return JSONResponse(status_code=404, content={"detail": "Not found", "path": f"/{full_path}"})

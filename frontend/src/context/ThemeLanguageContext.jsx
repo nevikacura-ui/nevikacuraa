@@ -149,7 +149,7 @@ export const ThemeLanguageProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (localStorage.getItem('autoTheme') === 'true') return getAutoTheme();
     const saved = localStorage.getItem('darkMode');
-    return saved !== null ? JSON.parse(saved) : false;
+    return saved !== null ? JSON.parse(saved) : true;
   });
 
   // Language state
