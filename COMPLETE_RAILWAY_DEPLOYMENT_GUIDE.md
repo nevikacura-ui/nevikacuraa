@@ -1,13 +1,13 @@
 # Complete Railway + MongoDB Deployment Guide
 
-## Prerequisites
+## ✅ Prerequisites
 - GitHub repository with your code
 - Railway account (https://railway.app)
 - MongoDB Atlas account (https://cloud.mongodb.com)
 
 ---
 
-## Part 1: MongoDB Atlas Setup
+## 📋 Part 1: MongoDB Atlas Setup
 
 ### Step 1: Create MongoDB Cluster
 1. Go to https://cloud.mongodb.com
@@ -40,34 +40,27 @@
 mongodb+srv://nevika_admin:<password>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority
 ```
 5. Replace `<password>` with your actual password
-6. Add database name before `?`:
+6. Add database name before `?`, example:
 ```
 mongodb+srv://nevika_admin:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/nevika_cura_prod?retryWrites=true&w=majority
 ```
 
 ---
 
-## Part 2: Railway Deployment
+## 🚀 Part 2: Railway Deployment
 
 ### Step 1: Create Railway Project
 1. Go to https://railway.app
 2. Click "New Project"
 3. Choose "Deploy from GitHub repo"
 4. Select your repository
+5. Railway will auto-detect it's a monorepo with frontend + backend
 
-### Step 2: Configure Backend Service
+### Step 2: Configure Backend Service — see Part 8 below for the exact copy-paste variable block
 
-#### Environment Variables:
+#### Build Command:
 ```bash
-MONGO_URL=mongodb+srv://nevika_admin:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/nevika_cura_prod?retryWrites=true&w=majority
-DB_NAME=nevika_cura_prod
-PORT=8001
-PYTHON_VERSION=3.11.0
-CORS_ORIGINS=https://your-frontend-url.railway.app,https://nevikacura.com
-MSG91_AUTH_KEY=your_msg91_key
-MSG91_SENDER_ID=NEVIKA
-MSG91_TEMPLATE_ID=your_template_id
-JWT_SECRET=your-super-secret-jwt-key-min-32-chars
+pip install --upgrade pip && pip install -r backend/requirements.txt
 ```
 
 #### Start Command:
@@ -75,15 +68,17 @@ JWT_SECRET=your-super-secret-jwt-key-min-32-chars
 cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT
 ```
 
-### Step 3: Configure Frontend Service
-
-#### Environment Variables:
-```bash
-REACT_APP_BACKEND_URL=https://your-backend-service.railway.app
-NODE_VERSION=18.x
-CI=false
-GENERATE_SOURCEMAP=false
+#### Root Directory:
 ```
+/
+```
+
+#### Watch Paths:
+```
+backend/**
+```
+
+### Step 3: Configure Frontend Service — see Part 8 below for the exact copy-paste variable block
 
 #### Build Command:
 ```bash
@@ -95,26 +90,40 @@ cd frontend && yarn install --frozen-lockfile && yarn build
 cd frontend && yarn global add serve && serve -s build -l $PORT
 ```
 
+#### Root Directory:
+```
+/
+```
+
+#### Watch Paths:
+```
+frontend/**
+```
+
 ---
 
-## Part 3: Critical Fixes
+## 🔧 Part 3: Critical Fixes (already applied in this codebase)
 
-### Fix 1: SPA Routing (backend/server.py)
-Add at END of server.py:
+### Fix 1: Backend server.py SPA Routing
+Add this at the END of your `backend/server.py` (only needed if you serve frontend build from the backend service; not needed if frontend is a separate Railway service using `serve`):
 ```python
 @app.get("/{full_path:path}")
 async def spa_fallback(full_path: str):
     return FileResponse('/app/frontend/build/index.html')
 ```
 
-### Fix 2: CORS Configuration
+### Fix 2: Backend CORS — already fixed in `backend/server.py` + `.env`
 ```python
 cors_origins_str = os.getenv('CORS_ORIGINS', '')
-allowed_origins = [origin.strip() for origin in cors_origins_str.split(',') if origin.strip()]
-allowed_origins.extend(["http://localhost:3000", "http://localhost:8001"])
+allowed_origins = [origin.strip() for origin in cors_origins_str.split(',') if origin.strip()] or ["*"]
+app.add_middleware(CORSMiddleware, allow_origins=allowed_origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 ```
 
-### Fix 3: nixpacks.toml (Root directory)
+### Fix 3: Frontend API URL — already using `process.env.REACT_APP_BACKEND_URL` everywhere. Never hardcode.
+
+### Fix 4: MongoDB Connection — already reads `MONGO_URL`/`DB_NAME` from env with no hardcoded fallback.
+
+### Fix 5: Railway nixpacks.toml (place in repo root)
 ```toml
 [phases.setup]
 nixPkgs = ["python311", "nodejs-18_x", "yarn"]
@@ -133,39 +142,86 @@ cmds = ["cd frontend && yarn build"]
 cmd = "cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT"
 ```
 
+### Fix 6 & 7: `requirements.txt` and `package.json`
+Use the versions already committed in this repo (`backend/requirements.txt`, `frontend/package.json`) — do not regenerate from scratch, they already contain every dependency this app needs (Motor, FastAPI, pywebpush, emergentintegrations, etc).
+
 ---
 
-## Part 4: Custom Domain Setup
+## 🌐 Part 4: Custom Domain Setup
 
-### DNS Configuration:
+### Step 1: Railway Domain Settings
+1. Go to your Railway Frontend service → Settings → "Domains"
+2. Click "Generate Domain" (you'll get: `your-app.up.railway.app`)
+3. Click "Custom Domain" → Add `nevikacura.com`
+
+### Step 2: DNS Configuration (your domain registrar)
 ```
-Type: CNAME, Name: @, Value: your-app.up.railway.app, TTL: 300
+Type: CNAME, Name: @,   Value: your-app.up.railway.app, TTL: 300
 Type: CNAME, Name: www, Value: your-app.up.railway.app, TTL: 300
 ```
+If your registrar doesn't support CNAME on the root (`@`), use the A record IP Railway shows in the dashboard instead.
 
-Railway auto-provisions SSL via Let's Encrypt.
-
----
-
-## Part 5: Production Checklist
-
-- [ ] MongoDB Atlas cluster running
-- [ ] MongoDB user permissions correct
-- [ ] IP whitelist includes 0.0.0.0/0
-- [ ] All backend env vars set
-- [ ] REACT_APP_BACKEND_URL correct
-- [ ] CORS includes custom domain
-- [ ] SPA fallback route is LAST
-- [ ] Custom domain DNS configured
-- [ ] SSL certificate active
-- [ ] Health endpoint returns "healthy"
-- [ ] All API calls work from frontend
-- [ ] Auth works, DB operations work
-- [ ] No console errors
-- [ ] Mobile responsive
+### Step 3: SSL — Railway auto-provisions via Let's Encrypt. Wait 5-30 min for DNS propagation, then check for the 🔒 icon on https://nevikacura.com
 
 ---
 
-**Estimated Time:** 30-45 minutes (first time)
-**Cost:** $0 (Free tiers)
-**Last Updated:** February 2026
+## 🧪 Part 5: Verification & Testing
+
+```bash
+curl https://your-backend.railway.app/api/health        # expect {"status": "healthy", ...}
+curl -I https://nevikacura.com                           # expect HTTP/2 200
+```
+In browser console on https://nevikacura.com:
+```javascript
+fetch(process.env.REACT_APP_BACKEND_URL + '/api/health').then(r => r.json()).then(console.log)
+```
+
+---
+
+## ⚠️ Common Errors & Fixes
+
+| Error | Fix |
+|---|---|
+| `ModuleNotFoundError` | Re-check `backend/requirements.txt` was installed |
+| Frontend "Failed to fetch" | Check `CORS_ORIGINS` and `REACT_APP_BACKEND_URL` |
+| `MongoServerError: bad auth` | Re-check Atlas password in `MONGO_URL`, IP whitelist `0.0.0.0/0` |
+| "This site can't be reached" | DNS not propagated yet — check https://dnschecker.org |
+| Build fails with `ECONNREFUSED` | Set `CI=false` in Railway frontend env vars |
+
+---
+
+## 📊 Part 6: Monitoring & Logs
+Railway → Service → Deployments → Latest deployment → View Logs.
+Health endpoint already exists at `/api/health`.
+
+---
+
+## 🎯 Part 7: Production Checklist
+- [ ] MongoDB Atlas cluster running, user configured, IP whitelist `0.0.0.0/0`
+- [ ] All backend env vars set (see Part 8)
+- [ ] `REACT_APP_BACKEND_URL` set on frontend service
+- [ ] `CORS_ORIGINS` includes `https://nevikacura.com` and `https://www.nevikacura.com`
+- [ ] Custom domain DNS configured + SSL active
+- [ ] `/api/health` returns healthy
+- [ ] Resend sender domain `nevikacura.com` verified at resend.com/domains (otherwise admin emails fail)
+- [ ] Cashfree is already in `production` mode — test a real ₹1 order before full launch
+- [ ] JWT_SECRET rotated to a fresh random 32+ char string for production
+
+---
+
+## 🔑 Part 8: Railway Environment Variables — Copy/Paste Ready
+
+See the chat message for the exact copy-paste blocks generated from this app's live `.env` files (backend + frontend), with notes on what must change per-environment (Mongo URL, CORS, callback URLs).
+
+---
+
+## 🚨 Emergency Rollback
+1. Railway → Service → Deployments → previous working deployment → "Redeploy"
+2. MongoDB: never delete data manually; restore from Atlas backup if needed
+3. Keep old DNS records until new deployment is verified
+
+---
+
+**Estimated Deployment Time:** 30-45 minutes (first time)
+**Cost:** $0 (Railway Free tier + MongoDB Atlas Free tier, until you scale)
+**Last Updated:** August 2026
