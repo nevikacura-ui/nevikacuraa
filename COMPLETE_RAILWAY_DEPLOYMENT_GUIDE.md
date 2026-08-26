@@ -60,12 +60,12 @@ mongodb+srv://nevika_admin:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/nevika_cura_
 
 #### Build Command:
 ```bash
-pip install --upgrade pip && pip install -r backend/requirements.txt
+python3 -m venv /opt/venv && /opt/venv/bin/pip install --upgrade pip && /opt/venv/bin/pip install -r backend/requirements.txt
 ```
 
 #### Start Command:
 ```bash
-cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT
+cd backend && /opt/venv/bin/uvicorn server:app --host 0.0.0.0 --port $PORT
 ```
 
 #### Root Directory:
@@ -124,14 +124,16 @@ app.add_middleware(CORSMiddleware, allow_origins=allowed_origins, allow_credenti
 ### Fix 4: MongoDB Connection — already reads `MONGO_URL`/`DB_NAME` from env with no hardcoded fallback.
 
 ### Fix 5: Railway nixpacks.toml (place in repo root)
+Railway's Nixpacks build image is "externally managed" (PEP 668) — a bare `pip install` fails with `pip: command not found` / `error: externally-managed-environment`. Always create a venv and call pip from inside it:
 ```toml
 [phases.setup]
-nixPkgs = ["python311", "nodejs-18_x", "yarn"]
+nixPkgs = ["python311", "python311Packages.pip", "python311Packages.virtualenv", "nodejs-18_x", "yarn"]
 
 [phases.install]
 cmds = [
-  "pip install --upgrade pip",
-  "pip install -r backend/requirements.txt",
+  "python3 -m venv /opt/venv",
+  "/opt/venv/bin/pip install --upgrade pip",
+  "/opt/venv/bin/pip install -r backend/requirements.txt",
   "cd frontend && yarn install --frozen-lockfile"
 ]
 
@@ -139,7 +141,7 @@ cmds = [
 cmds = ["cd frontend && yarn build"]
 
 [start]
-cmd = "cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT"
+cmd = "cd backend && /opt/venv/bin/uvicorn server:app --host 0.0.0.0 --port $PORT"
 ```
 
 ### Fix 6 & 7: `requirements.txt` and `package.json`
