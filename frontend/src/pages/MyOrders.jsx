@@ -15,7 +15,7 @@ import {
   RefreshCw,
   Loader2
 } from 'lucide-react';
-import { OrderCardSkeleton, StatsSkeleton } from '@/components/ui/skeleton-loaders';
+import { OrderCardSkeleton } from '@/components/ui/skeleton-loaders';
 import { toast } from 'sonner';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import OrderTimeline from '@/components/OrderTimeline';
