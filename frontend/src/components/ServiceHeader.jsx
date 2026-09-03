@@ -150,26 +150,6 @@ export const ServiceHeader = () => {
             data-testid="main-logo"
           />
           <div className="flex items-center gap-1">
-            {/* Theme Toggle — Sun/Moon */}
-            <button
-              onClick={() => { selectionTap(); toggleDarkMode(); }}
-              className="relative p-2 rounded-full transition-all duration-300"
-              style={lightMode ? {
-                background: 'rgba(255,255,255,0.6)',
-                boxShadow: '3px 3px 8px rgba(166,160,154,0.15), -2px -2px 6px rgba(255,255,255,0.8), inset 1px 1px 2px rgba(255,255,255,0.5)',
-              } : {
-                background: 'rgba(255,255,255,0.08)',
-              }}
-              data-testid="theme-toggle-btn"
-              aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              {isDarkMode ? (
-                <Sun className="w-[20px] h-[20px] transition-all duration-300" style={{ color: '#FBBF24' }} />
-              ) : (
-                <Moon className="w-[20px] h-[20px] transition-all duration-300" style={{ color: '#6366F1' }} />
-              )}
-            </button>
-
             {/* Notifications */}
             <NotificationBell lightMode={lightMode} />
 

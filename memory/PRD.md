@@ -84,5 +84,5 @@ Build a production-ready healthcare super-app (Nevika Cura) with:
 - Note: `pharmacy_browse.py` has a 5-min in-memory cache; restart backend after bulk inventory changes.
 
 ## Pending/Backlog
-- Verify clay-morphism cards look correct in Light Mode on Home/Service pages (P2, not started).
 - Push notifications for status updates (P2 backlog).
+- Light Mode: DISABLED APP-WIDE (Sep 2026) per user request — styling wasn't fixed, user asked to stop spending credits on it. `ThemeLanguageContext.jsx` now hardcodes `isDarkMode=true`, toggle button removed from `ServiceHeader.jsx`. Do NOT re-introduce light mode toggle unless explicitly asked.
