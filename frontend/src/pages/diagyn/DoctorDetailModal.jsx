@@ -101,6 +101,7 @@ const DoctorDetailModal = ({
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [clinicOverrides, setClinicOverrides] = useState([]);
   const [timeFilter, setTimeFilter] = useState('Morning');
+  const [blockedDates, setBlockedDates] = useState([]);
 
   const theme = DOCTOR_BOOKING_THEMES[doctor?.id] || DOCTOR_BOOKING_THEMES.vikas;
   const isDark = isDarkTheme(theme);
@@ -110,6 +111,13 @@ const DoctorDetailModal = ({
       setClinicOverrides(res.data.overrides || []);
     }).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!doctor?.name) { setBlockedDates([]); return; }
+    axios.get(`${API}/doctors/blocked-dates`, { params: { doctor: doctor.name } }).then(res => {
+      setBlockedDates((res.data.blocked_dates || []).map(b => b.date));
+    }).catch(() => setBlockedDates([]));
+  }, [doctor]);
 
   const getCurrentFee = () => {
     if (selectedClinic !== 'online') return null;
@@ -128,11 +136,12 @@ const DoctorDetailModal = ({
     if (!selectedClinic || !doctor || selectedDate) return;
     const firstAvail = next7Days.find(date => {
       if (isSunday(date) && selectedClinic !== 'online') return false;
+      if (blockedDates.includes(format(date, 'yyyy-MM-dd'))) return false;
       const dayName = format(date, 'EEEE');
       return doctor.schedule[selectedClinic]?.some(s => s.days.includes(dayName)) || false;
     });
     if (firstAvail) onDateSelect(firstAvail);
-  }, [selectedClinic, doctor]);
+  }, [selectedClinic, doctor, blockedDates]);
 
   useEffect(() => {
     const fetchSlots = async () => {
@@ -195,6 +204,7 @@ const DoctorDetailModal = ({
   const isDoctorAvailable = (date) => {
     if (!doctor || !selectedClinic) return false;
     if (isSunday(date) && selectedClinic !== 'online') return false;
+    if (blockedDates.includes(format(date, 'yyyy-MM-dd'))) return false;
     const dayName = format(date, 'EEEE');
     return doctor.schedule[selectedClinic]?.some(s => s.days.includes(dayName)) || false;
   };

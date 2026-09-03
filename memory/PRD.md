@@ -63,4 +63,26 @@ Build a production-ready healthcare super-app (Nevika Cura) with:
 - Theme toggle: Moon icon = light mode, Sun icon = dark mode
 - `dark-page` class on root container opts page out of light-mode text overrides
 - CSS specificity: `.App .dark-page .text-white` (0-3-1) beats `.App .text-white` (0-2-1)
-- Database: `medicines` collection (1165 docs) + `pharmacy_inventory` (1165 docs mirrored)
+- Database: `medicines` collection (1246 docs) + `pharmacy_inventory` (1246 docs mirrored) — replaced Sep 2026
+
+## Session Update (Sep 2026)
+- Replaced Orange Pharmacy inventory using `Stock_Summary_Report_24-08-2026.pdf` (1316 raw rows).
+  Applied: exclude 32 items (injectables/IV/consultation/delivery charges), collapse 14 pack-size-variant
+  groups to 1 item each (largest pack price kept), merge 8 typo/near-duplicate pairs. Final: 1246 items
+  across 28 categories. Script: `/app/backend/scripts/import_orange_pdf_inventory.py`. PDF stored at
+  `/app/backend/data/imports/orange_pharmacy_stock_24-08-2026.pdf`.
+- Premium text-only card variant added in `MedicineCard.jsx` (activates when `!image_url`): cream card,
+  name, price, "Price shown is after 15-20% discount" label, no images/icons. Fixed a cropping bug where
+  the ADD button (absolute positioned) overlapped the discount note text — moved to normal flex flow.
+- Removed "Orange Select" (curated 1584-item legacy dataset) tab + promo section from `/pharmacy` page
+  per user request — only the new 1246-item import shows now.
+- Fixed bug: doctor blocking a leave day/session (Doctor Portal) didn't stop `/api/doctors/next-available`
+  from suggesting slots on that blocked day (never checked `doctor_schedules.blocked_dates`). Added shared
+  `get_doctor_schedule_by_name()` helper in `appointment_routes.py`, new public
+  `GET /api/doctors/blocked-dates?doctor=<name>` endpoint, wired into `DoctorDetailModal.jsx` to grey out
+  blocked calendar days for patients.
+- Note: `pharmacy_browse.py` has a 5-min in-memory cache; restart backend after bulk inventory changes.
+
+## Pending/Backlog
+- Verify clay-morphism cards look correct in Light Mode on Home/Service pages (P2, not started).
+- Push notifications for status updates (P2 backlog).

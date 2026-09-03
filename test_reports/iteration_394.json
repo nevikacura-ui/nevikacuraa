@@ -1,0 +1,47 @@
+{
+  "summary": "Tested Orange Pharmacy PDF import (1246 items, 28 categories), text-only card design, and doctor-leave bug fix (/api/doctors/blocked-dates + next-available fix). 12/13 backend tests passed (92% success). Frontend /pharmacy loads with 1,246+ medicines banner, text-only cards, DROTIN search works, ProductDetailView shows the 'Price shown is after 15\u201320% discount' note with data-testid=price-after-discount-note. One real data-import bug found: DROZIVER pack-size collapse left 2 entries instead of 1.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/pharmacy/v3/search?q=DROZIVER", "issue": "Pack-size collapse incomplete: returns TWO entries ['DROZIVER 80MG', 'DROZIVER 80 6TAB'] instead of ONE collapsed entry per task rule. import_orange_pdf_inventory.py collapse rule failed for this variant group. Other collapse (ORTHAL FORTE) and typo merges (VEET REMOVEL, TETAN 20/40) worked correctly."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "MedicineCard search-result row", "issue": "Search-result list row for DROTIN still shows an 'MRP \u20b9199' strike-through above the current price. Per task rules the new PDF items have no separate MRP/discount \u2014 price is shown as-is with only the discount note. The strike-through creates a fake discount visual.", "selector": "[data-testid^='medicine-card-']", "priority": "MEDIUM"},
+      {"component": "ProductDetailView image area", "issue": "For items with no image_url, ProductDetailView still renders a large 'No image available' placeholder box. The pharmacy redesign was TEXT-ONLY (no images/icons) for these items \u2014 the placeholder should be hidden and header should collapse. Cream card design was applied on the browse grid but not inside ProductDetailView.", "selector": "ProductDetailView modal", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "/pharmacy header", "issues": ["Header text reads '1,246+ medicines delivered to your doorstep' but task spec said '1,246 products across 28 categories' should be visible. The category count is not exposed in the hero text."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration_394_pharmacy_leave.py",
+    "/app/test_reports/pytest/iteration_394.xml"
+  ],
+  "action_items": [
+    "Fix DROZIVER pack-collapse in import_orange_pdf_inventory.py \u2014 currently 'DROZIVER 80MG' and 'DROZIVER 80 6TAB' both remain; only one collapsed entry expected. Total is 1246 today, so if collapse is re-run the total may drop by 1.",
+    "Remove the 'MRP \u20b9xxx' strike-through in the medicine search-result row when discount_percent === 0 (new PDF dataset). Currently DROTIN row shows '\u20b9189  MRP \u20b9199' which fakes a discount that the backend does not have.",
+    "In ProductDetailView, hide the 'No image available' placeholder box when image_url is empty, to match the text-only card design intent used elsewhere.",
+    "Consider exposing 'across 28 categories' in the /pharmacy header per task spec."
+  ],
+  "critical_code_review_comments": [
+    "pharmacy_browse.py has a 5-min in-memory cache with no invalidation hook \u2014 after any medicines-collection update (like re-import), stale results will be served for up to 5 minutes. Add a POST /pharmacy/v3/cache/flush or subscribe to a change stream.",
+    "appointment_routes.get_doctor_schedule_by_name() does a $or lookup on staff.doctor_name/name and returns the FIRST doctor_schedule found \u2014 if two staff records match the same display name across clinics, wrong schedule could be returned. Consider disambiguating by clinic when available.",
+    "/api/doctors/next-available hardcodes sessions = [11:00-14:00, 18:00-22:00] and slot_duration=15 regardless of the doctor's actual doctor_schedules.weekly_schedule/slot_duration \u2014 fix ignores the doctor's real working hours."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration_394_pharmacy_leave.py (new)"
+  ],
+  "success_rate": {"backend": "92% (12/13)", "frontend": "80% (core flows OK, 3 minor UI issues)"},
+  "test_credentials": "dr_vikas / test1234 (staff login) \u2014 verified working via /api/staff/login",
+  "seed_data_creation": "Test blocks/unblocks a future date (today+5) for Dr. Vikas Jha and cleans up via DELETE /api/doctor-schedule/block-date/{date}",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend regression pytest is at /app/backend/tests/test_iteration_394_pharmacy_leave.py (12 pass, 1 real-bug fail on DROZIVER collapse). Once main agent fixes the DROZIVER collapse and re-imports, re-run this file. Doctor leave bug fix is fully verified end-to-end on backend (blocked-dates public endpoint, booked-slots date_blocked flag, next-available skips blocked date). Frontend DiaGyn calendar grey-out was NOT visually verified (complex OTP-based flow); recommend a Playwright test that navigates DiaGyn -> Dr. Vikas Jha detail modal -> calendar -> assert blocked date has disabled class.",
+  "rca_of_issues": {
+    "DROZIVER duplicate": "import_orange_pdf_inventory.py's pack-size-collapse rule likely groups by name ending pattern like '<base> <strength> <N>TAB' but 'DROZIVER 80MG' does not match the '<N>TAB' pattern and slipped through, leaving both the MG variant and the 6TAB variant. The 14 declared pack-size groups probably need this specific variant added.",
+    "MRP strike-through": "MedicineCard.jsx list-row variant still renders mrp field as strike-through even when discount_percent === 0 and mrp differs from price by only a few rupees. The new dataset writes mrp=price into the same row; frontend should check discount_percent > 0 (or (mrp - price) > threshold) before showing MRP strike-through."
+  }
+}

@@ -31,6 +31,75 @@ export const MedicineCard = ({ medicine, onAdd, onView, cartQuantity = 0, onIncr
   const discount = mrp > 0 ? Math.round(mrp - salePrice) : 0;
   const discountPct = medicine.discount_percent || (mrp > 0 ? Math.round((1 - salePrice / mrp) * 100) : 0);
 
+  // Orange Pharmacy stock-list items have no product photo — premium, text-only card
+  if (!hasImage) {
+    return (
+      <div
+        className="rounded-2xl flex flex-col p-3.5 cursor-pointer transition-transform active:scale-[0.98]"
+        style={{ background: '#FBF6EC', border: '1px solid #E8DCC4' }}
+        onClick={() => onView(medicine)}
+        data-testid={`medicine-card-${medicine.id}`}
+      >
+        <div className="w-6 h-[2px] mb-2" style={{ background: '#C2793A' }} />
+        <h3
+          className="font-bold leading-snug line-clamp-2 flex-1"
+          style={{ fontFamily: 'Outfit, sans-serif', color: '#2B241C', fontSize: '12.5px', minHeight: '32px' }}
+        >
+          {medicine.name}
+        </h3>
+
+        {mrp > 0 ? (
+          <div className="mt-3 flex items-end justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <p className="font-black tracking-tight" style={{ color: '#8A4A17', fontSize: '17px', fontFamily: 'Outfit, sans-serif' }}>
+                {'\u20B9'}{Math.round(salePrice)}
+              </p>
+              <p className="leading-snug mt-0.5" style={{ color: '#9A8E75', fontSize: '8.5px' }}>
+                Price shown is after 15&ndash;20% discount
+              </p>
+            </div>
+            <div className="flex-shrink-0">
+              {cartQuantity > 0 ? (
+                <div className="flex items-center gap-2 rounded-lg px-2.5 py-1" style={{ background: '#8A4A17' }}>
+                  <button onClick={(e) => { e.stopPropagation(); onDecrement(); }} className="text-white font-bold w-3 text-center leading-none" data-testid={`decrement-${medicine.id}`}>&minus;</button>
+                  <span className="text-white font-bold text-xs min-w-[14px] text-center">{cartQuantity}</span>
+                  <button onClick={(e) => { e.stopPropagation(); onIncrement(); }} className="text-white font-bold w-3 text-center leading-none" data-testid={`increment-${medicine.id}`}>+</button>
+                </div>
+              ) : medicine.stock_status === 'out_of_stock' ? (
+                <span className="text-[9px] font-medium px-2.5 py-1 rounded-lg whitespace-nowrap" style={{ color: '#9A8E75', background: '#EFE7D4' }}>Out of Stock</span>
+              ) : (
+                <button
+                  ref={addButtonRef}
+                  onClick={handleAdd}
+                  className="px-4 py-1.5 rounded-lg text-[11px] font-bold tracking-wide active:scale-95 transition-all whitespace-nowrap"
+                  style={{ background: '#8A4A17', color: '#FBF6EC' }}
+                  data-testid={`add-to-cart-${medicine.id}`}
+                >
+                  ADD
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="mt-3">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                const msg = encodeURIComponent(`Hi, I'd like to know the price for: ${medicine.name}`);
+                window.open(`https://wa.me/919833188288?text=${msg}`, '_blank');
+              }}
+              className="text-[10px] font-semibold underline"
+              style={{ color: '#8A4A17' }}
+              data-testid={`price-request-${medicine.id}`}
+            >
+              Call pharmacist for price
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       className="bg-white rounded-xl overflow-hidden relative border border-gray-100"
@@ -249,7 +318,11 @@ export const SearchResults = ({ results, loading, onSelect, onAdd }) => {
                   {mrp > 0 ? (
                     <>
                       <span className="font-bold text-green-600 text-sm">{'\u20B9'}{Math.round(salePrice)}</span>
-                      <span className="block text-[9px] text-stone-400 line-through">MRP {'\u20B9'}{Math.round(mrp)}</span>
+                      {mrp > salePrice ? (
+                        <span className="block text-[9px] text-stone-400 line-through">MRP {'\u20B9'}{Math.round(mrp)}</span>
+                      ) : (
+                        <span className="block text-[8px] text-stone-400">after 15&ndash;20% discount</span>
+                      )}
                     </>
                   ) : (
                     <span className="text-[10px] text-orange-600 font-medium">Call pharmacist</span>

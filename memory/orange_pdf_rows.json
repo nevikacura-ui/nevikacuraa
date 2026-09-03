@@ -1,0 +1,4292 @@
+[
+ {
+  "sl": 1,
+  "name": "ABSOLUT GOLD",
+  "price": "178.50"
+ },
+ {
+  "sl": 2,
+  "name": "ABSOLUT WOMAN",
+  "price": "199.75"
+ },
+ {
+  "sl": 3,
+  "name": "ACIGENE MINT GEL SYP",
+  "price": "75.08"
+ },
+ {
+  "sl": 4,
+  "name": "ACTIGUT",
+  "price": "167.15"
+ },
+ {
+  "sl": 5,
+  "name": "ACUPERA TH4",
+  "price": "275.83"
+ },
+ {
+  "sl": 6,
+  "name": "ADIGESIC MR",
+  "price": "93.50"
+ },
+ {
+  "sl": 7,
+  "name": "ADJUVANEX-D TAB",
+  "price": "122.70"
+ },
+ {
+  "sl": 8,
+  "name": "ALBAYES SYP",
+  "price": "17.32"
+ },
+ {
+  "sl": 9,
+  "name": "ALBAYES TAB",
+  "price": "21.25"
+ },
+ {
+  "sl": 10,
+  "name": "ALCIFLOX D DROPS",
+  "price": "41.65"
+ },
+ {
+  "sl": 11,
+  "name": "ALEX",
+  "price": "112.63"
+ },
+ {
+  "sl": 12,
+  "name": "ALICLAIR 125 SYRUP",
+  "price": "131.32"
+ },
+ {
+  "sl": 13,
+  "name": "ALICLAIR 250 -4 TAB",
+  "price": "92.48"
+ },
+ {
+  "sl": 14,
+  "name": "ALICLAIR 250 SYRP",
+  "price": "208.25"
+ },
+ {
+  "sl": 15,
+  "name": "ALICLAIR 500",
+  "price": "151.64"
+ },
+ {
+  "sl": 16,
+  "name": "ALKACIP 100 ML SYP",
+  "price": "79.19"
+ },
+ {
+  "sl": 17,
+  "name": "ALKOF DX 60ML SYRUP",
+  "price": "59.50"
+ },
+ {
+  "sl": 18,
+  "name": "ALKOF JUNIOR 100",
+  "price": "100.30"
+ },
+ {
+  "sl": 19,
+  "name": "ALKOF JUNIOR 60 ML SYRUP",
+  "price": "68.00"
+ },
+ {
+  "sl": 20,
+  "name": "ALKOF LS",
+  "price": "109.65"
+ },
+ {
+  "sl": 21,
+  "name": "ALKOF LS PLUS",
+  "price": "110.50"
+ },
+ {
+  "sl": 22,
+  "name": "ALMOX CV 625",
+  "price": "104.47"
+ },
+ {
+  "sl": 23,
+  "name": "ALNURO PLUS",
+  "price": "153.85"
+ },
+ {
+  "sl": 24,
+  "name": "ALPHA KETONAVAG",
+  "price": "385.05"
+ },
+ {
+  "sl": 25,
+  "name": "ALTIVA 120 MG",
+  "price": "188.70"
+ },
+ {
+  "sl": 26,
+  "name": "ALZYME SYRUP",
+  "price": "125.80"
+ },
+ {
+  "sl": 27,
+  "name": "AMLIP 2.5",
+  "price": "17.03"
+ },
+ {
+  "sl": 28,
+  "name": "AMLIP AT",
+  "price": "70.27"
+ },
+ {
+  "sl": 29,
+  "name": "AMLOBIG 5",
+  "price": "29.97"
+ },
+ {
+  "sl": 30,
+  "name": "AMLOBIG AT",
+  "price": "76.00"
+ },
+ {
+  "sl": 31,
+  "name": "AMLOKIND 5MG",
+  "price": "21.11"
+ },
+ {
+  "sl": 32,
+  "name": "AMOXYCLAV 375",
+  "price": "263.42"
+ },
+ {
+  "sl": 33,
+  "name": "AMOXYCLAV 625 MG",
+  "price": "177.23"
+ },
+ {
+  "sl": 34,
+  "name": "AMPOXIN-CV 375",
+  "price": "175.44"
+ },
+ {
+  "sl": 35,
+  "name": "AMPOXIN-CV FORTE",
+  "price": "131.75"
+ },
+ {
+  "sl": 36,
+  "name": "AMROLTRU 0.25% GEL",
+  "price": "139.32"
+ },
+ {
+  "sl": 37,
+  "name": "AMROX JUNIOR SYRUP",
+  "price": "63.75"
+ },
+ {
+  "sl": 38,
+  "name": "ANERGEN TAB",
+  "price": "98.01"
+ },
+ {
+  "sl": 39,
+  "name": "APARCARMINE RAFT",
+  "price": "187.00"
+ },
+ {
+  "sl": 40,
+  "name": "APTISTART SYP",
+  "price": "128.56"
+ },
+ {
+  "sl": 41,
+  "name": "AQUAGERMINA",
+  "price": "60.35"
+ },
+ {
+  "sl": 42,
+  "name": "ARADIM 0.25 % OINT",
+  "price": "395.25"
+ },
+ {
+  "sl": 43,
+  "name": "ARILIZAN SYP",
+  "price": "118.15"
+ },
+ {
+  "sl": 44,
+  "name": "ARISTOMOX CV 625",
+  "price": "177.26"
+ },
+ {
+  "sl": 45,
+  "name": "ARISTOMOX CV DDS 457",
+  "price": "124.10"
+ },
+ {
+  "sl": 46,
+  "name": "ARISTONEUROL OD",
+  "price": "118.15"
+ },
+ {
+  "sl": 47,
+  "name": "ARISTONEUROL PLUS",
+  "price": "195.42"
+ },
+ {
+  "sl": 48,
+  "name": "ARISTOVERT 16",
+  "price": "181.43"
+ },
+ {
+  "sl": 49,
+  "name": "ASCODEX JR LS DRP",
+  "price": "66.30"
+ },
+ {
+  "sl": 50,
+  "name": "ASCODEX JUNIOR SYP",
+  "price": "90.10"
+ },
+ {
+  "sl": 51,
+  "name": "ASCODEX PLUS SYP",
+  "price": "109.65"
+ },
+ {
+  "sl": 52,
+  "name": "ASCODEX SF",
+  "price": "137.28"
+ },
+ {
+  "sl": 53,
+  "name": "ASOMEX 2.5",
+  "price": "85.17"
+ },
+ {
+  "sl": 54,
+  "name": "ATARISE 10",
+  "price": "37.40"
+ },
+ {
+  "sl": 55,
+  "name": "ATORBEST 20",
+  "price": "117.53"
+ },
+ {
+  "sl": 56,
+  "name": "ATORBEST-10",
+  "price": "44.53"
+ },
+ {
+  "sl": 57,
+  "name": "ATORVAKIND 10",
+  "price": "64.06"
+ },
+ {
+  "sl": 58,
+  "name": "AUGTRAM TAB",
+  "price": "130.48"
+ },
+ {
+  "sl": 59,
+  "name": "AVACRD AT 50 /5 MG",
+  "price": "78.80"
+ },
+ {
+  "sl": 60,
+  "name": "AVEENO BABY WASH &SHAMPOO",
+  "price": "1410.00"
+ },
+ {
+  "sl": 61,
+  "name": "AZIKIND 250",
+  "price": "67.45"
+ },
+ {
+  "sl": 62,
+  "name": "AZIKIND 500",
+  "price": "67.45"
+ },
+ {
+  "sl": 63,
+  "name": "B-METHYL 16",
+  "price": "93.50"
+ },
+ {
+  "sl": 64,
+  "name": "B-METHYL 4",
+  "price": "73.10"
+ },
+ {
+  "sl": 65,
+  "name": "BACLFYL SUSPENSION",
+  "price": "42.50"
+ },
+ {
+  "sl": 66,
+  "name": "BACLOHYPE 10 TAB",
+  "price": "102.00"
+ },
+ {
+  "sl": 67,
+  "name": "BENDEX 400 TAB",
+  "price": "7.05"
+ },
+ {
+  "sl": 68,
+  "name": "BENDEX CHERRY SYRP",
+  "price": "17.32"
+ },
+ {
+  "sl": 69,
+  "name": "BESIFLAM SYRUP",
+  "price": "45.48"
+ },
+ {
+  "sl": 70,
+  "name": "BETADINE PESSARY",
+  "price": "267.18"
+ },
+ {
+  "sl": 71,
+  "name": "BETHNEVOID 25",
+  "price": "126.23"
+ },
+ {
+  "sl": 72,
+  "name": "BEURER CLINICAL THERMOMETR",
+  "price": "204.00"
+ },
+ {
+  "sl": 73,
+  "name": "BILATEK M",
+  "price": "174.25"
+ },
+ {
+  "sl": 74,
+  "name": "BILAXL M TAB",
+  "price": "169.15"
+ },
+ {
+  "sl": 75,
+  "name": "BIOCIB T4",
+  "price": "185.30"
+ },
+ {
+  "sl": 76,
+  "name": "BIOTIN 10000MCG",
+  "price": "802.75"
+ },
+ {
+  "sl": 77,
+  "name": "BIOVEIN FORTE",
+  "price": "74.80"
+ },
+ {
+  "sl": 78,
+  "name": "BISOHEART-5",
+  "price": "95.65"
+ },
+ {
+  "sl": 79,
+  "name": "BISONOL -5",
+  "price": "46.07"
+ },
+ {
+  "sl": 80,
+  "name": "BLACK PERFUME",
+  "price": "1999.20"
+ },
+ {
+  "sl": 81,
+  "name": "BOMBAY SHAVING FOAM",
+  "price": "95.00"
+ },
+ {
+  "sl": 82,
+  "name": "BRO COFDEX SYP",
+  "price": "107.99"
+ },
+ {
+  "sl": 83,
+  "name": "BRONCHOFIL N",
+  "price": "187.00"
+ },
+ {
+  "sl": 84,
+  "name": "BRONCOFIL CAP",
+  "price": "80.75"
+ },
+ {
+  "sl": 85,
+  "name": "BRUTACROSS CV 200",
+  "price": "282.84"
+ },
+ {
+  "sl": 86,
+  "name": "BRUTACROSS-100",
+  "price": "140.25"
+ },
+ {
+  "sl": 87,
+  "name": "BUDAMATE-G",
+  "price": "408.41"
+ },
+ {
+  "sl": 88,
+  "name": "BURNHEAL",
+  "price": "84.28"
+ },
+ {
+  "sl": 89,
+  "name": "C - FURO CV SYP",
+  "price": "158.95"
+ },
+ {
+  "sl": 90,
+  "name": "C FURO DRY SYP",
+  "price": "152.57"
+ },
+ {
+  "sl": 91,
+  "name": "CALAMINE LOTION",
+  "price": "139.40"
+ },
+ {
+  "sl": 92,
+  "name": "CALCIGEN D3",
+  "price": "119.22"
+ },
+ {
+  "sl": 93,
+  "name": "CALDIMINT CORAL",
+  "price": "126.65"
+ },
+ {
+  "sl": 94,
+  "name": "CALDIMINT FEM",
+  "price": "254.15"
+ },
+ {
+  "sl": 95,
+  "name": "CALEN LOTION",
+  "price": "105.80"
+ },
+ {
+  "sl": 96,
+  "name": "CALENDULA OINTMENT",
+  "price": "80.00"
+ },
+ {
+  "sl": 97,
+  "name": "CALFLIP CQ TAB",
+  "price": "187.85"
+ },
+ {
+  "sl": 98,
+  "name": "CANAZOLE LOTION B",
+  "price": "56.95"
+ },
+ {
+  "sl": 99,
+  "name": "CANAZOLE MOUTH PAINT",
+  "price": "55.55"
+ },
+ {
+  "sl": 100,
+  "name": "CANDIPRAZ 100",
+  "price": "133.42"
+ },
+ {
+  "sl": 101,
+  "name": "CANDIPRAZ 200",
+  "price": "210.58"
+ },
+ {
+  "sl": 102,
+  "name": "CANZOLE B LOTION",
+  "price": "57.46"
+ },
+ {
+  "sl": 103,
+  "name": "CARDIPURE 10",
+  "price": "64.00"
+ },
+ {
+  "sl": 104,
+  "name": "CARDIPURE T",
+  "price": "88.80"
+ },
+ {
+  "sl": 105,
+  "name": "CAREBACT",
+  "price": "126.65"
+ },
+ {
+  "sl": 106,
+  "name": "CAREFIT",
+  "price": "135.15"
+ },
+ {
+  "sl": 107,
+  "name": "CARIFORD TAB",
+  "price": "297.50"
+ },
+ {
+  "sl": 108,
+  "name": "CARIHEAL OINT 15G",
+  "price": "154.70"
+ },
+ {
+  "sl": 109,
+  "name": "CARITERO",
+  "price": "385.05"
+ },
+ {
+  "sl": 110,
+  "name": "CARTIFLOW TAB",
+  "price": "352.75"
+ },
+ {
+  "sl": 111,
+  "name": "CARTIGEN DN",
+  "price": "220.74"
+ },
+ {
+  "sl": 112,
+  "name": "CARTIGEN FORTE+",
+  "price": "355.49"
+ },
+ {
+  "sl": 113,
+  "name": "CARTIGEN PRO",
+  "price": "620.21"
+ },
+ {
+  "sl": 114,
+  "name": "CASTOR D EYE/EAR",
+  "price": "35.28"
+ },
+ {
+  "sl": 115,
+  "name": "CASTOR NF CREAM",
+  "price": "84.15"
+ },
+ {
+  "sl": 116,
+  "name": "CEFABLAST-250",
+  "price": "257.13"
+ },
+ {
+  "sl": 117,
+  "name": "CEFASYN 250 MG - 4",
+  "price": "114.27"
+ },
+ {
+  "sl": 118,
+  "name": "CEFASYN 500",
+  "price": "195.84"
+ },
+ {
+  "sl": 119,
+  "name": "CEFPER 500",
+  "price": "498.18"
+ },
+ {
+  "sl": 120,
+  "name": "CEFPER-CV",
+  "price": "331.50"
+ },
+ {
+  "sl": 121,
+  "name": "CEFUVAX 125 SYP",
+  "price": "139.40"
+ },
+ {
+  "sl": 122,
+  "name": "CEFUVAX 250 TAB",
+  "price": "238.85"
+ },
+ {
+  "sl": 123,
+  "name": "CERIZ 10MG.",
+  "price": "17.90"
+ },
+ {
+  "sl": 124,
+  "name": "CERVIMORE TAB",
+  "price": "254.15"
+ },
+ {
+  "sl": 125,
+  "name": "CETAPHIL GENTLE SKIN CLEANSER",
+  "price": "403.26"
+ },
+ {
+  "sl": 126,
+  "name": "CETAPHIL OILY SKIN",
+  "price": "141.55"
+ },
+ {
+  "sl": 127,
+  "name": "CETCIP SYP",
+  "price": "20.90"
+ },
+ {
+  "sl": 128,
+  "name": "CETPHIL MOISTURISING",
+  "price": "179.55"
+ },
+ {
+  "sl": 129,
+  "name": "CETRIZENE 10",
+  "price": "15.30"
+ },
+ {
+  "sl": 130,
+  "name": "CHESTON AX SYRUP",
+  "price": "88.97"
+ },
+ {
+  "sl": 131,
+  "name": "CHESTON COLD",
+  "price": "72.00"
+ },
+ {
+  "sl": 132,
+  "name": "CHESTON COLD TOTAL",
+  "price": "97.75"
+ },
+ {
+  "sl": 133,
+  "name": "CHESTON PLUS SYP",
+  "price": "78.17"
+ },
+ {
+  "sl": 134,
+  "name": "CHORONEX GEL",
+  "price": "72.25"
+ },
+ {
+  "sl": 135,
+  "name": "CHYMORIXL FORTE TAB",
+  "price": "296.65"
+ },
+ {
+  "sl": 136,
+  "name": "CHYMOTOMAC FORTE- 10 Tab",
+  "price": "208.25"
+ },
+ {
+  "sl": 137,
+  "name": "CILOGARD 5 MG",
+  "price": "39.92"
+ },
+ {
+  "sl": 138,
+  "name": "CINABET - 16",
+  "price": "210.80"
+ },
+ {
+  "sl": 139,
+  "name": "CINABET - 24",
+  "price": "213.78"
+ },
+ {
+  "sl": 140,
+  "name": "CINABET - 8",
+  "price": "116.03"
+ },
+ {
+  "sl": 141,
+  "name": "CINAFREE PLUS",
+  "price": "99.88"
+ },
+ {
+  "sl": 142,
+  "name": "CINALOC 20 TAB",
+  "price": "138.98"
+ },
+ {
+  "sl": 143,
+  "name": "CINALOC 5",
+  "price": "66.40"
+ },
+ {
+  "sl": 144,
+  "name": "CINALOC M10",
+  "price": "77.20"
+ },
+ {
+  "sl": 145,
+  "name": "CINALOC T",
+  "price": "126.40"
+ },
+ {
+  "sl": 146,
+  "name": "CIPANATE CV 375",
+  "price": "260.95"
+ },
+ {
+  "sl": 147,
+  "name": "CIPANATE FORTE DDS SYR",
+  "price": "120.70"
+ },
+ {
+  "sl": 148,
+  "name": "CIPCAL D3 60 K CAP",
+  "price": "119.26"
+ },
+ {
+  "sl": 149,
+  "name": "CIPCAL SYRUP",
+  "price": "84.85"
+ },
+ {
+  "sl": 150,
+  "name": "CIPLACTIN SYRP",
+  "price": "149.19"
+ },
+ {
+  "sl": 151,
+  "name": "CIPLADINE GARGLE",
+  "price": "185.54"
+ },
+ {
+  "sl": 152,
+  "name": "CIPRODAC 250",
+  "price": "20.85"
+ },
+ {
+  "sl": 153,
+  "name": "CIPZEN D",
+  "price": "133.71"
+ },
+ {
+  "sl": 154,
+  "name": "CIPZOX TAB",
+  "price": "75.79"
+ },
+ {
+  "sl": 155,
+  "name": "CITRO FLO B6 SYRUP",
+  "price": "148.13"
+ },
+ {
+  "sl": 156,
+  "name": "CLARIXL 125 SYP",
+  "price": "131.11"
+ },
+ {
+  "sl": 157,
+  "name": "CLARIXL-250 TAB",
+  "price": "226.20"
+ },
+ {
+  "sl": 158,
+  "name": "CLARIXL-500 TAB",
+  "price": "385.84"
+ },
+ {
+  "sl": 159,
+  "name": "CLEAR WATER 500",
+  "price": "10.00"
+ },
+ {
+  "sl": 160,
+  "name": "CLINDOAID 300",
+  "price": "253.20"
+ },
+ {
+  "sl": 161,
+  "name": "CLINEP 10",
+  "price": "64.00"
+ },
+ {
+  "sl": 162,
+  "name": "CLINISOL GEL",
+  "price": "84.15"
+ },
+ {
+  "sl": 163,
+  "name": "CLINPEU 300 MG",
+  "price": "169.43"
+ },
+ {
+  "sl": 164,
+  "name": "CLINSOL SOAP",
+  "price": "63.75"
+ },
+ {
+  "sl": 165,
+  "name": "CLINSTEP FORTE",
+  "price": "220.15"
+ },
+ {
+  "sl": 166,
+  "name": "CLINSTICK 300 CAP",
+  "price": "257.55"
+ },
+ {
+  "sl": 167,
+  "name": "CLISTOAZOL 50",
+  "price": "128.35"
+ },
+ {
+  "sl": 168,
+  "name": "CLOMIYES 25",
+  "price": "54.40"
+ },
+ {
+  "sl": 169,
+  "name": "CLOMIYES 50",
+  "price": "80.23"
+ },
+ {
+  "sl": 170,
+  "name": "CLONAMIT PLUS",
+  "price": "91.80"
+ },
+ {
+  "sl": 171,
+  "name": "COFOL Z",
+  "price": "160.08"
+ },
+ {
+  "sl": 172,
+  "name": "COFRYL SYRUP",
+  "price": "77.14"
+ },
+ {
+  "sl": 173,
+  "name": "COLGATE CHARCOAL CLEAN GEL",
+  "price": "180.18"
+ },
+ {
+  "sl": 174,
+  "name": "COLGATE TOTAL ACTIVE PRE",
+  "price": "180.50"
+ },
+ {
+  "sl": 175,
+  "name": "CORBIS AM-5",
+  "price": "126.65"
+ },
+ {
+  "sl": 176,
+  "name": "CORN CAPS",
+  "price": "34.00"
+ },
+ {
+  "sl": 177,
+  "name": "CORTIYES M 16",
+  "price": "93.73"
+ },
+ {
+  "sl": 178,
+  "name": "CORTIYES MD 8",
+  "price": "53.55"
+ },
+ {
+  "sl": 179,
+  "name": "CUFLIFT LS 100 SYRUP",
+  "price": "93.50"
+ },
+ {
+  "sl": 180,
+  "name": "CUFLIFT LS JUNIOR 60 ML",
+  "price": "63.75"
+ },
+ {
+  "sl": 181,
+  "name": "CURIVIT",
+  "price": "143.65"
+ },
+ {
+  "sl": 182,
+  "name": "CYCITA 5 TAB",
+  "price": "46.75"
+ },
+ {
+  "sl": 183,
+  "name": "D3 HIGH CAP",
+  "price": "102.00"
+ },
+ {
+  "sl": 184,
+  "name": "DABUR ALMA HAIR OIL",
+  "price": "99.75"
+ },
+ {
+  "sl": 185,
+  "name": "DAILYGLIM M1",
+  "price": "46.75"
+ },
+ {
+  "sl": 186,
+  "name": "DANFREE SHAMPOO",
+  "price": "224.72"
+ },
+ {
+  "sl": 187,
+  "name": "DAPANTA TRIO",
+  "price": "174.80"
+ },
+ {
+  "sl": 188,
+  "name": "DAPATREND 10",
+  "price": "132.00"
+ },
+ {
+  "sl": 189,
+  "name": "DEBISTAL GM2",
+  "price": "79.20"
+ },
+ {
+  "sl": 190,
+  "name": "DEFLA CORTIL",
+  "price": "104.55"
+ },
+ {
+  "sl": 191,
+  "name": "DEFLISO 6",
+  "price": "126.65"
+ },
+ {
+  "sl": 192,
+  "name": "DEFLOVEIN TAB",
+  "price": "195.50"
+ },
+ {
+  "sl": 193,
+  "name": "DELTONE 60 MG",
+  "price": "202.30"
+ },
+ {
+  "sl": 194,
+  "name": "DERICIP 150",
+  "price": "8.88"
+ },
+ {
+  "sl": 195,
+  "name": "DERICIP RETARD 300 TAB",
+  "price": "12.19"
+ },
+ {
+  "sl": 196,
+  "name": "DERMIKEM OC",
+  "price": "85.00"
+ },
+ {
+  "sl": 197,
+  "name": "DERMIYES OC CREAM",
+  "price": "88.40"
+ },
+ {
+  "sl": 198,
+  "name": "DETTOL ANTISEPTIC LIQUID",
+  "price": "80.00"
+ },
+ {
+  "sl": 199,
+  "name": "DETTOL ANTISEPTIC LIQUID SMALL",
+  "price": "40.00"
+ },
+ {
+  "sl": 200,
+  "name": "DETTOL LIQUID HANDWASH",
+  "price": "35.00"
+ },
+ {
+  "sl": 201,
+  "name": "DETTOL ORIGINAL GERM DEFENCE",
+  "price": "35.00"
+ },
+ {
+  "sl": 202,
+  "name": "DETTOL SOAP",
+  "price": "10.00"
+ },
+ {
+  "sl": 203,
+  "name": "DEXLURON LC",
+  "price": "134.73"
+ },
+ {
+  "sl": 204,
+  "name": "DEXORANGE SYP",
+  "price": "189.90"
+ },
+ {
+  "sl": 205,
+  "name": "DIABETA GB TAB",
+  "price": "29.35"
+ },
+ {
+  "sl": 206,
+  "name": "DIAPLAN CHOCOLATE",
+  "price": "231.07"
+ },
+ {
+  "sl": 207,
+  "name": "DIAPLAN VANILLA",
+  "price": "233.75"
+ },
+ {
+  "sl": 208,
+  "name": "DICLOGESIC GEL",
+  "price": "112.54"
+ },
+ {
+  "sl": 209,
+  "name": "DICLOKEM PLUS",
+  "price": "29.75"
+ },
+ {
+  "sl": 210,
+  "name": "DICLOTREAT CREAM",
+  "price": "89.29"
+ },
+ {
+  "sl": 211,
+  "name": "DICLOWIN PLUS 2TAB",
+  "price": "20.57"
+ },
+ {
+  "sl": 212,
+  "name": "DILIGAN 25 TAB",
+  "price": "216.11"
+ },
+ {
+  "sl": 213,
+  "name": "DIPODEM 5",
+  "price": "13.00"
+ },
+ {
+  "sl": 214,
+  "name": "DISPRIN REGULAR 325",
+  "price": "7.00"
+ },
+ {
+  "sl": 215,
+  "name": "DOBIMEC TAB",
+  "price": "127.50"
+ },
+ {
+  "sl": 216,
+  "name": "DOLIEF 6 SYRUP",
+  "price": "79.05"
+ },
+ {
+  "sl": 217,
+  "name": "DOLOBREACK SP",
+  "price": "76.67"
+ },
+ {
+  "sl": 218,
+  "name": "DOLOBREAK MR",
+  "price": "79.47"
+ },
+ {
+  "sl": 219,
+  "name": "DOLOCOLD DS SYRUP",
+  "price": "67.62"
+ },
+ {
+  "sl": 220,
+  "name": "DOLOZOX NEO",
+  "price": "55.93"
+ },
+ {
+  "sl": 221,
+  "name": "DOMSTAL- 5 Tab",
+  "price": "10.00"
+ },
+ {
+  "sl": 222,
+  "name": "DORIMAC TAB",
+  "price": "40.00"
+ },
+ {
+  "sl": 223,
+  "name": "DOXOCIP 400",
+  "price": "70.13"
+ },
+ {
+  "sl": 224,
+  "name": "DOXOHIGH 400 TAB",
+  "price": "96.90"
+ },
+ {
+  "sl": 225,
+  "name": "DOXOHIGH-BRO",
+  "price": "74.80"
+ },
+ {
+  "sl": 226,
+  "name": "DOXYITIC LB CAP",
+  "price": "102.00"
+ },
+ {
+  "sl": 227,
+  "name": "DOXYKIND LB CAP",
+  "price": "97.71"
+ },
+ {
+  "sl": 228,
+  "name": "DREAMSURE M TAB",
+  "price": "424.15"
+ },
+ {
+  "sl": 229,
+  "name": "DROKEZ M TAB",
+  "price": "102.85"
+ },
+ {
+  "sl": 230,
+  "name": "DROTAWAYS M",
+  "price": "120.52"
+ },
+ {
+  "sl": 231,
+  "name": "DROTIN SYRUP",
+  "price": "188.94"
+ },
+ {
+  "sl": 232,
+  "name": "DUREX AIR ULTRA",
+  "price": "90.00"
+ },
+ {
+  "sl": 233,
+  "name": "DUREX EXTRA DOTS",
+  "price": "108.00"
+ },
+ {
+  "sl": 234,
+  "name": "DUREX EXTRA RIBBED",
+  "price": "108.00"
+ },
+ {
+  "sl": 235,
+  "name": "DUREX EXTRA THIN",
+  "price": "108.00"
+ },
+ {
+  "sl": 236,
+  "name": "DUREX EXTRA TIME",
+  "price": "90.00"
+ },
+ {
+  "sl": 237,
+  "name": "DYDROFEM",
+  "price": "595.00"
+ },
+ {
+  "sl": 238,
+  "name": "DYNAFLEX MR TAB",
+  "price": "104.13"
+ },
+ {
+  "sl": 239,
+  "name": "DYNAFLEX SP TAB",
+  "price": "138.55"
+ },
+ {
+  "sl": 240,
+  "name": "DYNAFLEX SPRAY",
+  "price": "151.77"
+ },
+ {
+  "sl": 241,
+  "name": "EASYLAX L 100 ML SF",
+  "price": "109.78"
+ },
+ {
+  "sl": 242,
+  "name": "EASYLAX L 200 SYP SF",
+  "price": "219.30"
+ },
+ {
+  "sl": 243,
+  "name": "EASYLAX PLUS",
+  "price": "147.08"
+ },
+ {
+  "sl": 244,
+  "name": "ECCINORM SACHET",
+  "price": "45.48"
+ },
+ {
+  "sl": 245,
+  "name": "ECOSPRIN 150 MG",
+  "price": "11.29"
+ },
+ {
+  "sl": 246,
+  "name": "ECOSPRIN 75 MG",
+  "price": "5.49"
+ },
+ {
+  "sl": 247,
+  "name": "EMEGON SYRUP",
+  "price": "36.55"
+ },
+ {
+  "sl": 248,
+  "name": "EMPASOFT 25",
+  "price": "96.00"
+ },
+ {
+  "sl": 249,
+  "name": "EMSYLATE 500",
+  "price": "102.00"
+ },
+ {
+  "sl": 250,
+  "name": "ENDOGEST 200",
+  "price": "306.26"
+ },
+ {
+  "sl": 251,
+  "name": "ENOXAPRIN",
+  "price": "270.00"
+ },
+ {
+  "sl": 252,
+  "name": "ENRISTAS - 1",
+  "price": "31.04"
+ },
+ {
+  "sl": 253,
+  "name": "ESOMEPRAZ DSR",
+  "price": "97.75"
+ },
+ {
+  "sl": 254,
+  "name": "ESOVAX HP KIT",
+  "price": "224.40"
+ },
+ {
+  "sl": 255,
+  "name": "ETHAMCIP 500",
+  "price": "168.16"
+ },
+ {
+  "sl": 256,
+  "name": "ETOLYTE MR",
+  "price": "165.75"
+ },
+ {
+  "sl": 257,
+  "name": "ETORIDAY 120",
+  "price": "130.90"
+ },
+ {
+  "sl": 258,
+  "name": "ETORIDAY 90",
+  "price": "123.42"
+ },
+ {
+  "sl": 259,
+  "name": "ETORISEN MR",
+  "price": "229.50"
+ },
+ {
+  "sl": 260,
+  "name": "ETOXIB 120",
+  "price": "202.56"
+ },
+ {
+  "sl": 261,
+  "name": "ETOXIB 60",
+  "price": "110.71"
+ },
+ {
+  "sl": 262,
+  "name": "ETOXIB 90",
+  "price": "187.00"
+ },
+ {
+  "sl": 263,
+  "name": "ETOZOX 60",
+  "price": "110.30"
+ },
+ {
+  "sl": 264,
+  "name": "ETOZOX 90",
+  "price": "150.47"
+ },
+ {
+  "sl": 265,
+  "name": "EVEREADY LEAKPROOF AA1015",
+  "price": "18.00"
+ },
+ {
+  "sl": 266,
+  "name": "EWINDIOL",
+  "price": "357.00"
+ },
+ {
+  "sl": 267,
+  "name": "EXCERAFT 200 ML",
+  "price": "190.23"
+ },
+ {
+  "sl": 268,
+  "name": "EYEDROP OPTIBES",
+  "price": "113.00"
+ },
+ {
+  "sl": 269,
+  "name": "FEBUTEC 40 MG",
+  "price": "129.34"
+ },
+ {
+  "sl": 270,
+  "name": "FEBUTEC 80 MG TAB",
+  "price": "171.96"
+ },
+ {
+  "sl": 271,
+  "name": "FEMIPRISTAL",
+  "price": "1023.40"
+ },
+ {
+  "sl": 272,
+  "name": "FERCEE RED SYRUP",
+  "price": "136.00"
+ },
+ {
+  "sl": 273,
+  "name": "FERCEE XT TAB",
+  "price": "137.70"
+ },
+ {
+  "sl": 274,
+  "name": "FERCIP XT SYRUP",
+  "price": "141.41"
+ },
+ {
+  "sl": 275,
+  "name": "FERICIP XT TAB",
+  "price": "114.67"
+ },
+ {
+  "sl": 276,
+  "name": "FERTIMORE F TAB",
+  "price": "370.69"
+ },
+ {
+  "sl": 277,
+  "name": "FERTIMORE M TAB",
+  "price": "309.40"
+ },
+ {
+  "sl": 278,
+  "name": "FERTYL M 25",
+  "price": "228.65"
+ },
+ {
+  "sl": 279,
+  "name": "FERYWIN XT PRO",
+  "price": "186.15"
+ },
+ {
+  "sl": 280,
+  "name": "FEXOTRUE 120",
+  "price": "127.50"
+ },
+ {
+  "sl": 281,
+  "name": "FEXOTRUE 180",
+  "price": "175.31"
+ },
+ {
+  "sl": 282,
+  "name": "FEXOTRUE M TAB",
+  "price": "178.50"
+ },
+ {
+  "sl": 283,
+  "name": "FEXOVAX M SYP",
+  "price": "126.65"
+ },
+ {
+  "sl": 284,
+  "name": "FEXOVAX M TAB",
+  "price": "246.50"
+ },
+ {
+  "sl": 285,
+  "name": "FIBAFEX 180MG",
+  "price": "178.08"
+ },
+ {
+  "sl": 286,
+  "name": "FIBOGEST 200MG",
+  "price": "269.45"
+ },
+ {
+  "sl": 287,
+  "name": "FIBOGEST 400",
+  "price": "551.65"
+ },
+ {
+  "sl": 288,
+  "name": "FINOBRATE 145",
+  "price": "100.96"
+ },
+ {
+  "sl": 289,
+  "name": "FINOBRATE 160",
+  "price": "110.80"
+ },
+ {
+  "sl": 290,
+  "name": "FLAGYL 600 TAB",
+  "price": "62.28"
+ },
+ {
+  "sl": 291,
+  "name": "FLAMOX CV 228.5",
+  "price": "57.69"
+ },
+ {
+  "sl": 292,
+  "name": "FLAMOX CV 375",
+  "price": "138.55"
+ },
+ {
+  "sl": 293,
+  "name": "FLAMOX CV DDS SYP",
+  "price": "136.85"
+ },
+ {
+  "sl": 294,
+  "name": "FLEXIB SYRUP",
+  "price": "41.65"
+ },
+ {
+  "sl": 295,
+  "name": "FLEXIBON TAB",
+  "price": "211.65"
+ },
+ {
+  "sl": 296,
+  "name": "FLEXON MR TAB",
+  "price": "22.31"
+ },
+ {
+  "sl": 297,
+  "name": "FLUBLAST SPRAY",
+  "price": "48.74"
+ },
+ {
+  "sl": 298,
+  "name": "FLUCOBIG-150",
+  "price": "11.67"
+ },
+ {
+  "sl": 299,
+  "name": "FLUKA 150 MG",
+  "price": "11.67"
+ },
+ {
+  "sl": 300,
+  "name": "FLUKONAZ 150 TAB",
+  "price": "11.48"
+ },
+ {
+  "sl": 301,
+  "name": "FLUKONAZ 400",
+  "price": "21.51"
+ },
+ {
+  "sl": 302,
+  "name": "FLUMET 400 TAB",
+  "price": "26.35"
+ },
+ {
+  "sl": 303,
+  "name": "FLUMONT LC KID SYP",
+  "price": "111.56"
+ },
+ {
+  "sl": 304,
+  "name": "FLUMONT LC KID TAB",
+  "price": "118.15"
+ },
+ {
+  "sl": 305,
+  "name": "FOOTSAVE PLUS 50G",
+  "price": "140.25"
+ },
+ {
+  "sl": 306,
+  "name": "FOURDERM CREAM",
+  "price": "125.48"
+ },
+ {
+  "sl": 307,
+  "name": "FREEGO GRANULES",
+  "price": "263.93"
+ },
+ {
+  "sl": 308,
+  "name": "FREEGO PEG SYP",
+  "price": "329.89"
+ },
+ {
+  "sl": 309,
+  "name": "FREEGO SYP",
+  "price": "297.50"
+ },
+ {
+  "sl": 310,
+  "name": "FREELEX PLUS SYPN",
+  "price": "116.45"
+ },
+ {
+  "sl": 311,
+  "name": "FUL AID GOLD CAP",
+  "price": "102.38"
+ },
+ {
+  "sl": 312,
+  "name": "FUL-AID GOLD SYP",
+  "price": "153.39"
+ },
+ {
+  "sl": 313,
+  "name": "FUNGICIP 150 TAB",
+  "price": "11.48"
+ },
+ {
+  "sl": 314,
+  "name": "FUNGICIP 200 MG",
+  "price": "16.62"
+ },
+ {
+  "sl": 315,
+  "name": "FUNGIFORCE 150 TAB",
+  "price": "22.95"
+ },
+ {
+  "sl": 316,
+  "name": "FUNGITOP F CREAM",
+  "price": "42.71"
+ },
+ {
+  "sl": 317,
+  "name": "FUNTWIST FEM",
+  "price": "152.15"
+ },
+ {
+  "sl": 318,
+  "name": "FUTURENZYME SYRUP",
+  "price": "128.35"
+ },
+ {
+  "sl": 319,
+  "name": "FYBOGEL ORANGE POWDER",
+  "price": "166.60"
+ },
+ {
+  "sl": 320,
+  "name": "GABAKIND M",
+  "price": "122.71"
+ },
+ {
+  "sl": 321,
+  "name": "GABAKIND NT",
+  "price": "164.05"
+ },
+ {
+  "sl": 322,
+  "name": "GABANYL NT 100",
+  "price": "80.75"
+ },
+ {
+  "sl": 323,
+  "name": "GABAPREX M",
+  "price": "126.65"
+ },
+ {
+  "sl": 324,
+  "name": "GABAVAX NT TAB",
+  "price": "158.53"
+ },
+ {
+  "sl": 325,
+  "name": "GABAYES PLUS",
+  "price": "157.77"
+ },
+ {
+  "sl": 326,
+  "name": "GALACT",
+  "price": "749.00"
+ },
+ {
+  "sl": 327,
+  "name": "GALVAMARK 50MG",
+  "price": "101.15"
+ },
+ {
+  "sl": 328,
+  "name": "GALVAMARK MET 50/500",
+  "price": "119.20"
+ },
+ {
+  "sl": 329,
+  "name": "GAVISCON PEPPERMINT",
+  "price": "165.76"
+ },
+ {
+  "sl": 330,
+  "name": "GENTAKEM D",
+  "price": "39.10"
+ },
+ {
+  "sl": 331,
+  "name": "GERMBETA 10%",
+  "price": "92.98"
+ },
+ {
+  "sl": 332,
+  "name": "GILLETTE FOAM REGULAR",
+  "price": "261.25"
+ },
+ {
+  "sl": 333,
+  "name": "GILLETTE SHAVING FOAM NEEM",
+  "price": "236.55"
+ },
+ {
+  "sl": 334,
+  "name": "GLENDAN 4 MG",
+  "price": "46.75"
+ },
+ {
+  "sl": 335,
+  "name": "GLIMDA 1",
+  "price": "33.15"
+ },
+ {
+  "sl": 336,
+  "name": "GLIMDA 2",
+  "price": "51.97"
+ },
+ {
+  "sl": 337,
+  "name": "GLIMDA MV1",
+  "price": "121.00"
+ },
+ {
+  "sl": 338,
+  "name": "GLIMDA MV2",
+  "price": "154.88"
+ },
+ {
+  "sl": 339,
+  "name": "GLIMIHELP M1",
+  "price": "95.28"
+ },
+ {
+  "sl": 340,
+  "name": "GLIMIHELP M2",
+  "price": "122.50"
+ },
+ {
+  "sl": 341,
+  "name": "GLIMIHELP PM1",
+  "price": "122.50"
+ },
+ {
+  "sl": 342,
+  "name": "GLIMIHELP PM2",
+  "price": "145.20"
+ },
+ {
+  "sl": 343,
+  "name": "GLIMIHELP VM1/0.2",
+  "price": "101.64"
+ },
+ {
+  "sl": 344,
+  "name": "GLIMIHELP VM2/0.2",
+  "price": "131.58"
+ },
+ {
+  "sl": 345,
+  "name": "GLIMISAVE MV 0.5",
+  "price": "154.13"
+ },
+ {
+  "sl": 346,
+  "name": "GLIMISAVE MV 3.3",
+  "price": "140.43"
+ },
+ {
+  "sl": 347,
+  "name": "GLISEN SM 1/50/500",
+  "price": "118.15"
+ },
+ {
+  "sl": 348,
+  "name": "GLISEN SM 2/50/500",
+  "price": "133.45"
+ },
+ {
+  "sl": 349,
+  "name": "GLITASENZ M 100",
+  "price": "127.50"
+ },
+ {
+  "sl": 350,
+  "name": "GLUCON - D ORANGE",
+  "price": "204.25"
+ },
+ {
+  "sl": 351,
+  "name": "GLYBOVIN 1.25",
+  "price": "5.40"
+ },
+ {
+  "sl": 352,
+  "name": "GLYBOVIN 2.5",
+  "price": "5.76"
+ },
+ {
+  "sl": 353,
+  "name": "GOODMORN",
+  "price": "192.10"
+ },
+ {
+  "sl": 354,
+  "name": "GRANTIN D GEL",
+  "price": "195.50"
+ },
+ {
+  "sl": 355,
+  "name": "GUTBLISS",
+  "price": "138.55"
+ },
+ {
+  "sl": 356,
+  "name": "HAIRFOLIC MEN",
+  "price": "765.00"
+ },
+ {
+  "sl": 357,
+  "name": "HAIRFOLLIC WOMEN",
+  "price": "683.76"
+ },
+ {
+  "sl": 358,
+  "name": "HALLENS INFANT 1G SUP",
+  "price": "30.00"
+ },
+ {
+  "sl": 359,
+  "name": "HAPPY BABY GIFT PACK",
+  "price": "970.00"
+ },
+ {
+  "sl": 360,
+  "name": "HEAD&SHOULDER COOL MENTHOL",
+  "price": "1510.50"
+ },
+ {
+  "sl": 361,
+  "name": "HEAD&SHOULDER SMOTH &SILKY",
+  "price": "1510.50"
+ },
+ {
+  "sl": 362,
+  "name": "HEALCEE TAB",
+  "price": "66.30"
+ },
+ {
+  "sl": 363,
+  "name": "HEALD&SHOULDER OILY STICKY DANDRUFF",
+  "price": "79.00"
+ },
+ {
+  "sl": 364,
+  "name": "HEALD&SHOULDER ANTI-HAIRFALL",
+  "price": "1510.50"
+ },
+ {
+  "sl": 365,
+  "name": "HEPACO 140TAB",
+  "price": "142.63"
+ },
+ {
+  "sl": 366,
+  "name": "HEPACOZY SACHET",
+  "price": "147.90"
+ },
+ {
+  "sl": 367,
+  "name": "HEPACOZY XT TAB",
+  "price": "233.75"
+ },
+ {
+  "sl": 368,
+  "name": "HICKS THERMO METER",
+  "price": "189.05"
+ },
+ {
+  "sl": 369,
+  "name": "HIMALAYA ANTI HAIR FALL SHAMPOO",
+  "price": "312.55"
+ },
+ {
+  "sl": 370,
+  "name": "HIMALAYA BABY POWDER",
+  "price": "323.00"
+ },
+ {
+  "sl": 371,
+  "name": "HIPRES 25",
+  "price": "28.55"
+ },
+ {
+  "sl": 372,
+  "name": "HISTOX 16",
+  "price": "68.00"
+ },
+ {
+  "sl": 373,
+  "name": "HITAP ER 50",
+  "price": "320.40"
+ },
+ {
+  "sl": 374,
+  "name": "HUNGREE SYRUP",
+  "price": "149.60"
+ },
+ {
+  "sl": 375,
+  "name": "HYDROHEAL NOVA CREAM",
+  "price": "543.15"
+ },
+ {
+  "sl": 376,
+  "name": "HYDROXINE 25",
+  "price": "46.75"
+ },
+ {
+  "sl": 377,
+  "name": "HYHIST SYRUP",
+  "price": "96.05"
+ },
+ {
+  "sl": 378,
+  "name": "HYOCIMAX S",
+  "price": "61.08"
+ },
+ {
+  "sl": 379,
+  "name": "IBUKEM PLUS SUS",
+  "price": "68.00"
+ },
+ {
+  "sl": 380,
+  "name": "IMUNOWISE OK SACHET",
+  "price": "41.65"
+ },
+ {
+  "sl": 381,
+  "name": "IMUNWISE OK",
+  "price": "49.00"
+ },
+ {
+  "sl": 382,
+  "name": "INDULEKHA BRINGHA OIL",
+  "price": "487.35"
+ },
+ {
+  "sl": 383,
+  "name": "INJ HCG 5000",
+  "price": "550.00"
+ },
+ {
+  "sl": 384,
+  "name": "INJ INDIRAB",
+  "price": "500.00"
+ },
+ {
+  "sl": 385,
+  "name": "INJ TD VAC",
+  "price": "500.00"
+ },
+ {
+  "sl": 386,
+  "name": "INJ VAXIFLU",
+  "price": "1990.00"
+ },
+ {
+  "sl": 387,
+  "name": "INJ WINGLAD FSH 75",
+  "price": "1290.00"
+ },
+ {
+  "sl": 388,
+  "name": "ISOFIB 40 TAB",
+  "price": "83.30"
+ },
+ {
+  "sl": 389,
+  "name": "ISOFIT 10MG",
+  "price": "477.33"
+ },
+ {
+  "sl": 390,
+  "name": "ITCH GUARD OINT",
+  "price": "63.87"
+ },
+ {
+  "sl": 391,
+  "name": "ITCH GUARD+",
+  "price": "18.11"
+ },
+ {
+  "sl": 392,
+  "name": "ITRANCURE 100",
+  "price": "158.70"
+ },
+ {
+  "sl": 393,
+  "name": "ITRANOX 200",
+  "price": "147.41"
+ },
+ {
+  "sl": 394,
+  "name": "ITROMED SOAP",
+  "price": "114.75"
+ },
+ {
+  "sl": 395,
+  "name": "JAKOSTE PLUS",
+  "price": "130.61"
+ },
+ {
+  "sl": 396,
+  "name": "JAREN 25 MG",
+  "price": "140.00"
+ },
+ {
+  "sl": 397,
+  "name": "JAREN L 25/5",
+  "price": "168.00"
+ },
+ {
+  "sl": 398,
+  "name": "KANDIZYME SYRUP",
+  "price": "153.00"
+ },
+ {
+  "sl": 399,
+  "name": "KASJEL CS SYRUP SF",
+  "price": "90.29"
+ },
+ {
+  "sl": 400,
+  "name": "KETOCIP CREAM",
+  "price": "82.28"
+ },
+ {
+  "sl": 401,
+  "name": "KETOCIP SHAMPOO",
+  "price": "247.19"
+ },
+ {
+  "sl": 402,
+  "name": "KETONALOG ALPHA",
+  "price": "315.35"
+ },
+ {
+  "sl": 403,
+  "name": "KOFCLEAR LS SYP",
+  "price": "110.50"
+ },
+ {
+  "sl": 404,
+  "name": "KOLDKIND TAB",
+  "price": "36.93"
+ },
+ {
+  "sl": 405,
+  "name": "KRIMLY",
+  "price": "339.15"
+ },
+ {
+  "sl": 406,
+  "name": "L HIST MONT JR",
+  "price": "110.50"
+ },
+ {
+  "sl": 407,
+  "name": "L HIST MONT JUNIOR 30 ML",
+  "price": "62.90"
+ },
+ {
+  "sl": 408,
+  "name": "LACTONIC GRANULES",
+  "price": "382.50"
+ },
+ {
+  "sl": 409,
+  "name": "LANSTEZ 30",
+  "price": "119.85"
+ },
+ {
+  "sl": 410,
+  "name": "LASIPEN 40",
+  "price": "8.50"
+ },
+ {
+  "sl": 411,
+  "name": "LECOVAX M TAB",
+  "price": "92.65"
+ },
+ {
+  "sl": 412,
+  "name": "LETROLIM 2.5",
+  "price": "139.40"
+ },
+ {
+  "sl": 413,
+  "name": "LEVOCAT 500",
+  "price": "229.50"
+ },
+ {
+  "sl": 414,
+  "name": "LEVOCET 40",
+  "price": "65.45"
+ },
+ {
+  "sl": 415,
+  "name": "LEVOQUIN 500",
+  "price": "42.79"
+ },
+ {
+  "sl": 416,
+  "name": "LILITEC CREAM 10G",
+  "price": "130.10"
+ },
+ {
+  "sl": 417,
+  "name": "LINAMIT 5 MG",
+  "price": "100.00"
+ },
+ {
+  "sl": 418,
+  "name": "LINOWIN-600",
+  "price": "339.15"
+ },
+ {
+  "sl": 419,
+  "name": "LINZOVAX 600 TAB",
+  "price": "344.25"
+ },
+ {
+  "sl": 420,
+  "name": "LIPICROSS R 10",
+  "price": "120.00"
+ },
+ {
+  "sl": 421,
+  "name": "LIPICROSS RF",
+  "price": "161.99"
+ },
+ {
+  "sl": 422,
+  "name": "LIPIKIND-AS 20",
+  "price": "26.25"
+ },
+ {
+  "sl": 423,
+  "name": "LIPVAS 10 MG",
+  "price": "44.53"
+ },
+ {
+  "sl": 424,
+  "name": "LIPVAS 20 MG",
+  "price": "114.50"
+ },
+ {
+  "sl": 425,
+  "name": "LISTERINE COOL MINT MOUTH WASH",
+  "price": "199.50"
+ },
+ {
+  "sl": 426,
+  "name": "LITTLES BABY WIPES",
+  "price": "209.00"
+ },
+ {
+  "sl": 427,
+  "name": "LIULIEASE CREAM 10G",
+  "price": "140.25"
+ },
+ {
+  "sl": 428,
+  "name": "LIVEASY ANKLE SUPPORT",
+  "price": "284.05"
+ },
+ {
+  "sl": 429,
+  "name": "LIVEASY ABDOMINAL BELT 8 L",
+  "price": "899.10"
+ },
+ {
+  "sl": 430,
+  "name": "LIVEASY ARM SLING POUCH L",
+  "price": "312.55"
+ },
+ {
+  "sl": 431,
+  "name": "LIVEASY ARM SLING POUCH XL",
+  "price": "312.55"
+ },
+ {
+  "sl": 432,
+  "name": "LIVEASY COOL EYE MASK",
+  "price": "114.00"
+ },
+ {
+  "sl": 433,
+  "name": "LIVEASY COTTON STICK",
+  "price": "99.75"
+ },
+ {
+  "sl": 434,
+  "name": "LIVEASY CREPE BANDAGE 10 CM",
+  "price": "278.91"
+ },
+ {
+  "sl": 435,
+  "name": "LIVEASY FEEDING BOTTLE",
+  "price": "132.00"
+ },
+ {
+  "sl": 436,
+  "name": "LIVEASY HOT&COOL EYE",
+  "price": "331.55"
+ },
+ {
+  "sl": 437,
+  "name": "LIVEASY NAIL PAINT",
+  "price": "151.05"
+ },
+ {
+  "sl": 438,
+  "name": "LIVEASY NASAL SPRAY",
+  "price": "80.75"
+ },
+ {
+  "sl": 439,
+  "name": "LIVEASY PATCH",
+  "price": "161.50"
+ },
+ {
+  "sl": 440,
+  "name": "LIVEASY PRO ABD BELT 8 M SIZE",
+  "price": "899.10"
+ },
+ {
+  "sl": 441,
+  "name": "LIVEASY PRO ABD BELT XL SIZE",
+  "price": "890.10"
+ },
+ {
+  "sl": 442,
+  "name": "LIVEASY PRO ARM LARGE",
+  "price": "464.07"
+ },
+ {
+  "sl": 443,
+  "name": "LIVEASY PRO KNEE CAP XL",
+  "price": "417.57"
+ },
+ {
+  "sl": 444,
+  "name": "LIVEASY VARICOSE VEIN STOCKINGS",
+  "price": "918.00"
+ },
+ {
+  "sl": 445,
+  "name": "LIVEAZY SPRAY",
+  "price": "80.75"
+ },
+ {
+  "sl": 446,
+  "name": "LIVOLUK KID SYP",
+  "price": "65.45"
+ },
+ {
+  "sl": 447,
+  "name": "LIVOSOFT 150",
+  "price": "163.63"
+ },
+ {
+  "sl": 448,
+  "name": "LIVOSOFT 300",
+  "price": "303.88"
+ },
+ {
+  "sl": 449,
+  "name": "LOBET 100",
+  "price": "733.55"
+ },
+ {
+  "sl": 450,
+  "name": "LODENS 5",
+  "price": "57.60"
+ },
+ {
+  "sl": 451,
+  "name": "LODENS F",
+  "price": "123.20"
+ },
+ {
+  "sl": 452,
+  "name": "LONOPIN 40MG INJ",
+  "price": "270.43"
+ },
+ {
+  "sl": 453,
+  "name": "LOPID 300 CAP",
+  "price": "266.40"
+ },
+ {
+  "sl": 454,
+  "name": "LOVOLKEM 250",
+  "price": "45.86"
+ },
+ {
+  "sl": 455,
+  "name": "LUCOBET GM",
+  "price": "121.55"
+ },
+ {
+  "sl": 456,
+  "name": "LULIACT LOTION",
+  "price": "127.50"
+ },
+ {
+  "sl": 457,
+  "name": "LULIEASE CREAM 10 GM",
+  "price": "140.25"
+ },
+ {
+  "sl": 458,
+  "name": "LULIHIGH LOTION",
+  "price": "232.81"
+ },
+ {
+  "sl": 459,
+  "name": "LULITEC 10 GM",
+  "price": "130.10"
+ },
+ {
+  "sl": 460,
+  "name": "LULITEC 20 GM CREAM",
+  "price": "248.90"
+ },
+ {
+  "sl": 461,
+  "name": "LULITEC 30 FM",
+  "price": "257.13"
+ },
+ {
+  "sl": 462,
+  "name": "LULITEC SPRAY",
+  "price": "280.50"
+ },
+ {
+  "sl": 463,
+  "name": "LULITREAT -B CREAM 10G",
+  "price": "149.60"
+ },
+ {
+  "sl": 464,
+  "name": "LULITREAT B CREAM 10 GM",
+  "price": "149.60"
+ },
+ {
+  "sl": 465,
+  "name": "LULITREAT SOAP",
+  "price": "140.25"
+ },
+ {
+  "sl": 466,
+  "name": "MA DHA",
+  "price": "86.24"
+ },
+ {
+  "sl": 467,
+  "name": "MACBERY Q DX TAB",
+  "price": "55.25"
+ },
+ {
+  "sl": 468,
+  "name": "MACBION LC 100ML",
+  "price": "80.75"
+ },
+ {
+  "sl": 469,
+  "name": "MACBION LC 200",
+  "price": "153.00"
+ },
+ {
+  "sl": 470,
+  "name": "MACPLATIN 200 ML",
+  "price": "149.60"
+ },
+ {
+  "sl": 471,
+  "name": "MACTHROMBO GEL",
+  "price": "89.25"
+ },
+ {
+  "sl": 472,
+  "name": "MAGINS 400",
+  "price": "46.75"
+ },
+ {
+  "sl": 473,
+  "name": "MAGINSO",
+  "price": "89.25"
+ },
+ {
+  "sl": 474,
+  "name": "MAGNAKOF DX JR SYRUP",
+  "price": "57.80"
+ },
+ {
+  "sl": 475,
+  "name": "MAGNAKOF DX SF SYRUP",
+  "price": "93.50"
+ },
+ {
+  "sl": 476,
+  "name": "MAGNAKOF LS SF SYRUP",
+  "price": "101.15"
+ },
+ {
+  "sl": 477,
+  "name": "MAHACAL RTD",
+  "price": "244.80"
+ },
+ {
+  "sl": 478,
+  "name": "MAHAMOX CV 625 TAB",
+  "price": "177.23"
+ },
+ {
+  "sl": 479,
+  "name": "MAHAMOX CV DUO SYP",
+  "price": "115.60"
+ },
+ {
+  "sl": 480,
+  "name": "MAHAMOX CV SYP",
+  "price": "58.37"
+ },
+ {
+  "sl": 481,
+  "name": "MAHAZIN FX TAB",
+  "price": "170.00"
+ },
+ {
+  "sl": 482,
+  "name": "MAXIRICH CAP",
+  "price": "101.15"
+ },
+ {
+  "sl": 483,
+  "name": "MAXTRA P DROPS",
+  "price": "96.90"
+ },
+ {
+  "sl": 484,
+  "name": "MEBALIN OD",
+  "price": "127.50"
+ },
+ {
+  "sl": 485,
+  "name": "MEBEX 6 TAB",
+  "price": "16.56"
+ },
+ {
+  "sl": 486,
+  "name": "MECOVIXR GOLD SACHET",
+  "price": "58.65"
+ },
+ {
+  "sl": 487,
+  "name": "MECOVIXR D3 TAB",
+  "price": "178.93"
+ },
+ {
+  "sl": 488,
+  "name": "MECOVIXR G TAB",
+  "price": "114.75"
+ },
+ {
+  "sl": 489,
+  "name": "MECOVIXR GOLD SACHET",
+  "price": "58.65"
+ },
+ {
+  "sl": 490,
+  "name": "MECOVIXR LC TAB",
+  "price": "255.00"
+ },
+ {
+  "sl": 491,
+  "name": "MECOVIXR NP TAB",
+  "price": "167.28"
+ },
+ {
+  "sl": 492,
+  "name": "MECOVIXR PLUS CAP",
+  "price": "331.50"
+ },
+ {
+  "sl": 493,
+  "name": "MEDLIP - 160",
+  "price": "127.50"
+ },
+ {
+  "sl": 494,
+  "name": "MEDLIP 145",
+  "price": "110.50"
+ },
+ {
+  "sl": 495,
+  "name": "MEGACECLO SPAS",
+  "price": "138.55"
+ },
+ {
+  "sl": 496,
+  "name": "MEGAVAX 369 CAP",
+  "price": "148.75"
+ },
+ {
+  "sl": 497,
+  "name": "MEGAVAX 5G CAP",
+  "price": "160.65"
+ },
+ {
+  "sl": 498,
+  "name": "MELNOR CREAM",
+  "price": "187.00"
+ },
+ {
+  "sl": 499,
+  "name": "MESH NEBULIZER",
+  "price": "474.05"
+ },
+ {
+  "sl": 500,
+  "name": "METAHENZ VG2",
+  "price": "94.68"
+ },
+ {
+  "sl": 501,
+  "name": "METASENS VG1",
+  "price": "79.72"
+ },
+ {
+  "sl": 502,
+  "name": "METASENZ V 0.3",
+  "price": "63.20"
+ },
+ {
+  "sl": 503,
+  "name": "METBETIC GL2",
+  "price": "111.62"
+ },
+ {
+  "sl": 504,
+  "name": "METFOR 500 MG",
+  "price": "31.22"
+ },
+ {
+  "sl": 505,
+  "name": "METHERGIN TAB",
+  "price": "88.00"
+ },
+ {
+  "sl": 506,
+  "name": "METHIFOL LC",
+  "price": "126.65"
+ },
+ {
+  "sl": 507,
+  "name": "METOHEART XL 25",
+  "price": "33.60"
+ },
+ {
+  "sl": 508,
+  "name": "METOHEART XL 50",
+  "price": "46.68"
+ },
+ {
+  "sl": 509,
+  "name": "METOZ 2.5",
+  "price": "159.66"
+ },
+ {
+  "sl": 510,
+  "name": "METROGYL 600 ER",
+  "price": "111.56"
+ },
+ {
+  "sl": 511,
+  "name": "MGD3 TAB",
+  "price": "229.50"
+ },
+ {
+  "sl": 512,
+  "name": "MINMIN PB SYRUP",
+  "price": "327.12"
+ },
+ {
+  "sl": 513,
+  "name": "MINMIN PB TAB",
+  "price": "490.45"
+ },
+ {
+  "sl": 514,
+  "name": "MIRAGRON S 25",
+  "price": "318.75"
+ },
+ {
+  "sl": 515,
+  "name": "MIRAHYPE 25 TAB",
+  "price": "212.50"
+ },
+ {
+  "sl": 516,
+  "name": "MIRAHYPE S 50/5 TAB",
+  "price": "420.75"
+ },
+ {
+  "sl": 517,
+  "name": "MONOVONO TAB",
+  "price": "127.50"
+ },
+ {
+  "sl": 518,
+  "name": "MONTECIP FX TAB",
+  "price": "177.34"
+ },
+ {
+  "sl": 519,
+  "name": "MONTECIP LC SYRUP",
+  "price": "118.90"
+ },
+ {
+  "sl": 520,
+  "name": "MONTECIP LC TAB",
+  "price": "190.65"
+ },
+ {
+  "sl": 521,
+  "name": "MONTENOVA LC - 5TAB",
+  "price": "100.00"
+ },
+ {
+  "sl": 522,
+  "name": "MOOV OINT 5G",
+  "price": "13.30"
+ },
+ {
+  "sl": 523,
+  "name": "MOOV ONIT 10G",
+  "price": "68.00"
+ },
+ {
+  "sl": 524,
+  "name": "MOOV SPRAY",
+  "price": "92.00"
+ },
+ {
+  "sl": 525,
+  "name": "MOREDOT 10 MG SACHET",
+  "price": "26.35"
+ },
+ {
+  "sl": 526,
+  "name": "MOXIMAX D EYE DROP",
+  "price": "107.10"
+ },
+ {
+  "sl": 527,
+  "name": "MUCINOVA EF 600 - 2 TAB",
+  "price": "70.00"
+ },
+ {
+  "sl": 528,
+  "name": "MUCOEND 600 EF",
+  "price": "45.00"
+ },
+ {
+  "sl": 529,
+  "name": "MUCOFORM AB 200",
+  "price": "204.43"
+ },
+ {
+  "sl": 530,
+  "name": "MUCOHYPE 600 TAB",
+  "price": "256.53"
+ },
+ {
+  "sl": 531,
+  "name": "MUCOLINC SYP",
+  "price": "102.33"
+ },
+ {
+  "sl": 532,
+  "name": "MULTICAINE GEL",
+  "price": "120.70"
+ },
+ {
+  "sl": 533,
+  "name": "MULTIRICH",
+  "price": "135.57"
+ },
+ {
+  "sl": 534,
+  "name": "MUPICIP 2% 15 GM OINT",
+  "price": "223.01"
+ },
+ {
+  "sl": 535,
+  "name": "MUPICIP 2% OINT 5G",
+  "price": "96.58"
+ },
+ {
+  "sl": 536,
+  "name": "MUPIPRIME OINT 5G",
+  "price": "96.58"
+ },
+ {
+  "sl": 537,
+  "name": "MYO BD",
+  "price": "262.45"
+ },
+ {
+  "sl": 538,
+  "name": "MYOVIL FORTE",
+  "price": "297.50"
+ },
+ {
+  "sl": 539,
+  "name": "MYOVIL PLUS SACHETS",
+  "price": "52.19"
+ },
+ {
+  "sl": 540,
+  "name": "NAFODIL 75 TAB",
+  "price": "157.68"
+ },
+ {
+  "sl": 541,
+  "name": "NAPROSTRONG 250",
+  "price": "88.83"
+ },
+ {
+  "sl": 542,
+  "name": "NAPROSTRONG D 250",
+  "price": "65.45"
+ },
+ {
+  "sl": 543,
+  "name": "NAPROSTRONG-D 500",
+  "price": "88.83"
+ },
+ {
+  "sl": 544,
+  "name": "NAPROWEL FORTE",
+  "price": "110.50"
+ },
+ {
+  "sl": 545,
+  "name": "NAPROWEL PLUS",
+  "price": "72.25"
+ },
+ {
+  "sl": 546,
+  "name": "NAVRATANA OIL",
+  "price": "90.00"
+ },
+ {
+  "sl": 547,
+  "name": "NAZOHYPE S",
+  "price": "54.40"
+ },
+ {
+  "sl": 548,
+  "name": "NEFROPATH TAB",
+  "price": "157.25"
+ },
+ {
+  "sl": 549,
+  "name": "NEFROSMOOTH AT",
+  "price": "159.80"
+ },
+ {
+  "sl": 550,
+  "name": "NEUROBION FORTE",
+  "price": "36.73"
+ },
+ {
+  "sl": 551,
+  "name": "NEURORUSH FORTE TAB",
+  "price": "67.50"
+ },
+ {
+  "sl": 552,
+  "name": "NEVIA FRESH POWER",
+  "price": "236.55"
+ },
+ {
+  "sl": 553,
+  "name": "NEVIA MEN DEEP IMPACT",
+  "price": "236.55"
+ },
+ {
+  "sl": 554,
+  "name": "NEVIA MEN FRESH ACTIVE",
+  "price": "236.55"
+ },
+ {
+  "sl": 555,
+  "name": "NEVIA PEARL& BEAUTY",
+  "price": "236.55"
+ },
+ {
+  "sl": 556,
+  "name": "NEW WHISPER CHOICE NIGHTS",
+  "price": "150.00"
+ },
+ {
+  "sl": 557,
+  "name": "NEWLARG SACHET",
+  "price": "58.65"
+ },
+ {
+  "sl": 558,
+  "name": "NEXOM RD",
+  "price": "138.55"
+ },
+ {
+  "sl": 559,
+  "name": "NICARDIA R 20",
+  "price": "63.40"
+ },
+ {
+  "sl": 560,
+  "name": "NIFTAWIN SR 100",
+  "price": "109.96"
+ },
+ {
+  "sl": 561,
+  "name": "NIFURTI 100",
+  "price": "78.20"
+ },
+ {
+  "sl": 562,
+  "name": "NITAXAN 100 SR",
+  "price": "115.80"
+ },
+ {
+  "sl": 563,
+  "name": "NITZOXIDE 500",
+  "price": "95.92"
+ },
+ {
+  "sl": 564,
+  "name": "NIVEA",
+  "price": "497.80"
+ },
+ {
+  "sl": 565,
+  "name": "NIVEA BODY LOTION COCOA NOURRISH",
+  "price": "536.75"
+ },
+ {
+  "sl": 566,
+  "name": "NIVEA BODY MILK LOTION",
+  "price": "722.00"
+ },
+ {
+  "sl": 567,
+  "name": "NIVEA PURE IMPACT",
+  "price": "313.50"
+ },
+ {
+  "sl": 568,
+  "name": "NIVEA SOFT LIGHT MOIST",
+  "price": "627.00"
+ },
+ {
+  "sl": 569,
+  "name": "NIVEA SUN PROTECT &MOIST",
+  "price": "699.00"
+ },
+ {
+  "sl": 570,
+  "name": "NOCOLD SYP",
+  "price": "70.45"
+ },
+ {
+  "sl": 571,
+  "name": "NOCOLD TAB",
+  "price": "40.11"
+ },
+ {
+  "sl": 572,
+  "name": "NORDAY TZ NF",
+  "price": "84.15"
+ },
+ {
+  "sl": 573,
+  "name": "NOVACLAV 625",
+  "price": "104.52"
+ },
+ {
+  "sl": 574,
+  "name": "NOVUGEST M 10",
+  "price": "60.43"
+ },
+ {
+  "sl": 575,
+  "name": "NUDICLO 2x",
+  "price": "165.75"
+ },
+ {
+  "sl": 576,
+  "name": "NUTRACIBEL CHOCO PWDR",
+  "price": "365.50"
+ },
+ {
+  "sl": 577,
+  "name": "NUTRACIBEL ELAICHI PWDR",
+  "price": "331.50"
+ },
+ {
+  "sl": 578,
+  "name": "NUTREME LITE PWDR",
+  "price": "221.00"
+ },
+ {
+  "sl": 579,
+  "name": "OFLOFINE M SUSPENSION",
+  "price": "103.20"
+ },
+ {
+  "sl": 580,
+  "name": "OKACET L - 8 tab",
+  "price": "58.62"
+ },
+ {
+  "sl": 581,
+  "name": "OLIVO PAPER COTTON",
+  "price": "65.10"
+ },
+ {
+  "sl": 582,
+  "name": "OMEE-CAINE GEL",
+  "price": "127.93"
+ },
+ {
+  "sl": 583,
+  "name": "OMNACORTIL 10",
+  "price": "12.98"
+ },
+ {
+  "sl": 584,
+  "name": "OMNACORTIL 20",
+  "price": "26.00"
+ },
+ {
+  "sl": 585,
+  "name": "OMNACORTIL 60 ML",
+  "price": "31.80"
+ },
+ {
+  "sl": 586,
+  "name": "OMNACORTIL DROPS",
+  "price": "43.65"
+ },
+ {
+  "sl": 587,
+  "name": "OMNACORTIL FORTE SYP",
+  "price": "54.95"
+ },
+ {
+  "sl": 588,
+  "name": "OMNICLAV 375 - 6 TAB",
+  "price": "125.58"
+ },
+ {
+  "sl": 589,
+  "name": "ORACRAFT GEL",
+  "price": "77.14"
+ },
+ {
+  "sl": 590,
+  "name": "ORAGUARD INSTA GEL",
+  "price": "63.75"
+ },
+ {
+  "sl": 591,
+  "name": "ORAWAYS PASTE",
+  "price": "91.17"
+ },
+ {
+  "sl": 592,
+  "name": "ORS SACHET",
+  "price": "19.64"
+ },
+ {
+  "sl": 593,
+  "name": "ORTHAL FORTE - 5 TAB",
+  "price": "100.80"
+ },
+ {
+  "sl": 594,
+  "name": "OSLID CREAM",
+  "price": "120.62"
+ },
+ {
+  "sl": 595,
+  "name": "OSTAVAXL DM TAB",
+  "price": "182.41"
+ },
+ {
+  "sl": 596,
+  "name": "OVACHIP SR 75",
+  "price": "331.50"
+ },
+ {
+  "sl": 597,
+  "name": "OXOLINE SPRAY",
+  "price": "93.50"
+ },
+ {
+  "sl": 598,
+  "name": "OZIVA BIOTIN",
+  "price": "664.05"
+ },
+ {
+  "sl": 599,
+  "name": "OZIVA HAIR VITAMINS",
+  "price": "854.05"
+ },
+ {
+  "sl": 600,
+  "name": "PANDERM + POWDER",
+  "price": "138.55"
+ },
+ {
+  "sl": 601,
+  "name": "PANTOLUP DSR CAP",
+  "price": "129.41"
+ },
+ {
+  "sl": 602,
+  "name": "PANTOSEC DSR",
+  "price": "128.97"
+ },
+ {
+  "sl": 603,
+  "name": "PARAKIND DS SYP",
+  "price": "38.25"
+ },
+ {
+  "sl": 604,
+  "name": "PENTALOC DSR",
+  "price": "119.17"
+ },
+ {
+  "sl": 605,
+  "name": "PENTOWOK DSR",
+  "price": "140.87"
+ },
+ {
+  "sl": 606,
+  "name": "PENVAX OXT TAB",
+  "price": "92.65"
+ },
+ {
+  "sl": 607,
+  "name": "PHARCAL FORTE",
+  "price": "110.50"
+ },
+ {
+  "sl": 608,
+  "name": "PHARCAL K27 CAP",
+  "price": "195.08"
+ },
+ {
+  "sl": 609,
+  "name": "PHENSDYL DX SYRUP",
+  "price": "119.09"
+ },
+ {
+  "sl": 610,
+  "name": "PICODOC TAB",
+  "price": "75.65"
+ },
+ {
+  "sl": 611,
+  "name": "PILEPLUS CREAM",
+  "price": "134.30"
+ },
+ {
+  "sl": 612,
+  "name": "PILO GO CREAM",
+  "price": "84.15"
+ },
+ {
+  "sl": 613,
+  "name": "PIORIDE 1 MG",
+  "price": "174.76"
+ },
+ {
+  "sl": 614,
+  "name": "PIORIDE 2 MG",
+  "price": "335.07"
+ },
+ {
+  "sl": 615,
+  "name": "PLACENTREX CREAM",
+  "price": "156.40"
+ },
+ {
+  "sl": 616,
+  "name": "PLATERISE TAB.",
+  "price": "220.15"
+ },
+ {
+  "sl": 617,
+  "name": "PLATONIC SYRUP",
+  "price": "153.00"
+ },
+ {
+  "sl": 618,
+  "name": "PODOGLEN 100 DT",
+  "price": "113.90"
+ },
+ {
+  "sl": 619,
+  "name": "PODOGLEN 50 SYP",
+  "price": "79.90"
+ },
+ {
+  "sl": 620,
+  "name": "PODOLGEN FORTE SYRUP",
+  "price": "148.75"
+ },
+ {
+  "sl": 621,
+  "name": "POVIDOT GARGLE",
+  "price": "106.25"
+ },
+ {
+  "sl": 622,
+  "name": "POWERFLAM MR",
+  "price": "97.75"
+ },
+ {
+  "sl": 623,
+  "name": "PRE GABAPREX CAP",
+  "price": "174.25"
+ },
+ {
+  "sl": 624,
+  "name": "PREGABANYL NT",
+  "price": "131.75"
+ },
+ {
+  "sl": 625,
+  "name": "PREGHYPE NT TAB",
+  "price": "158.10"
+ },
+ {
+  "sl": 626,
+  "name": "PREGNERV NT",
+  "price": "134.03"
+ },
+ {
+  "sl": 627,
+  "name": "PREGVOM",
+  "price": "127.93"
+ },
+ {
+  "sl": 628,
+  "name": "PREGVOM PLUS",
+  "price": "143.65"
+ },
+ {
+  "sl": 629,
+  "name": "PRIMEPILL 35",
+  "price": "296.65"
+ },
+ {
+  "sl": 630,
+  "name": "PRIMEPILL ULTRA",
+  "price": "466.65"
+ },
+ {
+  "sl": 631,
+  "name": "PRIUX MNT",
+  "price": "209.58"
+ },
+ {
+  "sl": 632,
+  "name": "PRIUX NT",
+  "price": "166.94"
+ },
+ {
+  "sl": 633,
+  "name": "PROZEF CAP",
+  "price": "72.25"
+ },
+ {
+  "sl": 634,
+  "name": "PRUVICT 1 MG",
+  "price": "138.55"
+ },
+ {
+  "sl": 635,
+  "name": "PYRIDIUM 200",
+  "price": "132.66"
+ },
+ {
+  "sl": 636,
+  "name": "Q MAX 200",
+  "price": "73.10"
+ },
+ {
+  "sl": 637,
+  "name": "RABALKEM IT",
+  "price": "205.70"
+ },
+ {
+  "sl": 638,
+  "name": "RABEFINE DSR",
+  "price": "104.55"
+ },
+ {
+  "sl": 639,
+  "name": "RABELKEM DSR",
+  "price": "123.25"
+ },
+ {
+  "sl": 640,
+  "name": "RABESEC DSR",
+  "price": "150.58"
+ },
+ {
+  "sl": 641,
+  "name": "RABESEC-LS",
+  "price": "205.33"
+ },
+ {
+  "sl": 642,
+  "name": "RABITOP LS",
+  "price": "204.43"
+ },
+ {
+  "sl": 643,
+  "name": "RABIWOK DSR",
+  "price": "136.66"
+ },
+ {
+  "sl": 644,
+  "name": "RAFLE 200",
+  "price": "192.10"
+ },
+ {
+  "sl": 645,
+  "name": "RAFLE 400",
+  "price": "381.23"
+ },
+ {
+  "sl": 646,
+  "name": "RAFLE 550",
+  "price": "448.80"
+ },
+ {
+  "sl": 647,
+  "name": "RANIPRIDE SYRP",
+  "price": "91.63"
+ },
+ {
+  "sl": 648,
+  "name": "RANIPRIDE SYRP 30 ML",
+  "price": "35.70"
+ },
+ {
+  "sl": 649,
+  "name": "RANTAC SYP",
+  "price": "151.30"
+ },
+ {
+  "sl": 650,
+  "name": "RANTOP 150",
+  "price": "56.02"
+ },
+ {
+  "sl": 651,
+  "name": "RAPID GEL",
+  "price": "113.82"
+ },
+ {
+  "sl": 652,
+  "name": "REACTIN SR 100",
+  "price": "57.50"
+ },
+ {
+  "sl": 653,
+  "name": "RECLER MPS PLUS",
+  "price": "79.05"
+ },
+ {
+  "sl": 654,
+  "name": "REDNISOL 16",
+  "price": "91.80"
+ },
+ {
+  "sl": 655,
+  "name": "REDNISOL 4",
+  "price": "51.00"
+ },
+ {
+  "sl": 656,
+  "name": "REDNISOL 8",
+  "price": "52.28"
+ },
+ {
+  "sl": 657,
+  "name": "REDOTREX 500",
+  "price": "165.41"
+ },
+ {
+  "sl": 658,
+  "name": "REJUNATE L TAB",
+  "price": "189.55"
+ },
+ {
+  "sl": 659,
+  "name": "RENORF 500 TAB",
+  "price": "144.50"
+ },
+ {
+  "sl": 660,
+  "name": "REXCOF DX SYP",
+  "price": "108.97"
+ },
+ {
+  "sl": 661,
+  "name": "RIBVAX OXT TAB",
+  "price": "84.15"
+ },
+ {
+  "sl": 662,
+  "name": "RIFA YES 200",
+  "price": "172.55"
+ },
+ {
+  "sl": 663,
+  "name": "RIFATREAT 200",
+  "price": "148.75"
+ },
+ {
+  "sl": 664,
+  "name": "RIFAVAX 100 SYP",
+  "price": "163.20"
+ },
+ {
+  "sl": 665,
+  "name": "RIFAXEMANIA M",
+  "price": "199.75"
+ },
+ {
+  "sl": 666,
+  "name": "RIFAXIGYL 60 ML",
+  "price": "135.00"
+ },
+ {
+  "sl": 667,
+  "name": "RIFAXIMAX SYRUP",
+  "price": "170.33"
+ },
+ {
+  "sl": 668,
+  "name": "RIFCURE 200",
+  "price": "172.55"
+ },
+ {
+  "sl": 669,
+  "name": "RIFCURE 400",
+  "price": "313.04"
+ },
+ {
+  "sl": 670,
+  "name": "RIFCURE 550",
+  "price": "398.87"
+ },
+ {
+  "sl": 671,
+  "name": "RING GUARD OINT 5G",
+  "price": "21.73"
+ },
+ {
+  "sl": 672,
+  "name": "RING OUT POWDER",
+  "price": "119.00"
+ },
+ {
+  "sl": 673,
+  "name": "RINILACT CAP",
+  "price": "46.28"
+ },
+ {
+  "sl": 674,
+  "name": "RINILACT DRY SYP",
+  "price": "51.85"
+ },
+ {
+  "sl": 675,
+  "name": "ROKO",
+  "price": "10.00"
+ },
+ {
+  "sl": 676,
+  "name": "ROLITEN 2MG TAB",
+  "price": "175.95"
+ },
+ {
+  "sl": 677,
+  "name": "ROLITEN OD 4MG",
+  "price": "339.15"
+ },
+ {
+  "sl": 678,
+  "name": "ROSUBEST 10MG",
+  "price": "203.72"
+ },
+ {
+  "sl": 679,
+  "name": "ROSUBEST 20 MG",
+  "price": "185.36"
+ },
+ {
+  "sl": 680,
+  "name": "ROSUBEST F",
+  "price": "185.56"
+ },
+ {
+  "sl": 681,
+  "name": "ROSUREN GOLD",
+  "price": "276.00"
+ },
+ {
+  "sl": 682,
+  "name": "ROSUVE-EZ 10",
+  "price": "186.64"
+ },
+ {
+  "sl": 683,
+  "name": "RUFLET TAB",
+  "price": "141.10"
+ },
+ {
+  "sl": 684,
+  "name": "RZOLE DSR",
+  "price": "131.72"
+ },
+ {
+  "sl": 685,
+  "name": "SACMIGUT SACHET",
+  "price": "29.75"
+ },
+ {
+  "sl": 686,
+  "name": "SAM 200",
+  "price": "302.40"
+ },
+ {
+  "sl": 687,
+  "name": "SAM 400",
+  "price": "704.80"
+ },
+ {
+  "sl": 688,
+  "name": "SEACURE 200",
+  "price": "406.30"
+ },
+ {
+  "sl": 689,
+  "name": "SELENIUM HEALTH",
+  "price": "664.05"
+ },
+ {
+  "sl": 690,
+  "name": "SENSODYNE X2",
+  "price": "399.50"
+ },
+ {
+  "sl": 691,
+  "name": "SET WET COOL AVATAR",
+  "price": "251.75"
+ },
+ {
+  "sl": 692,
+  "name": "SIAGLIP D",
+  "price": "150.00"
+ },
+ {
+  "sl": 693,
+  "name": "SILDOEASE 8MG",
+  "price": "208.25"
+ },
+ {
+  "sl": 694,
+  "name": "SILDOEASE D",
+  "price": "233.75"
+ },
+ {
+  "sl": 695,
+  "name": "SILHOLIFE 8",
+  "price": "238.85"
+ },
+ {
+  "sl": 696,
+  "name": "SILHOLIFE D",
+  "price": "458.15"
+ },
+ {
+  "sl": 697,
+  "name": "SILODOVA 8",
+  "price": "386.16"
+ },
+ {
+  "sl": 698,
+  "name": "SIM B6 TAB",
+  "price": "195.50"
+ },
+ {
+  "sl": 699,
+  "name": "SINAREST SYP",
+  "price": "116.45"
+ },
+ {
+  "sl": 700,
+  "name": "SITAGLIP 100",
+  "price": "112.48"
+ },
+ {
+  "sl": 701,
+  "name": "SITAGLIP 50",
+  "price": "104.00"
+ },
+ {
+  "sl": 702,
+  "name": "SITAGLIP D 100/10",
+  "price": "150.00"
+ },
+ {
+  "sl": 703,
+  "name": "SITAGLIP D 50/5",
+  "price": "124.00"
+ },
+ {
+  "sl": 704,
+  "name": "SITAGLIP DM 10/100/500",
+  "price": "168.00"
+ },
+ {
+  "sl": 705,
+  "name": "SITAKRAFT 100",
+  "price": "220.00"
+ },
+ {
+  "sl": 706,
+  "name": "SITAKRAFT 50",
+  "price": "158.40"
+ },
+ {
+  "sl": 707,
+  "name": "SITAKRAFT-M 500",
+  "price": "190.96"
+ },
+ {
+  "sl": 708,
+  "name": "SITANIA UTI SUS.",
+  "price": "161.50"
+ },
+ {
+  "sl": 709,
+  "name": "SITATRI M 50/500",
+  "price": "96.00"
+ },
+ {
+  "sl": 710,
+  "name": "SKINSHINE CREAM",
+  "price": "245.65"
+ },
+ {
+  "sl": 711,
+  "name": "SODATAB DS",
+  "price": "80.75"
+ },
+ {
+  "sl": 712,
+  "name": "SODATAB 500",
+  "price": "50.15"
+ },
+ {
+  "sl": 713,
+  "name": "SODIMCAR 500 TAB",
+  "price": "55.54"
+ },
+ {
+  "sl": 714,
+  "name": "SOFY ANTIBACTIRIA NIGHT PAD",
+  "price": "180.00"
+ },
+ {
+  "sl": 715,
+  "name": "SOLIWISE 10 TAB",
+  "price": "278.04"
+ },
+ {
+  "sl": 716,
+  "name": "SOSTIN AC",
+  "price": "167.20"
+ },
+ {
+  "sl": 717,
+  "name": "SOSTIN F",
+  "price": "185.60"
+ },
+ {
+  "sl": 718,
+  "name": "SOSTIN-10",
+  "price": "120.00"
+ },
+ {
+  "sl": 719,
+  "name": "SOSTIN-A",
+  "price": "80.80"
+ },
+ {
+  "sl": 720,
+  "name": "SPASCAINE SUSPENSION",
+  "price": "147.90"
+ },
+ {
+  "sl": 721,
+  "name": "SPASMONIL DROPS",
+  "price": "40.62"
+ },
+ {
+  "sl": 722,
+  "name": "SPASONIX 200",
+  "price": "172.55"
+ },
+ {
+  "sl": 723,
+  "name": "SPASRELIF DROP",
+  "price": "45.48"
+ },
+ {
+  "sl": 724,
+  "name": "SPASRELIF SUSPENSION",
+  "price": "70.13"
+ },
+ {
+  "sl": 725,
+  "name": "STAYCLEAR TUBE",
+  "price": "425.00"
+ },
+ {
+  "sl": 726,
+  "name": "STGLIPTIN M 100/500",
+  "price": "156.00"
+ },
+ {
+  "sl": 727,
+  "name": "STRECHMIN CREAM",
+  "price": "382.50"
+ },
+ {
+  "sl": 728,
+  "name": "STREPCLEAR LOZENGES",
+  "price": "40.38"
+ },
+ {
+  "sl": 729,
+  "name": "STREPSILS CAP",
+  "price": "28.00"
+ },
+ {
+  "sl": 730,
+  "name": "STRONE 200",
+  "price": "331.08"
+ },
+ {
+  "sl": 731,
+  "name": "SUCC-C ORANGE",
+  "price": "51.00"
+ },
+ {
+  "sl": 732,
+  "name": "SUCRA RECLER O 200",
+  "price": "251.18"
+ },
+ {
+  "sl": 733,
+  "name": "SUCRAZIDE 60MR",
+  "price": "60.00"
+ },
+ {
+  "sl": 734,
+  "name": "SUCRAZIDE MV 0.2",
+  "price": "100.00"
+ },
+ {
+  "sl": 735,
+  "name": "SUHAGRA 25",
+  "price": "109.02"
+ },
+ {
+  "sl": 736,
+  "name": "SULOXID O 100 ML",
+  "price": "121.55"
+ },
+ {
+  "sl": 737,
+  "name": "SUMO PLUS SPRAY 35 GM",
+  "price": "125.80"
+ },
+ {
+  "sl": 738,
+  "name": "SUPER ZINC",
+  "price": "66.30"
+ },
+ {
+  "sl": 739,
+  "name": "SUPIROBAN OINTMENT",
+  "price": "96.58"
+ },
+ {
+  "sl": 740,
+  "name": "SUPPOL CHILD SUP",
+  "price": "20.00"
+ },
+ {
+  "sl": 741,
+  "name": "SUPRACAL - ISO",
+  "price": "318.75"
+ },
+ {
+  "sl": 742,
+  "name": "SUPRACAL 1000",
+  "price": "171.33"
+ },
+ {
+  "sl": 743,
+  "name": "SUPRACAL 2000",
+  "price": "335.75"
+ },
+ {
+  "sl": 744,
+  "name": "SUREPENAM 200",
+  "price": "535.50"
+ },
+ {
+  "sl": 745,
+  "name": "TAPENAX ER-50",
+  "price": "277.10"
+ },
+ {
+  "sl": 746,
+  "name": "TCU D3 NANO SHOT",
+  "price": "62.67"
+ },
+ {
+  "sl": 747,
+  "name": "TELMIBLESS 40",
+  "price": "81.04"
+ },
+ {
+  "sl": 748,
+  "name": "TELMIBLESS AM",
+  "price": "104.00"
+ },
+ {
+  "sl": 749,
+  "name": "TELMIBLESS AMH",
+  "price": "128.00"
+ },
+ {
+  "sl": 750,
+  "name": "TELMIBLESS CT",
+  "price": "106.40"
+ },
+ {
+  "sl": 751,
+  "name": "TELMIBLESS H",
+  "price": "81.04"
+ },
+ {
+  "sl": 752,
+  "name": "TELMIKIND 20",
+  "price": "21.34"
+ },
+ {
+  "sl": 753,
+  "name": "TELMIKIND TRIO 6.25",
+  "price": "96.62"
+ },
+ {
+  "sl": 754,
+  "name": "TELTAN 40",
+  "price": "61.62"
+ },
+ {
+  "sl": 755,
+  "name": "TELTAN AMH",
+  "price": "95.60"
+ },
+ {
+  "sl": 756,
+  "name": "TENDOCARE FORTE",
+  "price": "529.45"
+ },
+ {
+  "sl": 757,
+  "name": "TENDOCARE TAB",
+  "price": "378.18"
+ },
+ {
+  "sl": 758,
+  "name": "TENDONOVA TAB",
+  "price": "169.15"
+ },
+ {
+  "sl": 759,
+  "name": "TENDOWISE CAP",
+  "price": "292.00"
+ },
+ {
+  "sl": 760,
+  "name": "TERBIZOL 250",
+  "price": "147.42"
+ },
+ {
+  "sl": 761,
+  "name": "THICK WHISPER NIGHT PAD",
+  "price": "332.50"
+ },
+ {
+  "sl": 762,
+  "name": "THIROACE 125",
+  "price": "160.89"
+ },
+ {
+  "sl": 763,
+  "name": "THIROACE 37.5",
+  "price": "136.00"
+ },
+ {
+  "sl": 764,
+  "name": "THIROACE 75",
+  "price": "137.09"
+ },
+ {
+  "sl": 765,
+  "name": "THREPTIN BISCUIT",
+  "price": "454.00"
+ },
+ {
+  "sl": 766,
+  "name": "THYROCRUSH 100MG",
+  "price": "150.80"
+ },
+ {
+  "sl": 767,
+  "name": "THYROCRUSH 25 MG",
+  "price": "165.65"
+ },
+ {
+  "sl": 768,
+  "name": "THYROCRUSH 50 MG",
+  "price": "117.67"
+ },
+ {
+  "sl": 769,
+  "name": "THYROXINOL 25",
+  "price": "164.43"
+ },
+ {
+  "sl": 770,
+  "name": "THYROXINOL 50",
+  "price": "117.30"
+ },
+ {
+  "sl": 771,
+  "name": "THYROXINOL 75",
+  "price": "163.20"
+ },
+ {
+  "sl": 772,
+  "name": "TICMOXY CL 375",
+  "price": "182.75"
+ },
+ {
+  "sl": 773,
+  "name": "TINFAL TAB",
+  "price": "63.75"
+ },
+ {
+  "sl": 774,
+  "name": "TINFAL 5%",
+  "price": "427.50"
+ },
+ {
+  "sl": 775,
+  "name": "TIZAN 2 MG",
+  "price": "162.00"
+ },
+ {
+  "sl": 776,
+  "name": "TOLAGIN 8",
+  "price": "294.85"
+ },
+ {
+  "sl": 777,
+  "name": "TORMOXIN CLAV 228.5 SYP",
+  "price": "58.64"
+ },
+ {
+  "sl": 778,
+  "name": "TORMOXIN CLAV 375",
+  "price": "205.70"
+ },
+ {
+  "sl": 779,
+  "name": "TORSEMIDE 10 MG",
+  "price": "71.40"
+ },
+ {
+  "sl": 780,
+  "name": "TORSEMIDE 5MG",
+  "price": "34.00"
+ },
+ {
+  "sl": 781,
+  "name": "TORSEVAC 5 MG",
+  "price": "30.85"
+ },
+ {
+  "sl": 782,
+  "name": "TRAMAZAC P",
+  "price": "123.17"
+ },
+ {
+  "sl": 783,
+  "name": "TRICAINE ALMA",
+  "price": "184.32"
+ },
+ {
+  "sl": 784,
+  "name": "TRUFEBUX 40",
+  "price": "86.02"
+ },
+ {
+  "sl": 785,
+  "name": "TRYVAX BR TAB",
+  "price": "160.65"
+ },
+ {
+  "sl": 786,
+  "name": "TRYVAX D",
+  "price": "186.15"
+ },
+ {
+  "sl": 787,
+  "name": "TRYZEN D",
+  "price": "165.75"
+ },
+ {
+  "sl": 788,
+  "name": "TUSSMARK D SYP",
+  "price": "102.85"
+ },
+ {
+  "sl": 789,
+  "name": "UDISEN 450 SR",
+  "price": "642.60"
+ },
+ {
+  "sl": 790,
+  "name": "ULGEL-A",
+  "price": "199.17"
+ },
+ {
+  "sl": 791,
+  "name": "ULTRA THIN SANITARY PADS",
+  "price": "189.05"
+ },
+ {
+  "sl": 792,
+  "name": "URIMAX 0.4 MG",
+  "price": "196.35"
+ },
+ {
+  "sl": 793,
+  "name": "URISLASH TAB",
+  "price": "158.53"
+ },
+ {
+  "sl": 794,
+  "name": "URISOLIN D",
+  "price": "136.00"
+ },
+ {
+  "sl": 795,
+  "name": "URIVEL",
+  "price": "127.50"
+ },
+ {
+  "sl": 796,
+  "name": "UROLASH KM SACHET",
+  "price": "52.19"
+ },
+ {
+  "sl": 797,
+  "name": "UVNIL MONT KID SUS.",
+  "price": "41.72"
+ },
+ {
+  "sl": 798,
+  "name": "UVSPAS - 5 TAB",
+  "price": "100.00"
+ },
+ {
+  "sl": 799,
+  "name": "VASELINE DEEP MOISTURE 48 HR",
+  "price": "489.25"
+ },
+ {
+  "sl": 800,
+  "name": "VAXHIST 16 TAB",
+  "price": "143.39"
+ },
+ {
+  "sl": 801,
+  "name": "VAXPRITE ENERGY DRINK",
+  "price": "58.65"
+ },
+ {
+  "sl": 802,
+  "name": "VAXTIC CAP",
+  "price": "113.90"
+ },
+ {
+  "sl": 803,
+  "name": "VEET HAIR REMOVEL",
+  "price": "115.00"
+ },
+ {
+  "sl": 804,
+  "name": "VEET HAIR REMOVAL",
+  "price": "115.00"
+ },
+ {
+  "sl": 805,
+  "name": "VEET PRE BODY",
+  "price": "185.00"
+ },
+ {
+  "sl": 806,
+  "name": "VEET PURE 50GM",
+  "price": "175.00"
+ },
+ {
+  "sl": 807,
+  "name": "VELVET E1",
+  "price": "50.00"
+ },
+ {
+  "sl": 808,
+  "name": "VENUS SAITARY 240MM",
+  "price": "65.00"
+ },
+ {
+  "sl": 809,
+  "name": "VENUS SANITARY 290MM",
+  "price": "70.00"
+ },
+ {
+  "sl": 810,
+  "name": "VERTIFORD 16",
+  "price": "67.20"
+ },
+ {
+  "sl": 811,
+  "name": "VERTIGIL 6 TAB.",
+  "price": "50.91"
+ },
+ {
+  "sl": 812,
+  "name": "VERTIRON 25",
+  "price": "99.25"
+ },
+ {
+  "sl": 813,
+  "name": "VISCO MPS SYP",
+  "price": "111.65"
+ },
+ {
+  "sl": 814,
+  "name": "VITIC O",
+  "price": "119.00"
+ },
+ {
+  "sl": 815,
+  "name": "VOGLI RAPID 0.2/0.5",
+  "price": "119.85"
+ },
+ {
+  "sl": 816,
+  "name": "VOGLI RAPID 0.3/2.0",
+  "price": "176.91"
+ },
+ {
+  "sl": 817,
+  "name": "VOGLIMET 0.3 MD",
+  "price": "83.30"
+ },
+ {
+  "sl": 818,
+  "name": "VOLTEND 0.2 MG",
+  "price": "91.20"
+ },
+ {
+  "sl": 819,
+  "name": "VOLTEND 0.3 MG",
+  "price": "130.40"
+ },
+ {
+  "sl": 820,
+  "name": "VOLTEND R 0.3",
+  "price": "192.00"
+ },
+ {
+  "sl": 821,
+  "name": "VOMETIL-MD",
+  "price": "66.85"
+ },
+ {
+  "sl": 822,
+  "name": "VOMIFORD 4 MD",
+  "price": "46.67"
+ },
+ {
+  "sl": 823,
+  "name": "VOMIFORD 8 MD",
+  "price": "84.70"
+ },
+ {
+  "sl": 824,
+  "name": "VOMINORM",
+  "price": "11.73"
+ },
+ {
+  "sl": 825,
+  "name": "VOMIOVER MD 4",
+  "price": "48.83"
+ },
+ {
+  "sl": 826,
+  "name": "VOMIOVER SYP",
+  "price": "36.32"
+ },
+ {
+  "sl": 827,
+  "name": "VOMIRAP -MD",
+  "price": "29.75"
+ },
+ {
+  "sl": 828,
+  "name": "VOMISAVE SYP",
+  "price": "35.70"
+ },
+ {
+  "sl": 829,
+  "name": "VOMISHIELD 4 MD",
+  "price": "46.67"
+ },
+ {
+  "sl": 830,
+  "name": "VOMISHIELD 8 MD",
+  "price": "84.70"
+ },
+ {
+  "sl": 831,
+  "name": "VOMIVAX 8 TAB",
+  "price": "92.65"
+ },
+ {
+  "sl": 832,
+  "name": "VONO 20 TAB",
+  "price": "127.50"
+ },
+ {
+  "sl": 833,
+  "name": "WHISPER ULTRA XL HEAVY FLOW",
+  "price": "451.25"
+ },
+ {
+  "sl": 834,
+  "name": "WHISPER Xl",
+  "price": "37.00"
+ },
+ {
+  "sl": 835,
+  "name": "WINCAB 0.5",
+  "price": "246.50"
+ },
+ {
+  "sl": 836,
+  "name": "WINOGASS",
+  "price": "84.15"
+ },
+ {
+  "sl": 837,
+  "name": "WINSTEP MAX TAB",
+  "price": "211.65"
+ },
+ {
+  "sl": 838,
+  "name": "WYSOLONE DT 10 MG",
+  "price": "17.25"
+ },
+ {
+  "sl": 839,
+  "name": "XMETOR 500 TAB",
+  "price": "32.30"
+ },
+ {
+  "sl": 840,
+  "name": "ZANDU CHYAVANPRASH",
+  "price": "456.00"
+ },
+ {
+  "sl": 841,
+  "name": "ZANDU PANCHARISHTA",
+  "price": "209.00"
+ },
+ {
+  "sl": 842,
+  "name": "ZANDU SATAVAREX",
+  "price": "317.30"
+ },
+ {
+  "sl": 843,
+  "name": "ZANDU SHILAJITPRASH",
+  "price": "427.50"
+ },
+ {
+  "sl": 844,
+  "name": "ZANDU ULTRA POWER BALM",
+  "price": "48.00"
+ },
+ {
+  "sl": 845,
+  "name": "ZEEBEE SYRUP",
+  "price": "18.34"
+ },
+ {
+  "sl": 846,
+  "name": "ZENKIND M SYP",
+  "price": "62.05"
+ },
+ {
+  "sl": 847,
+  "name": "ZENTO SUSPENSION",
+  "price": "17.04"
+ },
+ {
+  "sl": 848,
+  "name": "ZERODOL-MR",
+  "price": "92.06"
+ },
+ {
+  "sl": 849,
+  "name": "ZINCIWELL 100 ML",
+  "price": "76.50"
+ },
+ {
+  "sl": 850,
+  "name": "ZINCIWELL 200 ML",
+  "price": "140.25"
+ },
+ {
+  "sl": 851,
+  "name": "ZINCIWELL DROPS",
+  "price": "68.00"
+ },
+ {
+  "sl": 852,
+  "name": "ZINCONYD TAB",
+  "price": "160.65"
+ },
+ {
+  "sl": 853,
+  "name": "ZINDERVIT NF",
+  "price": "165.75"
+ },
+ {
+  "sl": 854,
+  "name": "ZITHOWIN SF KIT",
+  "price": "126.65"
+ },
+ {
+  "sl": 855,
+  "name": "ZOCLAR 500",
+  "price": "147.77"
+ },
+ {
+  "sl": 856,
+  "name": "ZREPAG RAPID-1",
+  "price": "112.00"
+ },
+ {
+  "sl": 857,
+  "name": "ZUKAMIN DROPS",
+  "price": "41.65"
+ },
+ {
+  "sl": 858,
+  "name": "ZYMVAX TAB",
+  "price": "94.78"
+ }
+]

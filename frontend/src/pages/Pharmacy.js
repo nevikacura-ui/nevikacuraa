@@ -31,7 +31,6 @@ import HeartbeatLoader from '@/components/HeartbeatLoader';
 import { MedicineCabinet, PersonalCabinet } from '@/components/pharmacy/CabinetSections';
 import { MedicineGridSkeleton } from '@/components/ui/skeleton-loaders';
 import { PullToRefreshContainer } from '@/components/ui/pull-to-refresh';
-import { TrustedFormularySection } from '@/components/pharmacy';
 import QuickReorder from '@/components/QuickReorder';
 import SubscriptionRefill from '@/components/SubscriptionRefill';
 
@@ -265,9 +264,6 @@ const Pharmacy = () => {
             <button onClick={() => { setActiveSection('orange_healthplus'); setSelectedCategory(null); setSearchQuery(''); }}
               className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${activeSection === 'orange_healthplus' ? 'bg-green-500 text-white shadow-lg shadow-green-200' : 'bg-white text-gray-600 border border-gray-200'}`}
               data-testid="tab-orange-healthplus">Healthplus</button>
-            <button onClick={() => navigate('/orange-select')}
-              className="flex-1 py-2.5 rounded-xl text-xs font-bold transition-all bg-white text-gray-600 border border-gray-200"
-              data-testid="tab-orange-select">Select</button>
           </div>
         </div>
 
@@ -301,7 +297,6 @@ const Pharmacy = () => {
         {/* Drug-specific sections (All Drugs only) */}
         {!selectedCategory && !searchQuery && activeSection === 'orange_pharmacy' && (
           <>
-            <TrustedFormularySection onSelectCategory={setSelectedCategory} onViewMedicine={(med) => { trackMedicineView(med); setSelectedMedicine(med); }} onAddToCart={handleAddToCart} />
             <CategoryGrid onSelectCategory={setSelectedCategory} />
             <TrendingNowSection onSelect={(med) => { trackMedicineView(med); setSelectedMedicine(med); }} store="orange_pharmacy" />
             <PharmacyStampBadge />

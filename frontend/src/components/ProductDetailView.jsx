@@ -109,22 +109,16 @@ const ProductDetailView = ({ product, onClose, onAddToCart, cartQuantity = 0, on
         </div>
 
         {/* Product Image Gallery */}
+        {hasImage && (
         <div className="relative pt-2 pb-4 px-4">
           <div className="detail-img w-full max-w-[300px] mx-auto aspect-square rounded-3xl overflow-hidden relative" style={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
-            {hasImage ? (
-              <img
-                src={productImages.length > 0 ? productImages[activeImg] : (product.image || product.image_url)}
-                alt={product.name}
-                className="w-full h-full object-contain p-4"
-                loading="lazy"
-                onError={() => setImgError(true)}
-              />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center gap-3" style={{ background: '#FFF7ED' }}>
-                <Package className="w-16 h-16 text-orange-300/40" />
-                <span className="text-xs text-orange-400/40 font-medium">No image available</span>
-              </div>
-            )}
+            <img
+              src={productImages.length > 0 ? productImages[activeImg] : (product.image || product.image_url)}
+              alt={product.name}
+              className="w-full h-full object-contain p-4"
+              loading="lazy"
+              onError={() => setImgError(true)}
+            />
             {product.discount_percent > 0 && (
               <span className="absolute top-3 left-3 text-white text-[10px] font-bold px-2.5 py-1 rounded-full" style={{ background: 'linear-gradient(135deg, #F97316, #EA580C)' }}>
                 {product.discount_percent}% OFF
@@ -149,6 +143,7 @@ const ProductDetailView = ({ product, onClose, onAddToCart, cartQuantity = 0, on
             </div>
           )}
         </div>
+        )}
 
         {/* Main Info Card */}
         <div className="px-4">
@@ -272,6 +267,11 @@ const ProductDetailView = ({ product, onClose, onAddToCart, cartQuantity = 0, on
                   <span className="text-orange-500 font-bold text-base" data-testid="call-to-confirm-price">Call to confirm price</span>
                 )}
               </div>
+              {displayPrice && !product.discount_percent && (
+                <p className="text-[10px] text-stone-400 mt-1" data-testid="price-after-discount-note">
+                  Price shown is after 15&ndash;20% discount
+                </p>
+              )}
 
               {/* Cart Action */}
               <div className="flex items-center justify-between mt-5">

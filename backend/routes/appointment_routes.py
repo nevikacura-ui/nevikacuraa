@@ -531,6 +531,36 @@ Time: {appointment.time}"""
 
 # ============ Booked Slots ============
 
+async def get_doctor_schedule_by_name(db, doctor: str):
+    """Look up a doctor's blocked_dates/blocked_sessions by their display name."""
+    doctor_staff_records = await db.staff.find(
+        {"$or": [{"doctor_name": doctor}, {"name": doctor}]},
+        {"_id": 1, "id": 1}
+    ).to_list(10)
+
+    for staff_record in doctor_staff_records:
+        doctor_id = staff_record.get("id") or str(staff_record.get("_id"))
+        doctor_schedule = await db.doctor_schedules.find_one(
+            {"doctor_id": doctor_id}, {"_id": 0, "blocked_sessions": 1, "blocked_dates": 1}
+        )
+        if doctor_schedule:
+            return doctor_schedule
+    return None
+
+
+@router.get("/doctors/blocked-dates")
+async def get_doctor_blocked_dates_public(doctor: str):
+    """Public endpoint so patient-facing calendars can grey out a doctor's leave days."""
+    db = get_db()
+    doctor_schedule = await get_doctor_schedule_by_name(db, doctor)
+    if not doctor_schedule:
+        return {"blocked_dates": [], "blocked_sessions": []}
+    return {
+        "blocked_dates": doctor_schedule.get("blocked_dates", []),
+        "blocked_sessions": doctor_schedule.get("blocked_sessions", [])
+    }
+
+
 @router.get("/appointments/booked-slots")
 async def get_booked_slots(doctor: str, clinic: str, date: str):
     db = get_db()
@@ -547,19 +577,7 @@ async def get_booked_slots(doctor: str, clinic: str, date: str):
 
     # Check doctor schedule blocked sessions
     blocked_session_slots = []
-    doctor_staff_records = await db.staff.find(
-        {"$or": [{"doctor_name": doctor}, {"name": doctor}]},
-        {"_id": 1, "id": 1}
-    ).to_list(10)
-
-    doctor_schedule = None
-    for staff_record in doctor_staff_records:
-        doctor_id = staff_record.get("id") or str(staff_record.get("_id"))
-        doctor_schedule = await db.doctor_schedules.find_one(
-            {"doctor_id": doctor_id}, {"_id": 0, "blocked_sessions": 1, "blocked_dates": 1}
-        )
-        if doctor_schedule:
-            break
+    doctor_schedule = await get_doctor_schedule_by_name(db, doctor)
 
     if doctor_schedule:
         blocked_dates = doctor_schedule.get("blocked_dates", [])
@@ -610,6 +628,10 @@ async def get_next_available_slot(doctor: str = "Dr. Vikas Jha"):
     sessions = [{"start": "11:00", "end": "14:00"}, {"start": "18:00", "end": "22:00"}]
     available_days = [d.lower() for d in doc_profile.get("available_days", [])]
 
+    doctor_schedule = await get_doctor_schedule_by_name(db, doctor)
+    blocked_dates = {b.get("date") for b in (doctor_schedule.get("blocked_dates", []) if doctor_schedule else [])}
+    blocked_sessions = doctor_schedule.get("blocked_sessions", []) if doctor_schedule else []
+
     def generate_slots(session_start, session_end):
         slots = []
         h, m = map(int, session_start.split(":"))
@@ -622,6 +644,20 @@ async def get_next_available_slot(doctor: str = "Dr. Vikas Jha"):
                 m -= 60
         return slots
 
+    def is_slot_blocked_by_session(date_str, slot):
+        for session in blocked_sessions:
+            if session.get("date") != date_str:
+                continue
+            try:
+                s = datetime.strptime(session["start_time"], "%H:%M")
+                e = datetime.strptime(session["end_time"], "%H:%M")
+                t = datetime.strptime(slot, "%H:%M")
+                if s <= t < e:
+                    return True
+            except (ValueError, KeyError):
+                pass
+        return False
+
     for day_offset in range(8):
         check_date = now_ist.date() + timedelta(days=day_offset)
         day_name = check_date.strftime("%A").lower()
@@ -629,6 +665,9 @@ async def get_next_available_slot(doctor: str = "Dr. Vikas Jha"):
             continue
 
         date_str = check_date.strftime("%Y-%m-%d")
+        if date_str in blocked_dates:
+            continue
+
         date_patterns_val = get_date_patterns(date_str)
         booked = await db.appointments.find(
             {"doctor": doctor, "date": {"$in": date_patterns_val},
@@ -641,7 +680,7 @@ async def get_next_available_slot(doctor: str = "Dr. Vikas Jha"):
         for session in sessions:
             all_slots = generate_slots(session["start"], session["end"])
             for slot in all_slots:
-                if slot in booked_times:
+                if slot in booked_times or is_slot_blocked_by_session(date_str, slot):
                     continue
                 if day_offset == 0:
                     slot_h, slot_m = map(int, slot.split(":"))
