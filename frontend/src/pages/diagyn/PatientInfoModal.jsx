@@ -30,14 +30,11 @@ const PatientInfoModal = ({ isOpen, onClose, onSubmit, loading, isOnlineConsulta
   useEffect(() => {
     if (isOpen) {
       const storedPatient = localStorage.getItem('patientInfo');
-      const gm = localStorage.getItem('guestMobile');
       if (storedPatient) {
         try {
           const info = JSON.parse(storedPatient);
-          setPatientInfo(prev => ({ ...prev, name: info.name || prev.name, phone: gm || info.phone || info.mobile || prev.phone, email: info.email || (isEmailAuth ? emailUserData.email : '') || prev.email }));
+          setPatientInfo(prev => ({ ...prev, name: info.name || prev.name, email: info.email || (isEmailAuth ? emailUserData.email : '') || prev.email }));
         } catch {}
-      } else if (gm) {
-        setPatientInfo(prev => ({ ...prev, phone: gm }));
       }
       if (isEmailAuth) {
         setPatientInfo(prev => ({ ...prev, name: prev.name || emailUserData.name || '', email: prev.email || emailUserData.email || '' }));
@@ -247,9 +244,9 @@ const PatientInfoModal = ({ isOpen, onClose, onSubmit, loading, isOnlineConsulta
                     </label>
                     <div className="flex items-center gap-2.5">
                       <Phone className="w-4 h-4 flex-shrink-0" style={{ color: theme.accent }} />
-                      <Input value={patientInfo.phone} onChange={(e) => setPatientInfo({ ...patientInfo, phone: e.target.value.replace(/[^\d+]/g, '').slice(0, 15) })} placeholder="10-digit number"
+                      <Input value={patientInfo.phone} onChange={(e) => setPatientInfo({ ...patientInfo, phone: e.target.value.replace(/[^\d+]/g, '').slice(0, 15) })} placeholder="Enter WhatsApp number to receive notifications"
                         className="border-0 bg-transparent h-9 text-white text-sm placeholder:text-white/30 focus-visible:ring-0 px-0"
-                        disabled={!isEmailAuth && isAlreadyVerified && patientInfo.phone === verifiedPhone} data-testid="input-patient-phone" />
+                        data-testid="input-patient-phone" />
                       {isAlreadyVerified && patientInfo.phone === verifiedPhone && <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: theme.accent }} />}
                     </div>
                   </div>

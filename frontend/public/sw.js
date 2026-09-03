@@ -1,5 +1,5 @@
 /* Service Worker for Nevika Cura PWA — Auto-update & cache management */
-const CACHE_VERSION = 6;
+const CACHE_VERSION = 7;
 const CACHE_NAME = `nevikacura-v${CACHE_VERSION}`;
 
 const PRECACHE = [
@@ -100,11 +100,11 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   const url = event.notification.data?.url || '/';
   event.waitUntil(
-    clients.matchAll({ type: 'window' }).then(wins => {
+    self.clients.matchAll({ type: 'window' }).then(wins => {
       for (const win of wins) {
         if (win.url.startsWith(self.location.origin)) return win.navigate(url).then(() => win.focus());
       }
-      return clients.openWindow(url);
+      return self.clients.openWindow(url);
     })
   );
 });

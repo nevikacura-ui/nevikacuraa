@@ -49,16 +49,14 @@ export const MedicineCard = ({ medicine, onAdd, onView, cartQuantity = 0, onIncr
         </h3>
 
         {mrp > 0 ? (
-          <div className="mt-3 flex items-end justify-between gap-2">
-            <div className="flex-1 min-w-0">
-              <p className="font-black tracking-tight" style={{ color: '#8A4A17', fontSize: '17px', fontFamily: 'Outfit, sans-serif' }}>
-                {'\u20B9'}{Math.round(salePrice)}
-              </p>
-              <p className="leading-snug mt-0.5" style={{ color: '#9A8E75', fontSize: '8.5px' }}>
-                Price shown is after 15&ndash;20% discount
-              </p>
-            </div>
-            <div className="flex-shrink-0">
+          <div className="mt-3">
+            <p className="font-black tracking-tight" style={{ color: '#8A4A17', fontSize: '17px', fontFamily: 'Outfit, sans-serif' }}>
+              {'\u20B9'}{Math.round(salePrice)}
+            </p>
+            <p className="leading-snug mt-0.5 mb-2.5" style={{ color: '#9A8E75', fontSize: '8.5px' }}>
+              Price shown is after 15&ndash;20% discount
+            </p>
+            <div className="flex justify-end">
               {cartQuantity > 0 ? (
                 <div className="flex items-center gap-2 rounded-lg px-2.5 py-1" style={{ background: '#8A4A17' }}>
                   <button onClick={(e) => { e.stopPropagation(); onDecrement(); }} className="text-white font-bold w-3 text-center leading-none" data-testid={`decrement-${medicine.id}`}>&minus;</button>
