@@ -1,0 +1,37 @@
+{
+  "summary": "Regression test for DiaGyn Staff Portal Amnion→Pushpa merge fix. All backend (8/8 pytest) and frontend UI checks pass. Config returns only Pushpa Clinic, both doctors have single unified schedule (Mon-Sat, 11:30-18:00 morning + 18:00-22:00 evening), slot endpoint returns 26 morning + 16 evening slots on weekdays for both doctors (0 on Sunday with 'not available' message), E2E booking at newly-available 14:00 and 16:00 slots succeeds with clinic='Pushpa Clinic'. Staff Portal UI shows only PUSHPA tag on doctor cards, headers read 'Walk-in at Pushpa' and 'Book future appointment at Pushpa', no Amnion reference anywhere in DOM. AdvanceBookingTab.jsx / staffUtils.js DOCTOR_SCHEDULES confirmed to be DEAD CODE — not imported by DiaGynStaffPortal.js or re-exported from staff/index.js, so stale Amnion data there has no user impact.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_diagyn_pushpa_merge.py",
+    "/app/test_reports/pytest/pytest_diagyn_pushpa_merge.xml"
+  ],
+  "action_items": [
+    "OPTIONAL/LOW: /app/frontend/src/components/staff/AdvanceBookingTab.jsx and /app/frontend/src/pages/staff/staffUtils.js still contain the old two-clinic DOCTOR_SCHEDULES with Amnion Clinic entries. These are dead code (AdvanceBookingTab is not imported anywhere in the live staff portal nav and not re-exported from staff/index.js), but for hygiene they could either be (a) deleted or (b) synced with the new Pushpa-only backend config, so a future dev doesn't wire them up and reintroduce the bug.",
+    "OPTIONAL: /app/backend/routes/diagyn_staff/shared.py still has 'Amnion Clinic' key inside GOOGLE_REVIEW_LINKS (line 90). Harmless (never read for a non-existent clinic), but could be removed for consistency."
+  ],
+  "critical_code_review_comments": [
+    "Fix is clean and minimal — CLINICS + DOCTOR_SCHEDULE consolidated to single Pushpa entry with days 0-5 (Mon-Sat).",
+    "get_current_ist_session() correctly widened to 11-18 as 'morning' matching the new schedule; walk-in current-session filter now works across the full 11:30-18:00 window.",
+    "Slot generation reuses evening_days fallback to schedule days — Sunday (weekday 6) correctly yields zero slots for both sessions.",
+    "Reserved slots {11:00, 11:15} live outside the new 11:30 morning start, so no accidental slot dropout.",
+    "Booking endpoint validates clinic against shared.CLINICS — a stale client sending clinic='Amnion Clinic' will now get 400 (verified indirectly via config check). Slot endpoint returns empty list without 400 for unknown clinic (silent), consider making it consistent."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_diagyn_pushpa_merge.py (new — regression suite)"
+  ],
+  "success_rate": {"backend": "100% (8/8)", "frontend": "100%"},
+  "test_credentials": "staff_diagyn / test1234 (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "Two temporary appointments created during E2E test (unique TEST_ patient names, unique phone), both cancelled in test teardown.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Regression file at /app/backend/tests/test_diagyn_pushpa_merge.py covers the merge. Live staff portal path: /diagyn-staff → click DiaGyn Healthcare card → username=staff_diagyn / password=test1234 (portal-picker page appears first, don't skip). Login form uses generic placeholders 'Username'/'Password' — the data-testid selectors on StaffLogin.jsx do NOT apply to this DiaGyn login form (different component in staff portal picker flow); use get_by_placeholder for automation.",
+  "rca of the issue": "Original bug: DOCTOR_SCHEDULE split each doctor's hours across two separate clinic keys ('Pushpa Clinic' had only a subset, 'Amnion Clinic' had the rest). Staff portal's clinic selector is scoped to one clinic, so viewing 'Pushpa Clinic' showed only partial hours. Fix: merged Amnion hours into Pushpa (Mon-Sat, 11:30-18:00 morning + 18:00-22:00 evening) and removed Amnion Clinic entirely from CLINICS + DOCTOR_SCHEDULE. Also widened get_current_ist_session() morning threshold from 14 → 18 to match. Verification passed on all fronts."
+}

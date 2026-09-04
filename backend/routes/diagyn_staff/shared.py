@@ -19,40 +19,30 @@ appointment_ws_manager = None
 IST_OFFSET = timedelta(hours=5, minutes=30)
 
 # ── Clinic configuration ─────────────────────────────────────────
+# Amnion Clinic has been merged into Pushpa Clinic — Pushpa now handles
+# all appointments for both doctors (Sep 2026).
 CLINICS = {
     "Pushpa Clinic": {
-        "doctors": ["Dr. Vikas Jha"],
+        "doctors": ["Dr. Vikas Jha", "Dr. Neha Patel"],
         "address": "Pushpa Clinic, Naigaon East",
         "map_link": "https://maps.app.goo.gl/LfFoHwVzvMEQ1Qzt9",
-    },
-    "Amnion Clinic": {
-        "doctors": ["Dr. Neha Patel"],
-        "address": "Amnion Clinic, Naigaon",
-        "map_link": "https://maps.app.goo.gl/aBr4jwCv3b6874vi8",
     },
 }
 
 # ── Doctor schedule ───────────────────────────────────────────────
+# Pushpa Clinic: 11:30 AM - 6:00 PM and 6:00 PM - 10:00 PM, Monday to Saturday, for both doctors.
 DOCTOR_SCHEDULE = {
     "Dr. Vikas Jha": {
         "Pushpa Clinic": {
-            "days": [0, 2, 4],
-            "evening": {"start": "18:00", "end": "22:00"},
-        },
-        "Amnion Clinic": {
             "days": [0, 1, 2, 3, 4, 5],
-            "morning": {"start": "11:00", "end": "14:00"},
-            "evening": {"start": "18:00", "end": "22:00", "days": [1, 3, 5]},
+            "morning": {"start": "11:30", "end": "18:00"},
+            "evening": {"start": "18:00", "end": "22:00"},
         },
     },
     "Dr. Neha Patel": {
         "Pushpa Clinic": {
             "days": [0, 1, 2, 3, 4, 5],
-            "morning": {"start": "11:00", "end": "14:00"},
-            "evening": {"start": "18:00", "end": "22:00", "days": [1, 3, 5]},
-        },
-        "Amnion Clinic": {
-            "days": [0, 2, 4],
+            "morning": {"start": "11:30", "end": "18:00"},
             "evening": {"start": "18:00", "end": "22:00"},
         },
     },
