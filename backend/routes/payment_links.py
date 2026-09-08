@@ -107,7 +107,7 @@ async def send_payment_link_whatsapp(phone: str, patient_name: str, amount: floa
             
             try:
                 response_data = response.json()
-            except:
+            except Exception:
                 response_data = {"raw": response.text}
             
             logger.info(f"Payment link WhatsApp response: status={response.status_code}, data={response_data}")
@@ -157,6 +157,7 @@ async def create_and_send_payment_link(
     user = Depends(_get_current_user())
 ):
     """Create Cashfree payment link and send to customer via WhatsApp"""
+    db = get_db()
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
     
@@ -251,6 +252,7 @@ async def update_pharmacy_order_status(
     
     Status values: confirmed, packing, out_for_delivery, delivered, cancelled
     """
+    db = get_db()
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
     
@@ -391,6 +393,7 @@ async def update_diagnostic_order_status(
     
     Status values: confirmed, sample_collected, processing, reports_ready, delivered, cancelled
     """
+    db = get_db()
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
     
@@ -723,6 +726,7 @@ async def upload_prescription_with_email(
     notes: str = Body("")
 ):
     """Upload prescription and send email notification to nevikacura@gmail.com"""
+    db = get_db()
     
     upload = {
         "id": f"PRESC-{datetime.now().strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:4].upper()}",

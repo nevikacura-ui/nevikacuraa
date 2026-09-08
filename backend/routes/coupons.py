@@ -5,13 +5,21 @@ from typing import Optional, List
 from datetime import datetime, timezone, timedelta
 from database import get_db
 from services.notification_service import (
-    send_email_notification, send_push_notification, send_push_to_staff, notify_staff_new_order
+    send_email_notification, send_push_notification, send_push_to_staff, notify_staff_new_order,
+    send_pharmacy_order_sms
 )
+from services.msg91_whatsapp import send_orange_pharmacy_confirmation
 import uuid
 import logging
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+_live_sync_manager = None
+
+def set_live_sync_manager(manager):
+    global _live_sync_manager
+    _live_sync_manager = manager
 
 
 class PharmacyOrderCreate(BaseModel):
@@ -297,8 +305,8 @@ async def create_pharmacy_order(input: PharmacyOrderCreate, user = Depends(_get_
     
     # Live sync notification to Orange staff
     try:
-        if live_sync_manager:
-            await live_sync_manager.notify_new_order("pharmacy", {
+        if _live_sync_manager:
+            await _live_sync_manager.notify_new_order("pharmacy", {
                 "id": order.id,
                 "patient_name": order.patient_name,
                 "patient_phone": order.patient_phone,

@@ -23,6 +23,8 @@ def set_db(database):
     global db
     db = database
 
+stripe_api_key = os.environ.get('STRIPE_API_KEY', '')
+
 # Subscription Plans - Updated pricing
 SUBSCRIPTION_PLANS = {
     "glydex": {

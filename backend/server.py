@@ -27,7 +27,6 @@ import resend
 import json
 import base64
 from pywebpush import webpush, WebPushException
-import base64
 from io import BytesIO
 from fastapi.responses import JSONResponse
 
@@ -472,7 +471,7 @@ async def health_check():
 
 
 @api_router.get("/health")
-async def health_check():
+async def api_health_check():
     return {"status": "ok"}
 
 
@@ -864,7 +863,7 @@ async def websocket_slot_updates(
                 # Send heartbeat
                 try:
                     await websocket.send_json({"type": "heartbeat"})
-                except:
+                except Exception:
                     break
                     
     except WebSocketDisconnect:
@@ -967,7 +966,7 @@ async def websocket_appointment_updates(
                 # Send heartbeat to keep connection alive
                 try:
                     await websocket.send_json({"type": "heartbeat", "timestamp": datetime.now(timezone.utc).isoformat()})
-                except:
+                except Exception:
                     break
                     
     except WebSocketDisconnect:
@@ -1400,8 +1399,8 @@ try:
     from routes.payment_wallet_routes import router as payment_notify_router, init_db as init_pn_db, set_whatsapp_fn
     init_pn_db(db)
     try:
-        set_whatsapp_fn(send_whatsapp)
-    except:
+        set_whatsapp_fn(send_whatsapp_notification)
+    except Exception:
         pass
     app.include_router(payment_notify_router)
     logger.info("Payment Methods + Wallet Notifications router loaded")
@@ -2065,8 +2064,9 @@ except Exception as e:
     logger.warning(f"Could not load health_streak router: {e}")
 
 try:
-    from routes.queue_status import router as queue_status_router
+    from routes.queue_status import router as queue_status_router, set_live_sync_manager as set_queue_live_sync
     app.include_router(queue_status_router, prefix="/api")
+    set_queue_live_sync(live_sync_manager)
     logger.info("Queue Status router loaded")
 except Exception as e:
     logger.warning(f"Could not load queue_status router: {e}")
@@ -2079,8 +2079,9 @@ except Exception as e:
     logger.warning(f"Could not load diagnostics_extended router: {e}")
 
 try:
-    from routes.coupons import router as coupons_router
+    from routes.coupons import router as coupons_router, set_live_sync_manager as set_coupons_live_sync
     app.include_router(coupons_router, prefix="/api")
+    set_coupons_live_sync(live_sync_manager)
     logger.info("Coupons router loaded")
 except Exception as e:
     logger.warning(f"Could not load coupons router: {e}")

@@ -319,6 +319,9 @@ async def confirm_voice_booking(request: ConfirmBookingRequest):
         if existing:
             raise HTTPException(status_code=400, detail="This time slot is already booked. Please choose another time.")
 
+        from routes.appointment_routes import assert_slot_not_blocked
+        await assert_slot_not_blocked(db, request.doctor, request.date, normalized_time)
+
         appointment_id = str(uuid.uuid4())
         doc = {
             "id": appointment_id,

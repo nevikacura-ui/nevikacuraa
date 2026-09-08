@@ -143,6 +143,10 @@ async def book_follow_up(
     if not original:
         raise HTTPException(status_code=404, detail="Original appointment not found")
 
+    if original.get("doctor"):
+        from routes.appointment_routes import assert_slot_not_blocked
+        await assert_slot_not_blocked(db, original.get("doctor"), preferred_date, preferred_time)
+
     follow_up = {
         "id": f"APT-{datetime.now().strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:4].upper()}",
         "user_id": original.get("user_id"),

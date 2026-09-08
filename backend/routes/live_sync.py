@@ -304,7 +304,7 @@ def init_router(db):
                     message = json.loads(data)
                     if message.get("type") == "ping":
                         await websocket.send_json({"type": "pong"})
-                except:
+                except Exception:
                     pass
         except WebSocketDisconnect:
             live_sync_manager.disconnect(websocket)
@@ -320,7 +320,7 @@ def init_router(db):
                     message = json.loads(data)
                     if message.get("type") == "ping":
                         await websocket.send_json({"type": "pong"})
-                except:
+                except Exception:
                     pass
         except WebSocketDisconnect:
             live_sync_manager.disconnect(websocket)

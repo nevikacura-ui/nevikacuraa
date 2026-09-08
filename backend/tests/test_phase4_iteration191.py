@@ -98,7 +98,7 @@ class TestFavorites:
         for fav_id in self.__class__.created_fav_ids:
             try:
                 requests.delete(f"{BASE_URL}/api/favorites/{fav_id}")
-            except:
+            except Exception:
                 pass
 
 
@@ -202,7 +202,7 @@ class TestAddresses:
         for addr_id in self.__class__.created_addr_ids:
             try:
                 requests.delete(f"{BASE_URL}/api/addresses/{addr_id}")
-            except:
+            except Exception:
                 pass
 
 
@@ -307,7 +307,7 @@ class TestFamilyMembers:
         for member_id in self.__class__.created_member_ids:
             try:
                 requests.delete(f"{BASE_URL}/api/family/members/{member_id}")
-            except:
+            except Exception:
                 pass
 
 

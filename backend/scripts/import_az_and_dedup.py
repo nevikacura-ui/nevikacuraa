@@ -81,7 +81,7 @@ for i in range(0, len(unique_rows), batch_size):
         mfg = row['manufacturer_name'].strip()
         try:
             price = float(row.get('price(₹)', '0') or '0')
-        except:
+        except Exception:
             price = 0.0
         is_disc = row.get('Is_discontinued', '').upper() == 'TRUE'
         comp = (row.get('short_composition1', '') or '').strip()
@@ -234,12 +234,12 @@ print("=" * 60)
 try:
     coll.create_index([("name", "text"), ("generic_name", "text"), ("manufacturer", "text")])
     print("Text index created")
-except:
+except Exception:
     print("Text index exists")
 try:
     coll.create_index([("name", 1)])
     print("Name index created")
-except:
+except Exception:
     pass
 
 print("\n" + "=" * 60)

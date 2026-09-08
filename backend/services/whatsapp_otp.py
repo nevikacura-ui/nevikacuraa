@@ -163,7 +163,7 @@ async def send_whatsapp_otp(
                         "msg91_id": data.get("data", {}).get("message_uuid"),
                         "status": "sent"
                     })
-                except:
+                except Exception:
                     pass
             
             return {
@@ -234,7 +234,7 @@ async def verify_whatsapp_otp(phone: str, otp: str) -> dict:
                     {"$set": {"verified_at": datetime.now(timezone.utc).isoformat(), "status": "verified"}},
                     upsert=False
                 )
-            except:
+            except Exception:
                 pass
         
         return {

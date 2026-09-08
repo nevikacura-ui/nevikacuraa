@@ -39,22 +39,17 @@ async def upload_prescription(
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Only image files allowed")
     
-    # Read file and save
+    # Read file and upload to Object Storage
     contents = await file.read()
     if len(contents) > 10 * 1024 * 1024:  # 10MB limit
         raise HTTPException(status_code=400, detail="File too large (max 10MB)")
     
-    # Save to uploads directory
-    upload_dir = "/app/backend/uploads/prescriptions"
-    os.makedirs(upload_dir, exist_ok=True)
-    
     file_ext = file.filename.split(".")[-1] if file.filename else "jpg"
     file_id = str(uuid.uuid4())[:8]
     filename = f"rx_{file_id}.{file_ext}"
-    filepath = os.path.join(upload_dir, filename)
     
-    with open(filepath, "wb") as f:
-        f.write(contents)
+    from services.object_storage import put_object
+    put_object(f"nevika-cura/prescriptions/{filename}", contents, file.content_type or "image/jpeg")
     
     # Store record in DB
     record = {
@@ -63,7 +58,7 @@ async def upload_prescription(
         "patient_name": patient_name,
         "notes": notes,
         "filename": filename,
-        "file_url": f"/api/uploads/prescriptions/{filename}",
+        "file_url": f"/api/pharmacy/prescriptions/file/{filename}",
         "status": "pending",  # pending, processing, completed, rejected
         "created_at": datetime.now(timezone.utc).isoformat(),
         "items_extracted": [],
@@ -79,6 +74,18 @@ async def upload_prescription(
         "message": "Prescription uploaded. Our pharmacist will review and prepare your order.",
         "status": "pending"
     }
+
+
+@router.get("/pharmacy/prescriptions/file/{filename}")
+async def get_pharmacy_prescription_file(filename: str):
+    """Serve an uploaded pharmacy prescription file from Object Storage."""
+    from services.object_storage import get_object
+    from fastapi.responses import Response
+    try:
+        data, content_type = get_object(f"nevika-cura/prescriptions/{filename}")
+    except Exception:
+        raise HTTPException(status_code=404, detail="File not found")
+    return Response(content=data, media_type=content_type or "application/octet-stream")
 
 
 @router.get("/pharmacy/prescriptions/{phone}")

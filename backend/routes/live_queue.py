@@ -195,7 +195,7 @@ async def get_my_queue_position(
             try:
                 token_num = int(token[1:])
                 query["token_number"] = token_num
-            except:
+            except Exception:
                 raise HTTPException(status_code=400, detail="Invalid token format")
     
     # Search in appointments
@@ -597,7 +597,7 @@ async def get_queue_analytics(clinic: str, staff = Depends(verify_staff)):
                 check_in = datetime.fromisoformat(apt["check_in_time"].replace("Z", "+00:00"))
                 called = datetime.fromisoformat(apt["called_time"].replace("Z", "+00:00"))
                 wait_times.append((called - check_in).total_seconds() / 60)
-            except:
+            except Exception:
                 pass
     
     avg_wait_today = sum(wait_times) / len(wait_times) if wait_times else 0
@@ -648,7 +648,7 @@ async def _calculate_avg_consultation_time(clinic: str) -> int:
             duration = (completed - check_in).total_seconds() / 60
             if 5 <= duration <= 60:
                 times.append(duration)
-        except:
+        except Exception:
             pass
     
     return round(sum(times) / len(times)) if times else 12  # Default 12 min

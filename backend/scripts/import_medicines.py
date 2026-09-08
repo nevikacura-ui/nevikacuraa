@@ -33,7 +33,7 @@ async def import_from_csv(csv_text: str):
             mrp_str = (row.get("MRP") or "0").strip()
             try:
                 mrp = float(mrp_str)
-            except:
+            except Exception:
                 mrp = 0
             
             rx_required = (row.get("prescription_required") or "").strip()

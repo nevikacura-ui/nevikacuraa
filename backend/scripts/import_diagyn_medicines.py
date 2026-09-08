@@ -42,7 +42,7 @@ def extract_products():
             composition = ''
         try:
             mrp = float(mrp_val) if mrp_val else 0.0
-        except:
+        except Exception:
             mrp = 0.0
         key = name.upper()
         if key in products:

@@ -820,6 +820,28 @@ async def get_all_diabetes_patients(doctor: Optional[str] = None, status: str = 
     
     return {"success": True, "patients": patients, "total": len(patients)}
 
+@router.get("/staff/patients/search")
+async def search_diabetes_patients(query: str, doctor: Optional[str] = None):
+    """Search diabetes patients by name, phone, or ID"""
+    search_filter = {
+        "$or": [
+            {"patient_name": {"$regex": query, "$options": "i"}},
+            {"phone": {"$regex": query}},
+            {"patient_id": {"$regex": query, "$options": "i"}}
+        ],
+        "status": "active"
+    }
+    
+    if doctor:
+        search_filter["doctor_assigned"] = {"$regex": doctor, "$options": "i"}
+    
+    patients = await db.glydex_managed_patients.find(
+        search_filter,
+        {"_id": 0}
+    ).limit(20).to_list(20)
+    
+    return {"success": True, "results": patients}
+
 @router.get("/staff/patients/{patient_id}")
 async def get_diabetes_patient(patient_id: str):
     """Get specific diabetes patient details"""
@@ -994,28 +1016,6 @@ async def toggle_congratulations(patient_id: str, toggle: CongratulatoryMessageT
         "send_congratulations": toggle.enabled,
         "message": f"Congratulatory messages {'enabled' if toggle.enabled else 'disabled'}"
     }
-
-@router.get("/staff/patients/search")
-async def search_diabetes_patients(query: str, doctor: Optional[str] = None):
-    """Search diabetes patients by name, phone, or ID"""
-    search_filter = {
-        "$or": [
-            {"patient_name": {"$regex": query, "$options": "i"}},
-            {"phone": {"$regex": query}},
-            {"patient_id": {"$regex": query, "$options": "i"}}
-        ],
-        "status": "active"
-    }
-    
-    if doctor:
-        search_filter["doctor_assigned"] = {"$regex": doctor, "$options": "i"}
-    
-    patients = await db.glydex_managed_patients.find(
-        search_filter,
-        {"_id": 0}
-    ).limit(20).to_list(20)
-    
-    return {"success": True, "results": patients}
 
 @router.get("/staff/reports/summary")
 async def get_diabetes_summary_report(doctor: Optional[str] = None):

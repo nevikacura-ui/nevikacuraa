@@ -989,15 +989,11 @@ async def send_patient_checkin_notification(
     - {{doctor_name}} - Doctor's name
     - {{clinic_name}} - Clinic location
     """
-    return await send_whatsapp_template(
-        phone=phone,
+    variables = [patient_name, token_number, doctor_name, clinic_name]
+    return await send_msg91_whatsapp(
+        recipient_phone=phone,
         template_name=TEMPLATES["patient_checkin"],
-        variables={
-            "patient_name": patient_name,
-            "token_number": token_number,
-            "doctor_name": doctor_name,
-            "clinic_name": clinic_name
-        },
+        variables=variables,
         db=db,
         reference_id=f"checkin_{token_number}",
         message_type="patient_checkin"

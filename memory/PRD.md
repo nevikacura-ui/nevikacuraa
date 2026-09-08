@@ -83,6 +83,13 @@ Build a production-ready healthcare super-app (Nevika Cura) with:
   blocked calendar days for patients.
 - Note: `pharmacy_browse.py` has a 5-min in-memory cache; restart backend after bulk inventory changes.
 
+## Session Update (Sep 8, 2026)
+- Added "Leave" badge on the reschedule date-picker (`MyAppointmentsPage.jsx` → `RescheduleModal`):
+  fetches `GET /api/doctors/blocked-dates?doctor=<name>` on open; fully-blocked dates get a red
+  "Leave" badge + are disabled/strikethrough; partial-day blocked sessions show a red notice banner
+  and grey out the affected time slots. Verified end-to-end via screenshot with seeded test data
+  (full-day leave + partial morning-session leave), then cleaned up test data.
+
 ## Pending/Backlog
 - Push notifications for status updates (P2 backlog).
 - Light Mode: DISABLED APP-WIDE (Sep 2026) per user request — styling wasn't fixed, user asked to stop spending credits on it. `ThemeLanguageContext.jsx` now hardcodes `isDarkMode=true`, toggle button removed from `ServiceHeader.jsx`. Do NOT re-introduce light mode toggle unless explicitly asked.

@@ -103,7 +103,8 @@ with open(AZ_CSV, "r", encoding="utf-8") as f:
         if not key: continue
         price = 0
         try: price = float(row.get("price(₹)", 0) or 0)
-        except: pass
+        except Exception:
+            pass
         comp1 = (row.get("short_composition1", "") or "").strip()
         comp2 = (row.get("short_composition2", "") or "").strip()
         composition = f"{comp1} + {comp2}" if comp2 else comp1

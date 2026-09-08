@@ -7,7 +7,6 @@ Teleconsultation Module - Enhanced Version
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Header, UploadFile, File, Form
-from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime, timezone, timedelta
@@ -715,10 +714,10 @@ async def upload_prescription(
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         filename = f"prescription_{appointment_id}_{timestamp}.pdf"
         
-        # Save PDF temporarily
-        pdf_path = f"/tmp/{filename}"
-        with open(pdf_path, 'wb') as f:
-            f.write(pdf_data)
+        # Save PDF to Object Storage
+        storage_path = f"nevika-cura/teleconsult-prescriptions/{filename}"
+        from services.object_storage import put_object
+        put_object(storage_path, pdf_data, "application/pdf")
         
         # Get base URL from environment
         base_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://premium-rx-portal.preview.emergentagent.com')
@@ -792,13 +791,15 @@ async def upload_prescription(
 @router.get("/prescription/download/{filename}")
 async def download_prescription(filename: str):
     """Download a prescription PDF"""
-    pdf_path = f"/tmp/{filename}"
-    
-    if not os.path.exists(pdf_path):
+    from services.object_storage import get_object
+    from fastapi.responses import Response
+    try:
+        data, content_type = get_object(f"nevika-cura/teleconsult-prescriptions/{filename}")
+    except Exception:
         raise HTTPException(status_code=404, detail="Prescription not found")
-    
-    return FileResponse(
-        pdf_path,
-        media_type="application/pdf",
-        filename=filename
+
+    return Response(
+        content=data,
+        media_type=content_type or "application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )

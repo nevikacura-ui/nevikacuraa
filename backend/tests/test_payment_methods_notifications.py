@@ -30,7 +30,7 @@ class TestPaymentMethodsCRUD:
         for pm_id in self.created_pm_ids:
             try:
                 requests.delete(f"{BASE_URL}/api/payment-methods/{pm_id}")
-            except:
+            except Exception:
                 pass
     
     def test_save_upi_method(self):

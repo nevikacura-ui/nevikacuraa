@@ -461,7 +461,7 @@ async def get_time_slot_analytics(
                 hourly_stats[hour]["total"] += 1
                 if apt.get("status") == "Completed":
                     hourly_stats[hour]["completed"] += 1
-            except:
+            except Exception:
                 pass
     
     # Convert to list
@@ -542,7 +542,7 @@ async def get_staff_performance(
                 out_time = datetime.fromisoformat(check_out.replace("Z", "+00:00"))
                 hours = (out_time - in_time).total_seconds() / 3600
                 staff_stats[staff_name]["total_hours"] += hours
-            except:
+            except Exception:
                 pass
         
         staff_stats[staff_name]["clinic"] = record.get("clinic", "")

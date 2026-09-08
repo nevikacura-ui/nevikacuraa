@@ -228,18 +228,15 @@ async def upload_prescription(
     """Upload a prescription image/PDF to the wallet."""
     db = get_db()
     
-    # Save file
+    # Save file to Object Storage
     rx_id = str(uuid.uuid4())[:8]
     ext = os.path.splitext(file.filename)[1] if file.filename else ".png"
     filename = f"rx_{rx_id}{ext}"
     
-    upload_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "uploads", "prescriptions")
-    os.makedirs(upload_dir, exist_ok=True)
-    filepath = os.path.join(upload_dir, filename)
-    
     content = await file.read()
-    with open(filepath, "wb") as f:
-        f.write(content)
+    storage_path = f"nevika-cura/prescriptions/{filename}"
+    from services.object_storage import put_object
+    put_object(storage_path, content, file.content_type or "application/octet-stream")
     
     prescription = {
         "id": rx_id,
@@ -248,7 +245,7 @@ async def upload_prescription(
         "doctor_name": doctor_name or "",
         "notes": notes or "",
         "filename": filename,
-        "file_url": f"/api/uploads/prescriptions/{filename}",
+        "file_url": f"/api/pharmacy/v2/prescriptions/file/{filename}",
         "status": "active",
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -257,6 +254,17 @@ async def upload_prescription(
     prescription.pop("_id", None)
     
     return {"status": "success", "prescription": prescription}
+
+@router.get("/prescriptions/file/{filename}")
+async def get_prescription_file(filename: str):
+    """Serve a prescription file from Object Storage."""
+    from services.object_storage import get_object
+    from fastapi.responses import Response
+    try:
+        data, content_type = get_object(f"nevika-cura/prescriptions/{filename}")
+    except Exception:
+        raise HTTPException(status_code=404, detail="File not found")
+    return Response(content=data, media_type=content_type or "application/octet-stream")
 
 @router.delete("/prescriptions/{prescription_id}")
 async def delete_prescription(prescription_id: str):

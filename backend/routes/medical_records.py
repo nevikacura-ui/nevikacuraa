@@ -83,10 +83,14 @@ async def upload_record(
 
     file_id = str(uuid.uuid4())
     safe_filename = f"{file_id}{ext}"
-    file_path = UPLOAD_DIR / safe_filename
 
-    with open(file_path, "wb") as f:
-        f.write(content)
+    storage_path = f"nevika-cura/medical-records/{phone}/{safe_filename}"
+    try:
+        from services.object_storage import put_object
+        put_object(storage_path, content, file.content_type or "application/octet-stream")
+    except Exception as e:
+        logger.error(f"Object storage upload failed for medical record: {e}")
+        raise HTTPException(status_code=500, detail="Failed to store file")
 
     record = {
         "id": file_id,
@@ -95,6 +99,7 @@ async def upload_record(
         "title": title or file.filename,
         "original_filename": file.filename,
         "stored_filename": safe_filename,
+        "storage_path": storage_path,
         "file_size": len(content),
         "file_type": ext.lstrip("."),
         "notes": notes,
@@ -166,15 +171,17 @@ async def download_record(record_id: str):
     if not record:
         raise HTTPException(status_code=404, detail="Record not found")
 
-    file_path = UPLOAD_DIR / record["stored_filename"]
-    if not file_path.exists():
-        raise HTTPException(status_code=404, detail="File not found on server")
+    from services.object_storage import get_object
+    from fastapi.responses import Response
+    try:
+        data, content_type = get_object(record["storage_path"])
+    except Exception:
+        raise HTTPException(status_code=404, detail="File not found in storage")
 
-    from fastapi.responses import FileResponse
-    return FileResponse(
-        str(file_path),
-        filename=record["original_filename"],
-        media_type="application/octet-stream",
+    return Response(
+        content=data,
+        media_type=content_type or "application/octet-stream",
+        headers={"Content-Disposition": f'attachment; filename="{record["original_filename"]}"'},
     )
 
 

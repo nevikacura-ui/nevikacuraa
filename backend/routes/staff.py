@@ -294,7 +294,10 @@ async def validate_staff_token(staff = Depends(verify_staff)):
 async def create_walkin_appointment(data: WalkInAppointment, staff = Depends(verify_staff)):
     """Create a walk-in appointment"""
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    
+
+    from routes.appointment_routes import assert_slot_not_blocked
+    await assert_slot_not_blocked(db, data.doctor, today, data.time)
+
     appointment = {
         "id": str(uuid.uuid4()),
         "doctor": data.doctor,
@@ -414,7 +417,8 @@ async def create_emergency_appointment(data: EmergencyAppointment, staff = Depen
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     appointment_date = data.date if data.date else today
     now_time = datetime.now(timezone.utc).strftime("%H:%M")
-    
+
+    # Emergency bookings intentionally bypass leave-block checks (matches diagyn_staff EMERGENCY policy)
     appointment = {
         "id": str(uuid.uuid4()),
         "doctor": data.doctor,

@@ -727,7 +727,7 @@ async def send_patient_portal_otp(mobile: str):
         try:
             await send_sms_notification(f"+91{clean_mobile}", f"Your Nevika Cura OTP: {otp}. Valid 10 mins.")
             sms_sent = True
-        except:
+        except Exception:
             pass
     
     return {"success": True, "message": f"OTP sent{' (Demo: 123456)' if is_demo else ''}", "mock_otp": otp, "sms_sent": sms_sent}

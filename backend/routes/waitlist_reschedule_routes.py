@@ -54,18 +54,6 @@ async def join_waitlist(request: WaitlistRequest):
     return {"success": True, "waitlist_id": waitlist_entry["id"], "position": position,
             "message": f"You're #{position} on the waitlist. We'll notify you when a slot opens."}
 
-@router.get("/appointments/waitlist/{patient_phone}")
-async def get_waitlist_status(patient_phone: str):
-    db = get_db()
-    entries = await db.appointment_waitlist.find({"patient_phone": patient_phone, "status": "waiting"}).to_list(20)
-    for e in entries:
-        e.pop("_id", None)
-        e["position"] = await db.appointment_waitlist.count_documents({
-            "doctor_id": e["doctor_id"], "preferred_date": e["preferred_date"],
-            "status": "waiting", "created_at": {"$lte": e["created_at"]}
-        })
-    return {"waitlist_entries": entries}
-
 @router.get("/appointments/waitlist/status")
 async def check_waitlist_status(patient_id: str, doctor_id: str):
     db = get_db()
@@ -79,6 +67,18 @@ async def check_waitlist_status(patient_id: str, doctor_id: str):
         return {"success": True, "on_waitlist": True, "position": position,
                 "estimated_wait": "1-2 days" if position <= 3 else "3-5 days"}
     return {"success": True, "on_waitlist": False}
+
+@router.get("/appointments/waitlist/{patient_phone}")
+async def get_waitlist_status(patient_phone: str):
+    db = get_db()
+    entries = await db.appointment_waitlist.find({"patient_phone": patient_phone, "status": "waiting"}).to_list(20)
+    for e in entries:
+        e.pop("_id", None)
+        e["position"] = await db.appointment_waitlist.count_documents({
+            "doctor_id": e["doctor_id"], "preferred_date": e["preferred_date"],
+            "status": "waiting", "created_at": {"$lte": e["created_at"]}
+        })
+    return {"waitlist_entries": entries}
 
 @router.post("/appointments/waitlist/join")
 async def join_waitlist_new(

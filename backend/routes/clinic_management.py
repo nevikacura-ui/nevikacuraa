@@ -113,7 +113,7 @@ async def get_clinic_queue(clinic: str, auth = Depends(verify_admin_or_staff)):
                 if 5 <= duration <= 60:  # Valid range
                     total_time += duration
                     count += 1
-            except:
+            except Exception:
                 pass
         if count > 0:
             avg_consultation_time = total_time / count
@@ -290,7 +290,7 @@ async def get_queue_analytics(clinic: str, days: int = 30, auth = Depends(verify
                 
                 weekday_stats[weekday]["count"] += 1
                 weekday_stats[weekday]["total_wait"] += wait_time
-        except:
+        except Exception:
             pass
     
     # Calculate averages
@@ -389,7 +389,7 @@ async def optimize_appointments(request: OptimizeScheduleRequest, auth = Depends
                     "gap_minutes": int(gap),
                     "suggestion": f"Consider adding appointment between {times[i]} and {times[i + 1]}"
                 })
-        except:
+        except Exception:
             pass
     
     # Predict no-shows
@@ -503,7 +503,7 @@ async def get_staff_analytics(clinic: Optional[str] = None, days: int = 30, auth
                     if 5 <= duration <= 120:
                         doctor_stats[doctor]["total_time"] += duration
                         doctor_stats[doctor]["time_count"] += 1
-                except:
+                except Exception:
                     pass
         elif status == "Cancelled":
             doctor_stats[doctor]["cancelled"] += 1
@@ -550,7 +550,7 @@ async def get_staff_analytics(clinic: Optional[str] = None, days: int = 30, auth
                 "late_arrivals": summary["late"],
                 "attendance_rate": round(summary["present"] / total * 100, 1) if total > 0 else 0
             })
-    except:
+    except Exception:
         pass
     
     return {
@@ -638,7 +638,7 @@ async def get_due_followups(days_overdue: int = 7, auth = Depends(verify_admin_o
                         "reason": apt.get("follow_up_reason", "Regular follow-up"),
                         "priority": "high" if days_since > days_overdue else "normal"
                     })
-        except:
+        except Exception:
             pass
     
     # Also check for chronic conditions needing regular check-ups

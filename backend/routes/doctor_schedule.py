@@ -380,7 +380,7 @@ async def block_session(data: BlockedSession, doctor=Depends(verify_doctor)):
             s = datetime.strptime(start, "%H:%M")
             e = datetime.strptime(end, "%H:%M")
             return s <= parsed <= e
-        except:
+        except Exception:
             return False
     
     affected_appointments = [a for a in all_appointments if time_in_range(a.get("time", ""), data.start_time, data.end_time)]

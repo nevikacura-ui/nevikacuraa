@@ -95,6 +95,22 @@ const RescheduleModal = ({ appointment, onClose, onConfirm, rescheduling }) => {
   const [bookedSlots, setBookedSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [dates, setDates] = useState([]);
+  const [blockedDates, setBlockedDates] = useState([]);
+  const [blockedSessions, setBlockedSessions] = useState([]);
+
+  // Fetch doctor's leave/blocked dates & sessions once
+  useEffect(() => {
+    if (!appointment.doctor) return;
+    axios.get(`${API}/doctors/blocked-dates`, { params: { doctor: appointment.doctor } })
+      .then(res => {
+        setBlockedDates(res.data.blocked_dates || []);
+        setBlockedSessions(res.data.blocked_sessions || []);
+      })
+      .catch(() => { setBlockedDates([]); setBlockedSessions([]); });
+  }, [appointment.doctor]);
+
+  const getBlockedDateInfo = (dateStr) => blockedDates.find(b => b.date === dateStr);
+  const getBlockedSessionsForDate = (dateStr) => blockedSessions.filter(s => s.date === dateStr);
 
   // Generate next 7 non-Sunday dates
   useEffect(() => {
@@ -151,6 +167,21 @@ const RescheduleModal = ({ appointment, onClose, onConfirm, rescheduling }) => {
 
   const isSlotBooked = (t) => bookedSlots.includes(t);
 
+  // Check if slot falls inside a doctor-blocked (leave) session for the selected date
+  const isSlotOnLeave = (t) => {
+    const sessions = getBlockedSessionsForDate(selectedDate);
+    if (sessions.length === 0) return false;
+    const [th, tm] = t.split(':').map(Number);
+    const tMinutes = th * 60 + tm;
+    return sessions.some(s => {
+      const [sh, sm] = s.start_time.split(':').map(Number);
+      const [eh, em] = s.end_time.split(':').map(Number);
+      const startMinutes = sh * 60 + sm;
+      const endMinutes = eh * 60 + em;
+      return tMinutes >= startMinutes && tMinutes < endMinutes;
+    });
+  };
+
   // Check if slot is in the past (for today)
   const isSlotPast = (t) => {
     if (selectedDate !== format(new Date(), 'yyyy-MM-dd')) return false;
@@ -187,26 +218,58 @@ const RescheduleModal = ({ appointment, onClose, onConfirm, rescheduling }) => {
         {/* Date Selection */}
         <p className="text-white/50 text-xs font-semibold mb-2 uppercase tracking-wider">Pick a Date</p>
         <div className="flex gap-2 overflow-x-auto pb-3 mb-4 scrollbar-hide">
-          {dates.map(d => (
-            <button
-              key={d.value}
-              onClick={() => setSelectedDate(d.value)}
-              className="flex-shrink-0 px-3 py-2 rounded-xl text-center transition-all min-w-[80px]"
-              style={{
-                background: selectedDate === d.value ? 'rgba(20,184,166,0.2)' : 'rgba(255,255,255,0.04)',
-                border: `1px solid ${selectedDate === d.value ? 'rgba(20,184,166,0.4)' : 'rgba(255,255,255,0.06)'}`,
-              }}
-              data-testid={`reschedule-date-${d.value}`}
-            >
-              <p className={`text-xs font-bold ${selectedDate === d.value ? 'text-teal-300' : 'text-white/60'}`}>
-                {d.display.split(',')[0]}
-              </p>
-              <p className={`text-[10px] ${selectedDate === d.value ? 'text-teal-400/70' : 'text-white/30'}`}>
-                {d.display.split(',')[1]}
-              </p>
-            </button>
-          ))}
+          {dates.map(d => {
+            const leaveInfo = getBlockedDateInfo(d.value);
+            const isOnLeave = !!leaveInfo;
+            return (
+              <button
+                key={d.value}
+                onClick={() => !isOnLeave && setSelectedDate(d.value)}
+                disabled={isOnLeave}
+                className="flex-shrink-0 relative px-3 py-2 rounded-xl text-center transition-all min-w-[80px] disabled:cursor-not-allowed"
+                style={{
+                  background: isOnLeave ? 'rgba(239,68,68,0.06)' : selectedDate === d.value ? 'rgba(20,184,166,0.2)' : 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${isOnLeave ? 'rgba(239,68,68,0.25)' : selectedDate === d.value ? 'rgba(20,184,166,0.4)' : 'rgba(255,255,255,0.06)'}`,
+                  opacity: isOnLeave ? 0.7 : 1,
+                }}
+                title={isOnLeave ? `Doctor on leave: ${leaveInfo.reason || 'Leave'}` : undefined}
+                data-testid={`reschedule-date-${d.value}`}
+              >
+                {isOnLeave && (
+                  <span
+                    className="absolute -top-2 -right-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wide"
+                    style={{ background: '#EF4444', color: 'white' }}
+                    data-testid={`reschedule-date-leave-badge-${d.value}`}
+                  >
+                    Leave
+                  </span>
+                )}
+                <p className={`text-xs font-bold ${isOnLeave ? 'text-red-400/70 line-through' : selectedDate === d.value ? 'text-teal-300' : 'text-white/60'}`}>
+                  {d.display.split(',')[0]}
+                </p>
+                <p className={`text-[10px] ${isOnLeave ? 'text-red-400/40' : selectedDate === d.value ? 'text-teal-400/70' : 'text-white/30'}`}>
+                  {d.display.split(',')[1]}
+                </p>
+              </button>
+            );
+          })}
         </div>
+
+        {/* Partial-day leave notice */}
+        {selectedDate && getBlockedSessionsForDate(selectedDate).length > 0 && (
+          <div
+            className="mb-4 p-2.5 rounded-xl flex items-start gap-2"
+            style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}
+            data-testid="reschedule-partial-leave-notice"
+          >
+            <span className="text-red-400 text-[10px] font-bold uppercase tracking-wide shrink-0 mt-0.5">Leave</span>
+            <p className="text-red-300/80 text-xs">
+              {appointment.doctor} is unavailable {getBlockedSessionsForDate(selectedDate).map((s, i) => (
+                <span key={i}>{formatTime(s.start_time)}-{formatTime(s.end_time)}{s.reason ? ` (${s.reason})` : ''}{i < getBlockedSessionsForDate(selectedDate).length - 1 ? ', ' : ''}</span>
+              ))} on this date. Those slots are disabled below.
+            </p>
+          </div>
+        )}
 
         {/* Time Slots */}
         {selectedDate && (
@@ -222,7 +285,8 @@ const RescheduleModal = ({ appointment, onClose, onConfirm, rescheduling }) => {
                   {morningSlots.map(t => {
                     const booked = isSlotBooked(t);
                     const past = isSlotPast(t);
-                    const disabled = booked || past;
+                    const onLeave = isSlotOnLeave(t);
+                    const disabled = booked || past || onLeave;
                     return (
                       <button
                         key={t}
@@ -230,10 +294,11 @@ const RescheduleModal = ({ appointment, onClose, onConfirm, rescheduling }) => {
                         onClick={() => setSelectedTime(t)}
                         className="py-2 rounded-lg text-[11px] font-medium transition-all disabled:opacity-20"
                         style={{
-                          background: selectedTime === t ? 'rgba(20,184,166,0.25)' : 'rgba(255,255,255,0.04)',
-                          border: `1px solid ${selectedTime === t ? 'rgba(20,184,166,0.5)' : 'rgba(255,255,255,0.06)'}`,
+                          background: onLeave ? 'rgba(239,68,68,0.08)' : selectedTime === t ? 'rgba(20,184,166,0.25)' : 'rgba(255,255,255,0.04)',
+                          border: `1px solid ${onLeave ? 'rgba(239,68,68,0.2)' : selectedTime === t ? 'rgba(20,184,166,0.5)' : 'rgba(255,255,255,0.06)'}`,
                           color: selectedTime === t ? '#2DD4BF' : disabled ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.6)',
                         }}
+                        title={onLeave ? 'Doctor on leave' : undefined}
                         data-testid={`slot-${t}`}
                       >
                         {formatTime(t)}
@@ -247,7 +312,8 @@ const RescheduleModal = ({ appointment, onClose, onConfirm, rescheduling }) => {
                   {eveningSlots.map(t => {
                     const booked = isSlotBooked(t);
                     const past = isSlotPast(t);
-                    const disabled = booked || past;
+                    const onLeave = isSlotOnLeave(t);
+                    const disabled = booked || past || onLeave;
                     return (
                       <button
                         key={t}
@@ -255,10 +321,11 @@ const RescheduleModal = ({ appointment, onClose, onConfirm, rescheduling }) => {
                         onClick={() => setSelectedTime(t)}
                         className="py-2 rounded-lg text-[11px] font-medium transition-all disabled:opacity-20"
                         style={{
-                          background: selectedTime === t ? 'rgba(20,184,166,0.25)' : 'rgba(255,255,255,0.04)',
-                          border: `1px solid ${selectedTime === t ? 'rgba(20,184,166,0.5)' : 'rgba(255,255,255,0.06)'}`,
+                          background: onLeave ? 'rgba(239,68,68,0.08)' : selectedTime === t ? 'rgba(20,184,166,0.25)' : 'rgba(255,255,255,0.04)',
+                          border: `1px solid ${onLeave ? 'rgba(239,68,68,0.2)' : selectedTime === t ? 'rgba(20,184,166,0.5)' : 'rgba(255,255,255,0.06)'}`,
                           color: selectedTime === t ? '#2DD4BF' : disabled ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.6)',
                         }}
+                        title={onLeave ? 'Doctor on leave' : undefined}
                         data-testid={`slot-${t}`}
                       >
                         {formatTime(t)}

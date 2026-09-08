@@ -60,7 +60,7 @@ def generate_ical_event(appointment: dict, clinic_details: dict = None) -> str:
             start_dt = datetime.fromisoformat(apt_date.replace("Z", "+00:00"))
         else:
             start_dt = datetime.strptime(f"{apt_date} {apt_time}", "%Y-%m-%d %H:%M")
-    except:
+    except Exception:
         start_dt = datetime.now() + timedelta(days=1)
     
     # Assume 30 minute appointment duration
@@ -136,7 +136,7 @@ def generate_google_calendar_url(appointment: dict) -> str:
             start_dt = datetime.fromisoformat(apt_date.replace("Z", "+00:00"))
         else:
             start_dt = datetime.strptime(f"{apt_date} {apt_time}", "%Y-%m-%d %H:%M")
-    except:
+    except Exception:
         start_dt = datetime.now() + timedelta(days=1)
     
     end_dt = start_dt + timedelta(minutes=30)

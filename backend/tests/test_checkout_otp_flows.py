@@ -228,7 +228,7 @@ class TestHealthCheck:
             try:
                 data = response.json()
                 assert data.get("status") == "healthy"
-            except:
+            except Exception:
                 # Frontend might intercept health endpoint
                 pass
         print("✅ API health check passed")

@@ -3,7 +3,7 @@ ALYNE - Kids Health & Care Module
 Backend routes for child health management
 """
 
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form, Query
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime, timezone, date, timedelta
@@ -324,9 +324,6 @@ def get_growth_percentile(gender: str, age_months: int, measurement_type: str, v
         return {"percentile": "85-97", "status": "high_normal", "color": "yellow"}
     else:
         return {"percentile": ">97", "status": "above_normal", "color": "red"}
-
-# Import timedelta
-from datetime import timedelta
 
 # ============ ENDPOINTS ============
 
@@ -1233,7 +1230,6 @@ async def get_vaccination_pdf(child_id: str):
 
 # ============ AI CHAT WITH ALYNE ============
 
-import os
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -2137,8 +2133,6 @@ async def get_kidszone_dashboard(child_id: str):
 
 # ============ VOICE HEALTH BUDDY - Speech-to-Text & Text-to-Speech ============
 
-from fastapi import UploadFile, File
-
 @router.post("/kidszone/buddy/voice")
 async def voice_chat_with_buddy(
     audio: UploadFile = File(...),
@@ -2626,7 +2620,7 @@ async def translate_medicine(request: MedicineTranslateRequest):
                     "ai_suggestion": ai_response,
                     "note": "AI-generated suggestion - please verify with a pharmacist"
                 }
-            except:
+            except Exception:
                 pass
     
     return {
@@ -2993,7 +2987,7 @@ IMPORTANT:
                 assessment_result = json.loads(json_match.group())
             else:
                 assessment_result = {"raw_assessment": ai_response}
-        except:
+        except Exception:
             assessment_result = {"raw_assessment": ai_response}
         
         # Store the assessment
@@ -3309,7 +3303,7 @@ async def log_newborn_sleep(log: NewbornSleepLog):
             start = datetime.fromisoformat(log.sleep_start.replace('Z', '+00:00'))
             end = datetime.fromisoformat(log.sleep_end.replace('Z', '+00:00'))
             sleep_doc["duration_minutes"] = int((end - start).total_seconds() / 60)
-        except:
+        except Exception:
             pass
     
     await db.newborn_sleep.insert_one(sleep_doc)
@@ -3334,7 +3328,7 @@ async def end_sleep_session(sleep_id: str):
         start = datetime.fromisoformat(sleep["sleep_start"].replace('Z', '+00:00'))
         end = datetime.now(timezone.utc)
         duration = int((end - start).total_seconds() / 60)
-    except:
+    except Exception:
         duration = None
     
     await db.newborn_sleep.update_one(
@@ -3389,7 +3383,7 @@ async def get_newborn_milestones(child_id: str):
         dob = datetime.strptime(child["date_of_birth"], "%Y-%m-%d")
         age_days = (datetime.now() - dob).days
         age_weeks = age_days // 7
-    except:
+    except Exception:
         age_weeks = 0
     
     # Get achieved milestones
@@ -3460,13 +3454,12 @@ async def record_milestone(milestone: NewbornMilestone):
     }
 
 @router.get("/newborn/{child_id}/daily-log")
-async def get_daily_log(child_id: str, date: str = None):
+async def get_daily_log(child_id: str, log_date_param: str = Query(None, alias="date")):
     """Get complete daily log for newborn (feeding, diaper, sleep)"""
-    if not date:
-        date = datetime.now().strftime("%Y-%m-%d")
+    log_date = log_date_param or datetime.now().strftime("%Y-%m-%d")
     
-    start = f"{date}T00:00:00"
-    end = f"{date}T23:59:59"
+    start = f"{log_date}T00:00:00"
+    end = f"{log_date}T23:59:59"
     
     # Get all logs for the day
     feeds = await db.newborn_feeding.find({
@@ -3697,7 +3690,7 @@ async def record_growth_measurement(measurement: GrowthMeasurement):
         dob = datetime.strptime(child["date_of_birth"], "%Y-%m-%d")
         measure_date = datetime.strptime(measurement.date, "%Y-%m-%d")
         age_months = (measure_date.year - dob.year) * 12 + (measure_date.month - dob.month)
-    except:
+    except Exception:
         age_months = 0
     
     # Get percentile based on WHO standards
@@ -3815,7 +3808,7 @@ async def get_growth_summary(child_id: str):
         today = datetime.now()
         age_months = (today.year - dob.year) * 12 + (today.month - dob.month)
         age_days = (today - dob).days
-    except:
+    except Exception:
         age_months = 0
         age_days = 0
     
@@ -3857,7 +3850,7 @@ async def get_growth_summary(child_id: str):
                     "kg_per_month": round(weight_diff / days_diff * 30, 2),
                     "period_days": days_diff
                 }
-        except:
+        except Exception:
             pass
     
     # Alerts

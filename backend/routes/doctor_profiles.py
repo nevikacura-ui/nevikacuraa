@@ -207,6 +207,35 @@ async def get_weekly_availability(days: int = 7):
     
     return {"availability": availability}
 
+@router.get("/search")
+async def search_doctors(query: str, limit: int = 10):
+    """Search doctors by name, specialization, or clinic"""
+    query_lower = query.lower()
+    
+    results = []
+    for doctor in DOCTOR_PROFILES:
+        score = 0
+        if query_lower in doctor["name"].lower():
+            score += 3
+        if query_lower in doctor["specialization"].lower():
+            score += 2
+        if query_lower in doctor["clinic"].lower():
+            score += 1
+        if any(query_lower in s.lower() for s in doctor.get("specialties", [])):
+            score += 2
+        
+        if score > 0:
+            results.append({**doctor, "_score": score})
+    
+    # Sort by score
+    results.sort(key=lambda x: x["_score"], reverse=True)
+    
+    # Remove score and limit
+    for r in results:
+        del r["_score"]
+    
+    return {"doctors": results[:limit], "total": len(results)}
+
 @router.get("/{doctor_id}")
 async def get_doctor_profile(doctor_id: str):
     """Get detailed doctor profile"""
@@ -341,32 +370,3 @@ async def mark_review_helpful(review_id: str, user_id: str):
     )
     
     return {"message": "Marked as helpful"}
-
-@router.get("/search")
-async def search_doctors(query: str, limit: int = 10):
-    """Search doctors by name, specialization, or clinic"""
-    query_lower = query.lower()
-    
-    results = []
-    for doctor in DOCTOR_PROFILES:
-        score = 0
-        if query_lower in doctor["name"].lower():
-            score += 3
-        if query_lower in doctor["specialization"].lower():
-            score += 2
-        if query_lower in doctor["clinic"].lower():
-            score += 1
-        if any(query_lower in s.lower() for s in doctor.get("specialties", [])):
-            score += 2
-        
-        if score > 0:
-            results.append({**doctor, "_score": score})
-    
-    # Sort by score
-    results.sort(key=lambda x: x["_score"], reverse=True)
-    
-    # Remove score and limit
-    for r in results:
-        del r["_score"]
-    
-    return {"doctors": results[:limit], "total": len(results)}

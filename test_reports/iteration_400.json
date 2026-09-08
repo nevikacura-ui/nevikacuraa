@@ -1,0 +1,35 @@
+{
+  "summary": "Iteration 400 - FINAL delta fix verification. Confirmed /api/staff/appointments/walk-in now correctly enforces doctor leave-block (returns HTTP 400 with 'on leave' detail), and /api/staff/appointments/emergency intentionally bypasses the leave block (returns 200 even on blocked date). Ran 5/5 pytest cases PASS including light regression on /api/appointments and /api/diagyn-staff/appointments/book (both correctly reject blocked date + accept open date). This closes the last remaining gap flagged in iteration_399 - all 9 booking write paths across the codebase now consistently honor the leave-block policy (with only EMERGENCY endpoints intentionally bypassing per approved design).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_walkin_emergency_leave_block_400.py",
+    "/app/test_reports/pytest/iter_400.xml"
+  ],
+  "action_items": [
+    "REMIND USER: Preview backend now fully consistent - production nevikacura.com STILL needs redeploy for user to observe the fix. This has been the persistent user-visible pain across 5 iterations and is a deployment task, not a code task."
+  ],
+  "critical_code_review_comments": [
+    "staff.py walk-in fix cleanly re-uses assert_slot_not_blocked() via deferred import (line 298-299) consistent with the pattern established in iterations 397/398/399.",
+    "Emergency bypass is now explicitly documented in code (line 421 comment) - good defensive design decision, matches diagyn_staff EMERGENCY policy.",
+    "Consider consolidating leave-block enforcement into a FastAPI dependency or middleware in future to eliminate the need to remember to call assert_slot_not_blocked() in each new booking endpoint - this 5-round cycle demonstrates the drift risk of the current per-endpoint check pattern.",
+    "staff.py is 1600+ lines - candidate for splitting (walk-in/emergency, sonography, pharmacy, feedback are distinct concerns)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_walkin_emergency_leave_block_400.py (new)"
+  ],
+  "success_rate": {"backend": "100% (5/5)", "frontend": "not tested (backend-only request)"},
+  "test_credentials": "dr_vikas/test1234, staff_diagyn/test1234 via /api/staff/login",
+  "seed_data_creation": "Block for TODAY created + torn down. Test appointments created with TEST_-prefixed names and unique per-run phone numbers (7775-7779 series); teardown deletes them via /api/appointments cleanup loop.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Full leave-block enforcement matrix now verified across 9 endpoints: /api/appointments, /api/appointments/guest, /api/appointments/{id}/reschedule, /api/diagyn-staff/appointments/book (SCHEDULED type only), /api/chatbot/book, /api/voice-booking/confirm-booking, /api/features/voice/book-appointment, /api/staff/appointments/walk-in. EMERGENCY endpoints (/api/diagyn-staff EMERGENCY type + /api/staff/appointments/emergency) intentionally bypass. Regression tests are in /app/backend/tests/test_leave_block_new_endpoints_399.py and /app/backend/tests/test_walkin_emergency_leave_block_400.py - reusable for future audits.",
+  "rca of the issue": "5-round bug cycle closed. Root cause across iterations: leave-block enforcement was implemented per-endpoint rather than centrally, so each newly-discovered booking write path (grep-audit-uncovered) needed a separate patch. Iteration 400 addresses the last legacy staff.py walk-in path. Emergency was left as explicit bypass by design. Long-term mitigation: refactor into a shared FastAPI dependency invoked automatically by booking route registration."
+}

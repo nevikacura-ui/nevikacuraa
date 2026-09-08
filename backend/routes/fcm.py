@@ -167,7 +167,7 @@ async def unregister_token(token: str):
     await db.fcm_tokens.update_one({"token": token}, {"$set": {"active": False}})
     try:
         messaging.unsubscribe_from_topic([token], "all_users")
-    except:
+    except Exception:
         pass
     return {"success": True}
 

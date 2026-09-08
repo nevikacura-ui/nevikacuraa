@@ -29,7 +29,7 @@ def parse_mrp(mrp_str):
         # Remove any non-numeric characters except decimal point
         cleaned = re.sub(r'[^\d.]', '', str(mrp_str))
         return float(cleaned) if cleaned else 0.0
-    except:
+    except Exception:
         return 0.0
 
 def extract_products_from_pdf(pdf_path):
@@ -71,7 +71,7 @@ def extract_products_from_pdf(pdf_path):
                         # Skip if sl_no is not numeric-like
                         try:
                             int(str(sl_no).strip())
-                        except:
+                        except Exception:
                             continue
                         
                         brand_name = clean_text(brand_name)

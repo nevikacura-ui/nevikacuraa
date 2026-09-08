@@ -278,7 +278,6 @@ class TestCreateAndCheckInAppointment:
     def test_full_check_in_flow(self, auth_headers):
         """Test full flow: book appointment -> check-in by code"""
         # Get IST date
-        from datetime import datetime, timedelta
         ist_offset = timedelta(hours=5, minutes=30)
         now_ist = datetime.utcnow() + ist_offset
         today = now_ist.strftime("%Y-%m-%d")
@@ -369,7 +368,6 @@ class TestDoctorFeeCollectionWithAppointment:
         doctor_headers = {"Authorization": f"Bearer {doctor_token}"}
         
         # Get IST date
-        from datetime import datetime, timedelta
         ist_offset = timedelta(hours=5, minutes=30)
         now_ist = datetime.utcnow() + ist_offset
         today = now_ist.strftime("%Y-%m-%d")

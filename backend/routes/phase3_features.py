@@ -34,7 +34,7 @@ async def get_patient_from_token(authorization: str = Header(None)):
         token = authorization.split(' ')[1]
         payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
         return payload
-    except:
+    except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 # ============ Multi-language Voice Assistant (#29) ============
@@ -135,7 +135,7 @@ async def process_voice_command(command: VoiceCommand, patient = Depends(get_pat
             else:
                 json_str = response
             result = json.loads(json_str)
-        except:
+        except Exception:
             result = {
                 "intent": "general_query",
                 "response_text": "I understood your request. How can I help you?" if command.language == "en" else 
@@ -192,6 +192,11 @@ async def voice_book_appointment(
     
     # Create appointment
     appointment_id = str(uuid.uuid4())[:8]
+
+    if db is not None:
+        from routes.appointment_routes import assert_slot_not_blocked
+        await assert_slot_not_blocked(db, doctor, date, time)
+
     appointment = {
         "id": appointment_id,
         "patient_name": patient_name,
@@ -206,6 +211,7 @@ async def voice_book_appointment(
     
     if db is not None:
         await db.appointments.insert_one(appointment)
+        appointment.pop("_id", None)
     
     # Generate confirmation in user's language
     confirmations = {

@@ -141,7 +141,7 @@ async def get_medicines_without_images(page: int = 1, per_page: int = 100):
     
     # Get all medicines with images from catalog
     catalog_with_images = await db.medicines_catalog.find(
-        {"image": {"$exists": True, "$ne": None, "$ne": ""}},
+        {"image": {"$exists": True, "$nin": [None, ""]}},
         {"_id": 0, "name": 1}
     ).to_list(None)
     
@@ -173,7 +173,7 @@ async def get_image_stats():
     
     # Count medicines with images in catalog
     with_images = await db.medicines_catalog.count_documents({
-        "image": {"$exists": True, "$ne": None, "$ne": ""}
+        "image": {"$exists": True, "$nin": [None, ""]}
     })
     
     return {

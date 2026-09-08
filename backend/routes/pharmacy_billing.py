@@ -552,7 +552,7 @@ async def get_sticker_data(
     staff=Depends(verify_staff),
 ):
     """Get medicine data for barcode sticker sheet (65 stickers per page)"""
-    query = {"barcode": {"$exists": True, "$ne": "", "$ne": None}}
+    query = {"barcode": {"$exists": True, "$nin": ["", None]}}
     if medicine_ids:
         ids = [x.strip() for x in medicine_ids.split(",")]
         query["id"] = {"$in": ids}

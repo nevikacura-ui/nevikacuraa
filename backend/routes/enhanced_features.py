@@ -170,7 +170,7 @@ async def schedule_appointment_reminders(appointment_id: str):
     
     try:
         apt_datetime = datetime.strptime(f"{apt_date} {apt_time}", "%Y-%m-%d %H:%M")
-    except:
+    except Exception:
         apt_datetime = datetime.strptime(apt_date, "%Y-%m-%d")
     
     reminders_created = []

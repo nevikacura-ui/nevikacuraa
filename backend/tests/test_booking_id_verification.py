@@ -165,7 +165,7 @@ class TestPharmacyOrderBookingId:
             )
             if login_resp.status_code == 200:
                 self.token = login_resp.json().get("token")
-        except:
+        except Exception:
             pass
     
     def test_pharmacy_order_endpoint_exists(self):
@@ -224,7 +224,7 @@ class TestDiagnosticOrderBookingId:
             )
             if login_resp.status_code == 200:
                 self.token = login_resp.json().get("token")
-        except:
+        except Exception:
             pass
     
     def test_diagnostic_order_endpoint_exists(self):

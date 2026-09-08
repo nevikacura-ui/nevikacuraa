@@ -217,7 +217,7 @@ async def send_weekly_digests(db):
 
     # Find users with email addresses
     users = await db.users.find(
-        {"email": {"$exists": True, "$ne": "", "$ne": None}},
+        {"email": {"$exists": True, "$nin": ["", None]}},
         {"_id": 0, "phone": 1, "email": 1, "name": 1}
     ).to_list(length=500)
 

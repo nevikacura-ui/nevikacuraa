@@ -1,0 +1,39 @@
+{
+  "summary": "Iteration 399 - Verified iteration_398's leave-block enforcement is now applied to THREE additional booking write endpoints found by main agent's grep audit (chatbot /api/chatbot/book, voice /api/voice-booking/confirm-booking, phase3 /api/features/voice/book-appointment). Ran 8/8 pytest cases PASS including full regression on the 4 previously-fixed endpoints. Verified via HTML/React inspection that Oct 15 (blocked date) renders with disabled=true attribute in the /diagyn calendar; attempted DOM-level bypass (removing disabled attr and clicking) did NOT trigger the React handler (controlled component). Independently verified /api/appointments/follow-up (appointment_calendar.py) is NOT registered (POST returns 405 - no live route). FLAGGED: /api/staff/appointments/walk-in and /api/staff/appointments/emergency (staff.py) ARE http-reachable and DO bypass the leave-block check - not called by current frontend .jsx/.js but curl-callable.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/staff/appointments/walk-in", "issue": "Bypasses leave-block check. Returned 200 for a booking on blocked date 2026-10-15 (though endpoint forces server-side date=today, so a walk-in on a day-with-leave would still write). Not called from current frontend - defense-in-depth gap only."},
+      {"endpoint": "/api/staff/appointments/emergency", "issue": "Bypasses leave-block check (returned 200 for booking on blocked date 2026-10-15). Likely intentional (matches diagyn_staff EMERGENCY bypass policy in iteration_398) but should be an explicit design decision, not implicit. Also not called from current frontend."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_leave_block_new_endpoints_399.py",
+    "/app/test_reports/pytest/iter_399.xml"
+  ],
+  "action_items": [
+    "REMIND USER: Fixes exist only in preview/dev backend. Production nevikacura.com MUST be re-deployed for the user to observe them - the persistent user complaint from the last 4 rounds has been about the un-deployed production site.",
+    "OPTIONAL defense-in-depth: apply assert_slot_not_blocked() to /api/staff/appointments/walk-in and /api/staff/appointments/emergency in routes/staff.py, OR delete these unused legacy endpoints entirely (grep confirms zero references in /app/frontend/src). Currently they represent an HTTP-reachable bypass path even though frontend never calls them."
+  ],
+  "critical_code_review_comments": [
+    "Three new patches correctly re-use assert_slot_not_blocked() from appointment_routes.py via deferred import pattern - consistent with iteration_398 approach, avoids circular imports.",
+    "voice_booking.py ConfirmBookingRequest model matches expected payload (doctor/clinic/date/time/patient_name/patient_phone all required).",
+    "Legacy staff.py walk-in/emergency endpoints represent a code-hygiene issue: 340+ lines of unused code + 2 leave-bypass paths that are HTTP-reachable. Recommend either deleting them or applying the same block-check.",
+    "appointment_calendar.py POST /appointments/follow-up confirmed NOT registered in server.py (grep no include_router). Safe as-is; consider deleting entire file to reduce audit surface next round."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_leave_block_new_endpoints_399.py (new)"
+  ],
+  "success_rate": {"backend": "100% (8/8)", "frontend": "UI calendar block verified (disabled=true on Oct 15)"},
+  "test_credentials": "dr_vikas/test1234, staff_diagyn/test1234 - both work via /api/staff/login",
+  "seed_data_creation": "Test creates block for 2026-10-15 (torn down after run). Some test appointments on OPEN_DATE 2026-10-16 (times 19:xx) may remain if the auto-cleanup DELETE didn't succeed - low-risk as data uses TEST_/AUDIT_ prefixed names. Verified: no leftover blocked-dates entries after cleanup.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Regression test file /app/backend/tests/test_leave_block_new_endpoints_399.py covers 3 new + 2 old endpoints + audit checks. Reusable - export REACT_APP_BACKEND_URL then run pytest. Random times used to avoid duplicate-slot collisions across re-runs. If main agent decides to also patch staff.py walk-in/emergency, add corresponding cases in the TestAuditUnreachable class. UI end-to-end was NOT fully clicked through to a completed booking because DOM-force-click on the disabled Oct 15 button did not trigger the React onClick handler (controlled component), which is the correct browser behavior. Happy-path booking via UI on an OPEN date was not exhaustively clicked-through because the full swipe-to-book flow gates behind SMS OTP - defer to main-agent self-verify if UI e2e happy-path is desired.",
+  "rca of the issue": "Round-4 audit fix. Main agent's grep across db.appointments.insert_one revealed 3 more genuinely-reachable booking write paths (chatbot voice-agent flows) that had never gone through the iteration_397/398 fix cycle. Root cause: horizontally distributed booking logic across chatbot_api.py, voice_booking.py, phase3_features.py - no single-source enforcement. Fix pattern (correctly applied): reuse the same assert_slot_not_blocked() helper via deferred import. Verified: all three now return leave/unavailable when target date is blocked, and succeed on open dates. NOTE: user's persistent frustration stems from production site (nevikacura.com) not being redeployed since these fixes started - preview backend is fully fixed; production is not until user redeploys."
+}

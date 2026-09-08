@@ -251,7 +251,10 @@ async def suggest_medicines(q: str = "", staff=Depends(verify_pharmacy_staff)):
     # If prefix match returns few results, try contains match
     if len(results) < 5:
         contains = await db.medicines.find(
-            {"name": {"$regex": q, "$options": "i"}, "name": {"$not": {"$regex": f"^{q}", "$options": "i"}}},
+            {"$and": [
+                {"name": {"$regex": q, "$options": "i"}},
+                {"name": {"$not": {"$regex": f"^{q}", "$options": "i"}}}
+            ]},
             {"_id": 0, "id": 1, "name": 1, "mrp": 1, "manufacturer": 1, "unit": 1,
              "generic_name": 1, "category": 1, "pack": 1, "description": 1,
              "stock_quantity": 1, "discount_percent": 1, "image_url": 1,

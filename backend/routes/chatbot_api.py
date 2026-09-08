@@ -331,6 +331,12 @@ async def chatbot_book_appointment(data: ChatbotBookingRequest):
             "success": False,
             "message": f"Sorry, {time_12h} on {data.date} is no longer available. Please select another slot."
         }
+
+    from routes.appointment_routes import assert_slot_not_blocked
+    try:
+        await assert_slot_not_blocked(db, data.doctor, data.date, time_24h)
+    except HTTPException as e:
+        return {"success": False, "message": e.detail}
     
     # Clean phone
     phone = data.patient_phone.replace("+", "").replace(" ", "").replace("-", "")

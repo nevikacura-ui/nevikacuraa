@@ -121,7 +121,7 @@ async def get_current_user_optional(authorization: str = Header(None)):
             return None
         
         return User(**user_doc)
-    except:
+    except Exception:
         return None
 
 async def verify_admin(authorization: str = Header(None)):

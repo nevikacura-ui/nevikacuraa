@@ -245,7 +245,7 @@ async def search_inventory(q: str, category: Optional[str] = None, limit: int = 
                     })
                     if len([r for r in results if r["type"] == "medicine"]) >= 20:
                         break
-        except:
+        except Exception:
             pass
     
     # Search custom items
@@ -337,6 +337,7 @@ async def add_custom_item(item: AddCustomItem):
     }
     
     await db.custom_bill_items.insert_one(doc)
+    doc.pop("_id", None)
     
     return {"success": True, "item": doc}
 

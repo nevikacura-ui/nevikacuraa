@@ -34,7 +34,7 @@ async def get_patient_from_token(authorization: str = Header(None)):
         token = authorization.split(' ')[1]
         payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
         return payload
-    except:
+    except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 # ============ Smart Schedule Optimizer (#7) ============
@@ -99,7 +99,7 @@ Return exactly 3 recommended slots in JSON format."""
             
             ai_result = json.loads(json_str)
             recommendations = ai_result.get("recommendations", [])
-        except:
+        except Exception:
             # Fallback recommendations
             base_date = request.preferred_date or datetime.now().strftime("%Y-%m-%d")
             recommendations = [
@@ -210,7 +210,7 @@ Provide health insights in JSON format with risk_factors, recommendations, areas
             else:
                 json_str = response
             insights = json.loads(json_str)
-        except:
+        except Exception:
             insights = {
                 "risk_factors": [
                     {"condition": "General Health", "risk": "low", "description": "Maintain regular checkups"}
@@ -295,7 +295,7 @@ Provide recommendation in JSON format."""
             else:
                 json_str = response
             suggestion = json.loads(json_str)
-        except:
+        except Exception:
             suggestion = {
                 "specialist": "General Physician",
                 "urgency": "routine",
@@ -411,7 +411,7 @@ Create a friendly, comprehensive health report in JSON format."""
             else:
                 json_str = response
             report = json.loads(json_str)
-        except:
+        except Exception:
             report = {
                 "summary": "Your health report is being prepared.",
                 "health_overview": "Regular health monitoring is key to wellness.",
@@ -491,7 +491,7 @@ async def get_post_visit_care_for_appointment(appointment_id: str):
             {"_id": ObjectId(appointment_id)},
             {"_id": 0, "consultation_type": 1, "doctor_name": 1, "status": 1, "date": 1}
         )
-    except:
+    except Exception:
         apt = None
     
     c_type = "default"

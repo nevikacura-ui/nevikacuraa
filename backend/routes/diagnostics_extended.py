@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timezone, timedelta
 from database import get_db
+from services.notification_service import notify_staff_new_order
 import uuid
 import logging
 
@@ -118,7 +119,7 @@ def parse_reference_range(ref_range: str):
         if "-" in ref_range:
             parts = ref_range.replace(" ", "").split("-")
             return {"min": float(parts[0]), "max": float(parts[1])}
-    except:
+    except Exception:
         pass
     return {"min": None, "max": None}
 
@@ -150,6 +151,7 @@ async def save_lab_result(
     notes: str = Body("")
 ):
     """Save a lab result for trend tracking"""
+    db = get_db()
     result = {
         "id": str(uuid.uuid4()),
         "patient_id": patient_id,
@@ -262,6 +264,7 @@ async def send_fasting_reminder(
     tests: List[str] = Body(...)
 ):
     """Send fasting reminder via WhatsApp and email"""
+    db = get_db()
     # Check which tests require fasting
     fasting_tests = ["glucose", "sugar", "lipid", "cholesterol", "triglyceride", "fbs", "ppbs"]
     requires_fasting = any(

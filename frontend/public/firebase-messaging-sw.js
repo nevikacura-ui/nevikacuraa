@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-globals */
+/* global importScripts, firebase */
 // Firebase Cloud Messaging Service Worker
 
 importScripts('https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js');

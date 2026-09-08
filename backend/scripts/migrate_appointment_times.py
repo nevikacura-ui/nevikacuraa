@@ -140,7 +140,7 @@ async def analyze_time_formats(db):
                         formats["12h_am_pm"].append((booking_id, time_val))  # Needs normalization
                 else:
                     formats["unknown"].append((booking_id, time_val))
-            except:
+            except Exception:
                 formats["unknown"].append((booking_id, time_val))
         else:
             formats["unknown"].append((booking_id, time_val))

@@ -11,6 +11,12 @@ import logging
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
+_live_sync_manager = None
+
+def set_live_sync_manager(manager):
+    global _live_sync_manager
+    _live_sync_manager = manager
+
 
 class DiagnosticOrderCreate(BaseModel):
     tests: List[str]
@@ -242,8 +248,8 @@ async def create_diagnostic_order(input: DiagnosticOrderCreate, user = Depends(_
     
     # Live sync notification to Mango staff
     try:
-        if live_sync_manager:
-            await live_sync_manager.notify_new_order("diagnostic", {
+        if _live_sync_manager:
+            await _live_sync_manager.notify_new_order("diagnostic", {
                 "id": order.id,
                 "patient_name": order.patient_name,
                 "patient_phone": order.patient_phone,

@@ -952,7 +952,7 @@ async def download_evara_pdf_report(user = Depends(lambda: get_current_user)):
                 cycle_length = (current - previous).days
                 if 21 <= cycle_length <= 45:
                     cycle_lengths.append(cycle_length)
-            except:
+            except Exception:
                 pass
     
     avg_cycle = round(sum(cycle_lengths) / len(cycle_lengths)) if cycle_lengths else None
@@ -986,7 +986,7 @@ async def download_evara_pdf_report(user = Depends(lambda: get_current_user)):
             try:
                 next_predicted = datetime.strptime(last_period['start_date'], "%Y-%m-%d") + timedelta(days=avg_cycle)
                 summary_data.append(["Next Period (Predicted):", next_predicted.strftime('%d %b %Y')])
-            except:
+            except Exception:
                 pass
     
     summary_table = Table(summary_data, colWidths=[5*cm, 6*cm])
@@ -1012,7 +1012,7 @@ async def download_evara_pdf_report(user = Depends(lambda: get_current_user)):
                 try:
                     d = (datetime.strptime(end, "%Y-%m-%d") - datetime.strptime(start, "%Y-%m-%d")).days + 1
                     duration = f"{d} days"
-                except:
+                except Exception:
                     pass
             symptoms = ", ".join(log.get('symptoms', [])[:2]) or "-"
             history_data.append([start, end or '-', duration, log.get('flow', '-'), symptoms[:20]])
