@@ -3,6 +3,7 @@ DiaGyn Staff Portal — Slot management routes.
 """
 
 from fastapi import APIRouter, Depends, Query
+from datetime import datetime
 
 from . import shared
 from .auth import verify_staff
@@ -51,6 +52,45 @@ async def get_available_slots(
 
     booked_times = set(apt.get("time") for apt in booked if apt.get("time"))
     unavailable_times = booked_times.union(reserved_slots)
+
+    # Doctor leave: full-day and session blocks set via Doctor Portal -> Manage Leave
+    from routes.appointment_routes import get_doctor_schedule_by_name
+    doctor_schedule = await get_doctor_schedule_by_name(shared.db, doctor)
+    date_blocked = False
+    leave_reason = None
+    if doctor_schedule:
+        for blocked_date in doctor_schedule.get("blocked_dates", []):
+            if blocked_date.get("date") == date:
+                date_blocked = True
+                leave_reason = blocked_date.get("reason", "Leave")
+                break
+        if not date_blocked:
+            for session in doctor_schedule.get("blocked_sessions", []):
+                if session.get("date") != date:
+                    continue
+                try:
+                    s_start = datetime.strptime(session["start_time"], "%H:%M")
+                    s_end = datetime.strptime(session["end_time"], "%H:%M")
+                    for slot in all_slots:
+                        slot_time = datetime.strptime(slot["value"], "%H:%M")
+                        if s_start <= slot_time < s_end:
+                            unavailable_times.add(slot["value"])
+                except (ValueError, KeyError):
+                    pass
+
+    if date_blocked:
+        return {
+            "clinic": clinic,
+            "doctor": doctor,
+            "date": date,
+            "available_slots": [],
+            "morning_slots": [],
+            "evening_slots": [],
+            "booked_count": 0,
+            "total_slots": len(all_slots),
+            "current_session": slot_data.get("current_session"),
+            "message": f"{doctor} is on leave on {date} ({leave_reason})",
+        }
 
     available = [slot for slot in all_slots if slot["value"] not in unavailable_times]
     morning_available = [slot for slot in slot_data.get("morning", []) if slot["value"] not in unavailable_times]

@@ -78,6 +78,7 @@ const Teleconsultation = () => {
   const [showPrescription, setShowPrescription] = useState(null);
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date()); // For real-time slot updates
+  const [blockedDates, setBlockedDates] = useState([]);
   
   // Update current time every minute to refresh slot availability
   useEffect(() => {
@@ -111,6 +112,13 @@ const Teleconsultation = () => {
       fetchBookedSlots();
     }
   }, [selectedDoctor, selectedDate]);
+
+  useEffect(() => {
+    if (!selectedDoctor) { setBlockedDates([]); return; }
+    axios.get(`${API}/doctors/blocked-dates`, { params: { doctor: selectedDoctor.name } }).then(res => {
+      setBlockedDates((res.data.blocked_dates || []).map(b => b.date));
+    }).catch(() => setBlockedDates([]));
+  }, [selectedDoctor]);
 
   const fetchWalletBalance = async () => {
     if (!token) return;
@@ -154,7 +162,7 @@ const Teleconsultation = () => {
     const dates = [];
     let date = startOfDay(new Date());
     for (let i = 0; i < 14; i++) {
-      if (!isSunday(date)) {
+      if (!isSunday(date) && !blockedDates.includes(format(date, 'yyyy-MM-dd'))) {
         dates.push(new Date(date));
       }
       date = addDays(date, 1);

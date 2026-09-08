@@ -137,8 +137,32 @@ async def get_booked_slots(doctor: str, date: str):
         {"doctor_id": doctor, "date": date, "status": {"$nin": ["cancelled", "Cancelled"]}},
         {"_id": 0, "time": 1}
     ).to_list(100)
-    
-    return {"booked_slots": [b["time"] for b in booked]}
+
+    booked_slots = [b["time"] for b in booked]
+
+    # Check doctor leave/session blocks (set via Doctor Portal -> Manage Leave)
+    doctor_name = TELECONSULT_DOCTORS.get(doctor, {}).get("name")
+    if doctor_name:
+        from routes.appointment_routes import get_doctor_schedule_by_name
+        doctor_schedule = await get_doctor_schedule_by_name(db, doctor_name)
+        if doctor_schedule:
+            for blocked_date in doctor_schedule.get("blocked_dates", []):
+                if blocked_date.get("date") == date:
+                    return {"booked_slots": [s["time_12"] for s in TIME_SLOTS], "date_blocked": True, "reason": blocked_date.get("reason", "Leave")}
+
+            for session in doctor_schedule.get("blocked_sessions", []):
+                if session.get("date") == date:
+                    try:
+                        s_start = datetime.strptime(session["start_time"], "%H:%M")
+                        s_end = datetime.strptime(session["end_time"], "%H:%M")
+                        for slot in TIME_SLOTS:
+                            slot_time = datetime.strptime(slot["time_24"], "%H:%M")
+                            if s_start <= slot_time < s_end:
+                                booked_slots.append(slot["time_12"])
+                    except (ValueError, KeyError):
+                        pass
+
+    return {"booked_slots": booked_slots}
 
 @router.post("/book")
 async def book_teleconsultation(
@@ -190,6 +214,26 @@ Please check if patient needs to reschedule."""
     
     if existing:
         raise HTTPException(status_code=400, detail="This slot is no longer available")
+
+    # Reject if doctor has marked leave for this date/session
+    doctor_name = TELECONSULT_DOCTORS.get(data.doctor_id, {}).get("name")
+    if doctor_name:
+        from routes.appointment_routes import get_doctor_schedule_by_name
+        doctor_schedule = await get_doctor_schedule_by_name(db, doctor_name)
+        if doctor_schedule:
+            for blocked_date in doctor_schedule.get("blocked_dates", []):
+                if blocked_date.get("date") == data.date:
+                    raise HTTPException(status_code=400, detail=f"{doctor_name} is on leave on {data.date}. Please pick another date.")
+            for session in doctor_schedule.get("blocked_sessions", []):
+                if session.get("date") == data.date:
+                    try:
+                        s_start = datetime.strptime(session["start_time"], "%H:%M")
+                        s_end = datetime.strptime(session["end_time"], "%H:%M")
+                        slot_time = next((datetime.strptime(s["time_24"], "%H:%M") for s in TIME_SLOTS if s["time_12"] == data.time), None)
+                        if slot_time and s_start <= slot_time < s_end:
+                            raise HTTPException(status_code=400, detail=f"{doctor_name} is unavailable at this time. Please pick another slot.")
+                    except (ValueError, KeyError):
+                        pass
     
     # Check wallet balance
     wallet = await db.wallets.find_one({"user_id": user["id"]})

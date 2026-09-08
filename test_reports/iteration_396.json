@@ -1,0 +1,32 @@
+{
+  "summary": "Verified fix for staff portal doctor-leave slot blocking. Wrote pytest test_staff_slots_leave_block.py covering: (a) full-day block via POST /api/doctor-schedule/block-date -> GET /api/diagyn-staff/slots/available returns empty morning/evening/available slots + leave message, (b) evening session block 18:00-22:00 -> only evening slots emptied while morning remains, (c) walk-in mode (mode=walkin) on a fully-blocked today returns empty, (d) open-day regression returns normal slot buckets, (e) patient-facing /api/appointments/booked-slots regression continues to return date_blocked:true for a blocked date. All 7 tests pass against live preview backend. Clinic name must be 'Pushpa Clinic' (not 'Pushpa'), doctor name must be 'Dr. Vikas Jha' — matches DiaGynStaffPortal.js and DOCTOR_SCHEDULE in diagyn_staff/shared.py.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_staff_slots_leave_block.py",
+    "/app/test_reports/pytest/pytest_staff_slots_leave_396.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "slots.py: reserved_slots {'11:00','11:15'} are hard-coded in two places (patient booked-slots endpoint and staff slots.py). Consider centralizing.",
+    "get_doctor_schedule_by_name looks up by db.staff.name/doctor_name — case-sensitive. Fine currently but fragile if a name variant is introduced (e.g. 'Vikas Jha' vs 'Dr. Vikas Jha'). The staff portal frontend always sends 'Dr. Vikas Jha', so OK.",
+    "The teleconsultation.py defensive fix is safe but as flagged, TeleconsultPage.jsx is fully mocked and NextAvailableButton.jsx / Teleconsultation.js appear orphaned. Grep confirms /api/teleconsult/* and /api/doctors/next-available not called by any active JSX (see finish thoughts). No action needed."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_staff_slots_leave_block.py (new)"
+  ],
+  "success_rate": {"backend": "100% (7/7)", "frontend": "not tested (targeted backend fix)"},
+  "test_credentials": "staff_diagyn/test1234, dr_vikas/test1234 via POST /api/staff/login (both from /app/memory/test_credentials.md)",
+  "seed_data_creation": "Test creates then cleans up blocked_dates and blocked_sessions for Dr. Vikas Jha on future dates; walk-in test uses today's date and cleans up after.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Test file test_staff_slots_leave_block.py in /app/backend/tests can be reused as a regression suite for doctor-leave slot filtering. It picks a working date automatically (Vikas Jha works Mon-Sat, off Sunday) so is date-agnostic. Doctor name must be 'Dr. Vikas Jha' and clinic 'Pushpa Clinic' when calling /api/diagyn-staff/slots/available or /api/appointments/booked-slots.",
+  "rca of the issue": "Root cause was that the staff portal's dedicated slots endpoint /api/diagyn-staff/slots/available (in routes/diagyn_staff/slots.py) was written before doctor leave management existed and only excluded already-booked appointment times + hard-coded reserved slots. It never consulted db.doctor_schedules where blocked_dates/blocked_sessions are written by POST /api/doctor-schedule/block-date and block-session. So even after a doctor blocked their leave, the staff Book/Walk-in flows kept showing normal bookable slots. Fix adds a call to the shared get_doctor_schedule_by_name() helper from appointment_routes.py and (i) returns empty slots + 'on leave' message when the date is in blocked_dates, (ii) excludes slot times within any blocked_session start/end range from morning_slots/evening_slots/available_slots for the given date. Verified via 7 pytest scenarios against the live preview backend."
+}
