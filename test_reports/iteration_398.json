@@ -1,0 +1,32 @@
+{
+  "summary": "Independently verified iteration_398 fix: server-side leave-block enforcement via assert_slot_not_blocked() across ALL 4 booking-write endpoints + session-level blocks. All 9 pytest scenarios PASS. Backend behavior matches spec, including intentional EMERGENCY bypass in staff portal. Frontend /diagyn smoke check confirms page still loads and doctor list renders (no regression from added backend validation).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_leave_block_booking_validation.py",
+    "/app/test_reports/pytest/iter_398.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "assert_slot_not_blocked() correctly handles both '18:00' and '6:00 PM' formatted time strings via dual strptime fallback - good.",
+    "Staff portal EMERGENCY bypass at /app/backend/routes/diagyn_staff/appointments.py L68 matches the existing duplicate-check pattern (L31) - consistent design.",
+    "Reschedule endpoint (appointment_routes.py L1694) calls assert_slot_not_blocked BEFORE freeing/updating the old slot - correct ordering, original appointment preserved on rejection (verified in tests).",
+    "Deferred import 'from routes.appointment_routes import assert_slot_not_blocked' inside diagyn_staff/appointments.py avoids circular import - acceptable pattern.",
+    "Minor: assert_slot_not_blocked bare `except (ValueError, KeyError): pass` silently swallows malformed session data - low risk since data is written from the same codebase, but a debug log would aid future debugging."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100% (9/9)", "frontend": "smoke pass"},
+  "test_credentials": "dr_vikas/test1234 (doctor), staff_diagyn/test1234 (staff) - both verified via /api/staff/login",
+  "seed_data_creation": "Test creates and tears down its own blocks (FULL_BLOCK_DATE=2026-09-20, SESSION_BLOCK_DATE=2026-09-24) and any appointments created during flows. Verified cleanup completed - GET /api/doctors/blocked-dates after run shows only pre-existing blocks (2026-09-02/04/10 + session on 2026-09-09), no leaked test data.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "The regression test file /app/backend/tests/test_leave_block_booking_validation.py is reusable - just export REACT_APP_BACKEND_URL then run pytest on it. Covers: patient booking (reject+allow), guest booking (reject via real OTP flow using /auth/guest/send-otp which returns OTP in response), reschedule (reject + original untouched), staff SCHEDULED/WALK_IN reject + EMERGENCY bypass, session-level block reject-inside/allow-outside. Full UI booking flow was NOT clicked through end-to-end (only /diagyn landing smoke) because (a) backend-only change with no frontend files touched, (b) full UI flow requires SMS OTP which is fragile - defer to main agent self-verify if UI e2e needed.",
+  "rca of the issue": "Round-3 fix for user's persistent 'blocked slots still shown/bookable' complaint. Root cause (from iteration_397 investigation): calendar UI greyed dates and slot-listing APIs hid slots correctly, BUT the four booking WRITE endpoints (POST /appointments, /appointments/guest, /appointments/{id}/reschedule, /diagyn-staff/appointments/book) had ZERO server-side validation against doctor_schedules.blocked_dates/blocked_sessions - so any client-side bypass (direct API, stale page back-button) could still write a booking onto a blocked date. Fix: shared helper assert_slot_not_blocked() wired into all four endpoints; EMERGENCY type intentionally bypasses in staff portal to match duplicate-check policy. Verified with 9 targeted pytest cases covering both full-day and session-level blocks."
+}

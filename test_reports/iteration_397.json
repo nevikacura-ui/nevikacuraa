@@ -1,0 +1,49 @@
+{
+  "summary": "Independent verification of the 'blocked date still bookable by patient' bug. Confirmed the REAL, still-open server-side gap that E1 missed. Public GETs (blocked-dates, booked-slots) correctly reflect the block (so the calendar UI does grey out the date — that's why E1's manual UI test appeared to work), BUT the actual booking-CREATION and RESCHEDULE endpoints have NO validation against doctor_schedules.blocked_dates / blocked_sessions. A determined patient (or any patient with a stale/cached page, back-button, race condition, or API replay) can POST /api/appointments (or /appointments/{id}/reschedule) directly with the blocked date and it is accepted with 200 OK. This perfectly matches the user's repeated 'slots are still seen / still bookable' complaint. Ran 9 pytest tests: 5 passed (GETs work), 4 failed (POST-create Vikas, POST-create Neha, POST-create online mode, POST-reschedule — all wrongly accepted).",
+  "backend_issues": {
+    "critical": [
+      {"endpoint": "POST /api/appointments", "issue": "Does NOT validate against doctor_schedules.blocked_dates. Booking on a blocked date returns 200 and inserts the appointment. Reproduces for Pushpa Clinic AND for 'online' clinic value. This is the true root cause of the user's repeated complaint.", "priority": "CRITICAL"},
+      {"endpoint": "POST /api/appointments/guest", "issue": "Same gap as /api/appointments — no blocked_dates / blocked_sessions check before insert. (Not exercised end-to-end here because it requires an OTP, but code review of lines 717-816 confirms no such check exists.)", "priority": "CRITICAL"},
+      {"endpoint": "POST /api/appointments/{id}/reschedule", "issue": "Does NOT validate against blocked_dates / blocked_sessions. Successfully rescheduled an appointment onto Dr. Vikas Jha's blocked-leave date (200 OK, booking_id DGO-...). Ref lines 1624-1698.", "priority": "CRITICAL"}
+    ],
+    "minor": [
+      {"endpoint": "POST /api/appointments", "issue": "Also does not check blocked_sessions (partial-day session blocks). If a doctor blocks only 11:00-14:00, a POST with a time inside that window still succeeds. Same code path as the blocked_dates gap above."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "MyAppointmentsPage.jsx reschedule modal", "issue": "Confirmed known cosmetic gap: date-scroller only excludes Sundays, NOT blocked_dates. Patient can visually select a blocked date; underlying slot list correctly shows no available times, but combined with the backend reschedule gap above this becomes exploitable — a determined patient can click a greyed-time-slot pattern or hit the API directly and the reschedule will succeed.", "selector": "date-scroller in MyAppointmentsPage.jsx line ~90-145", "priority": "MEDIUM"},
+      {"component": "DoctorDetailModal.jsx", "issue": "blockedDates state is fetched via useEffect only on [doctor] change (line ~102-119) — it does NOT refresh while the modal stays open. A patient who has the /diagyn page open BEFORE the doctor blocks a date will keep seeing the old un-greyed calendar until they refresh. This is a stale-state race window that, combined with the backend gap, exactly matches 'slots are still seen'.", "selector": "useEffect on [doctor] in DoctorDetailModal.jsx", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [
+      {"flow": "Public booking (any doctor, any clinic incl. 'online') on a blocked date", "issue": "Frontend calendar correctly hides/greys the date (verified via GET /api/doctors/blocked-dates and GET /api/appointments/booked-slots which both return the block). BUT backend accepts the booking if bypassed — so any stale page, back-button, direct API call, or race condition slips through.", "affected_selectors": ["POST /api/appointments", "POST /api/appointments/guest", "POST /api/appointments/{id}/reschedule"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_blocked_date_booking_gap.py",
+    "/app/test_reports/pytest/blocked_date_gap.xml"
+  ],
+  "action_items": [
+    "PRIMARY FIX: In POST /api/appointments (appointment_routes.py line 137-246), after normalize_date_format but before the insert, look up db.doctor_schedules for the doctor and reject with HTTPException 400 if input.date is in blocked_dates, or if (input.date, input.time) falls within any blocked_sessions window. Reuse the exact lookup logic from get_doctor_schedule_by_name() / the get_slots endpoint (lines 630-680) — the same is_slot_blocked_by_session helper already exists at line 647 and can be extracted into a shared helper.",
+    "Apply the SAME check to POST /api/appointments/guest (line 717-816) — insert after the existing slot-conflict check on line 757-763.",
+    "Apply the SAME check to POST /api/appointments/{id}/reschedule (line 1624-1698) — insert after the 'existing slot' check on line 1666-1675.",
+    "Recommend factoring out the check into a helper e.g. `async def _assert_slot_not_blocked(db, doctor_name, date, time)` and calling it from all three endpoints.",
+    "OPTIONAL UI polish (not the root cause but improves UX): (a) refetch blockedDates in DoctorDetailModal on modal-open AND on a short interval / websocket / socket signal so a stale page updates; (b) MyAppointmentsPage.jsx reschedule date-scroller should also skip dates present in blocked_dates, not just Sundays."
+  ],
+  "critical_code_review_comments": [
+    "appointment_routes.py already has all the plumbing (get_doctor_schedule_by_name at line 534, blocked_dates + blocked_sessions handled inside GET /booked-slots at line 578-608 and GET /doctors/schedule-slots at line 632-683). The AUTHORING pattern is clearly there — it just was not applied to the create/reschedule paths. Very likely an oversight during the earlier fix session which only touched staff booking + GET endpoints.",
+    "Recommend a single shared helper `is_slot_blocked(doctor_name, date, time) -> tuple[bool, str]` used by GET (to hide) AND POST (to reject). Currently the logic is duplicated inline in GET, which is why the create path was missed.",
+    "Note: E1's manual UI test 'appeared to work' because the calendar correctly greys the date on a fresh page load — but that only tests the GET/UI layer, not the actual server-side booking authorization. Any determined user, cached page, or race condition bypasses this."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_blocked_date_booking_gap.py (new pytest, 9 tests, covers create+guest+reschedule+online+GET)"
+  ],
+  "success_rate": {"backend": "56% (5/9 tests passed; 4 failures are the actual bug being reproduced, not test issues)", "frontend": "not tested — root cause is server-side and definitively confirmed"},
+  "test_credentials": "dr_vikas / test1234 and dr_neha / test1234 via POST /api/staff/login (works, confirmed).",
+  "seed_data_creation": "Created 2 blocked_dates during test run (Vikas: date+17d, Neha: date+18d) and cleaned them up in fixture teardown. Also cleaned up 24 leaked TEST_ prefixed appointment documents via direct mongo delete_many.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "After E1 fixes the 3 endpoints, simply re-run: `cd /app && REACT_APP_BACKEND_URL=<url> pytest backend/tests/test_blocked_date_booking_gap.py -v`. All 9 tests should pass. The test file is idempotent — it creates+cleans up its own blocked dates and uses a random phone number for the reschedule test.",
+  "rca of the issue": "ROOT CAUSE: appointment_routes.py has three appointment-writing endpoints (POST /appointments line 137, POST /appointments/guest line 717, POST /appointments/{id}/reschedule line 1624). All three query db.appointments for existing bookings on the same slot, but NONE of them query db.doctor_schedules for blocked_dates / blocked_sessions. The doctor's leave is stored in db.doctor_schedules by /doctor-schedule/block-date (writes to blocked_dates array). GET /appointments/booked-slots correctly consults this collection and returns date_blocked=True, which is why the calendar UI works. But because the CREATE side does not, any bypass of the UI (stale cached page, back-button, direct API call, mobile-app race, or simply refreshing after a doctor blocks a date while the patient already has the booking form filled) will successfully write an appointment onto a leave day. REPRODUCTION: 1) Login as dr_vikas, POST /api/doctor-schedule/block-date with a future date. 2) Verify GET /api/doctors/blocked-dates lists it (it does). 3) POST /api/appointments with that date+any valid clinic-hour time → returns 200 Booked. Same for /appointments/guest (with OTP) and /appointments/{id}/reschedule. MITIGATION: Add a `_assert_slot_not_blocked` helper (see action_items) and call it from all three write endpoints immediately before insert/update."
+}

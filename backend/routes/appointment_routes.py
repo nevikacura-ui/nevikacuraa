@@ -193,6 +193,8 @@ async def create_appointment(input: AppointmentCreate, user=Depends(get_current_
     # Normalize time BEFORE duplicate check to prevent double-booking
     normalized_time = normalize_time_to_24h(input.time) if input.time else input.time
 
+    await assert_slot_not_blocked(db, input.doctor, normalized_date, normalized_time)
+
     existing = await db.appointments.find_one({
         "doctor": input.doctor, "clinic": input.clinic,
         "date": {"$in": date_patterns}, "time": normalized_time,
@@ -548,6 +550,30 @@ async def get_doctor_schedule_by_name(db, doctor: str):
     return None
 
 
+async def assert_slot_not_blocked(db, doctor: str, date: str, time_str: str):
+    """Reject booking/rescheduling onto a doctor's leave day or blocked session. Call before insert/update."""
+    doctor_schedule = await get_doctor_schedule_by_name(db, doctor)
+    if not doctor_schedule:
+        return
+    for blocked_date in doctor_schedule.get("blocked_dates", []):
+        if blocked_date.get("date") == date:
+            reason = blocked_date.get("reason", "Leave")
+            raise HTTPException(status_code=400, detail=f"{doctor} is on leave on {date} ({reason}). Please pick another date.")
+    for session in doctor_schedule.get("blocked_sessions", []):
+        if session.get("date") != date:
+            continue
+        try:
+            t = datetime.strptime(time_str, "%H:%M") if ":" in time_str and "AM" not in time_str.upper() and "PM" not in time_str.upper() else datetime.strptime(time_str.strip().upper(), "%I:%M %p")
+            s = datetime.strptime(session["start_time"], "%H:%M")
+            e = datetime.strptime(session["end_time"], "%H:%M")
+            if s.time() <= t.time() < e.time():
+                raise HTTPException(status_code=400, detail=f"{doctor} is unavailable at {time_str} on {date} ({session.get('reason', 'Leave')}). Please pick another slot.")
+        except HTTPException:
+            raise
+        except (ValueError, KeyError):
+            pass
+
+
 @router.get("/doctors/blocked-dates")
 async def get_doctor_blocked_dates_public(doctor: str):
     """Public endpoint so patient-facing calendars can grey out a doctor's leave days."""
@@ -754,6 +780,7 @@ async def create_guest_appointment(input: GuestAppointmentCreate):
 
     normalized_date = normalize_date_format(input.date)
     date_patterns = get_date_patterns(normalized_date)
+    await assert_slot_not_blocked(db, input.doctor, normalized_date, input.time)
     existing = await db.appointments.find_one({
         "doctor": input.doctor, "clinic": input.clinic,
         "date": {"$in": date_patterns}, "time": input.time,
@@ -1664,6 +1691,7 @@ async def patient_reschedule_appointment(appointment_id: str, data: PatientResch
 
     # Check new slot availability
     date_patterns = get_date_patterns(normalized_new_date)
+    await assert_slot_not_blocked(db, appointment["doctor"], normalized_new_date, normalized_new_time)
     existing = await db.appointments.find_one({
         "doctor": appointment["doctor"],
         "clinic": appointment["clinic"],
