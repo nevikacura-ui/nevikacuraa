@@ -12,6 +12,7 @@ import os
 import uuid
 import logging
 import base64
+from pymongo.errors import DuplicateKeyError
 
 from rate_limit import limiter
 
@@ -296,7 +297,8 @@ async def create_walkin_appointment(data: WalkInAppointment, staff = Depends(ver
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     from routes.appointment_routes import assert_slot_not_blocked
-    await assert_slot_not_blocked(db, data.doctor, today, data.time)
+    await assert_slot_not_blocked(db, data.doctor, today, data.time,
+                                   source="walk_in", patient_name=getattr(data, "patient_name", None), patient_phone=getattr(data, "patient_phone", None))
 
     appointment = {
         "id": str(uuid.uuid4()),
@@ -316,7 +318,10 @@ async def create_walkin_appointment(data: WalkInAppointment, staff = Depends(ver
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
-    await db.appointments.insert_one(appointment)
+    try:
+        await db.appointments.insert_one(appointment)
+    except DuplicateKeyError:
+        raise HTTPException(status_code=409, detail=f"{data.doctor} already has a booking at {data.time} on {today}. Please pick another time.")
     appointment.pop("_id", None)
     
     # Send SMS confirmation (DiaGyn Walk-in - SMS allowed)

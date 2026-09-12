@@ -217,22 +217,10 @@ Please check if patient needs to reschedule."""
     # Reject if doctor has marked leave for this date/session
     doctor_name = TELECONSULT_DOCTORS.get(data.doctor_id, {}).get("name")
     if doctor_name:
-        from routes.appointment_routes import get_doctor_schedule_by_name
-        doctor_schedule = await get_doctor_schedule_by_name(db, doctor_name)
-        if doctor_schedule:
-            for blocked_date in doctor_schedule.get("blocked_dates", []):
-                if blocked_date.get("date") == data.date:
-                    raise HTTPException(status_code=400, detail=f"{doctor_name} is on leave on {data.date}. Please pick another date.")
-            for session in doctor_schedule.get("blocked_sessions", []):
-                if session.get("date") == data.date:
-                    try:
-                        s_start = datetime.strptime(session["start_time"], "%H:%M")
-                        s_end = datetime.strptime(session["end_time"], "%H:%M")
-                        slot_time = next((datetime.strptime(s["time_24"], "%H:%M") for s in TIME_SLOTS if s["time_12"] == data.time), None)
-                        if slot_time and s_start <= slot_time < s_end:
-                            raise HTTPException(status_code=400, detail=f"{doctor_name} is unavailable at this time. Please pick another slot.")
-                    except (ValueError, KeyError):
-                        pass
+        from routes.appointment_routes import assert_slot_not_blocked
+        # data.time is 12h e.g. "7:00 PM" - assert_slot_not_blocked parses both 12h and 24h formats
+        await assert_slot_not_blocked(db, doctor_name, data.date, data.time,
+                                       source="teleconsultation", patient_name=data.patient_name, patient_phone=data.patient_phone)
     
     # Check wallet balance
     wallet = await db.wallets.find_one({"user_id": user["id"]})

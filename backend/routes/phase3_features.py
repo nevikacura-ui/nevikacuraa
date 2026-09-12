@@ -195,7 +195,7 @@ async def voice_book_appointment(
 
     if db is not None:
         from routes.appointment_routes import assert_slot_not_blocked
-        await assert_slot_not_blocked(db, doctor, date, time)
+        await assert_slot_not_blocked(db, doctor, date, time, source="voice_command", patient_name=patient_name, patient_phone=patient_phone)
 
     appointment = {
         "id": appointment_id,

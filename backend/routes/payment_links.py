@@ -372,13 +372,29 @@ async def update_pharmacy_order_status(
     except Exception as e:
         logger.warning(f"Could not store order notification: {e}")
 
+    # Send OS-level push notification to logged-in patients with a real linked email
+    push_result = {"sent": 0}
+    try:
+        patient_email = order.get("patient_email")
+        if patient_email and "@" in patient_email and not patient_email.endswith("@pharmacy.nevikacura.com"):
+            from routes.fcm import send_fcm_notification
+            push_result = await send_fcm_notification(
+                title=label,
+                body=f"Your pharmacy order {order.get('booking_id', order_id)} is now: {label}",
+                target_email=patient_email,
+                data={"type": "pharmacy_order", "order_id": order.get("booking_id", order_id), "status": status_update.status, "url": "/track"}
+            )
+    except Exception as e:
+        logger.warning(f"Could not send push notification for pharmacy order: {e}")
+
     return {
         "success": True,
         "order_id": order_id,
         "new_status": status_update.status,
         "notification": notification_result,
         "email": email_result,
-        "invoice": invoice_result
+        "invoice": invoice_result,
+        "push": push_result
     }
 
 
@@ -489,15 +505,32 @@ async def update_diagnostic_order_status(
     except Exception as e:
         logger.warning(f"Could not store order notification: {e}")
 
+    # Send OS-level push notification to logged-in patients with a real linked email
+    push_result = {"sent": 0}
+    try:
+        patient_email = order.get("patient_email")
+        if patient_email and "@" in patient_email and not patient_email.endswith("@pharmacy.nevikacura.com"):
+            from routes.fcm import send_fcm_notification
+            from routes.order_notifications import STATUS_MESSAGES as _STATUS_MESSAGES
+            push_msgs = _STATUS_MESSAGES.get("lab_order", {}).get(status_update.status, {})
+            push_result = await send_fcm_notification(
+                title=push_msgs.get("title", f"Lab Update: {status_update.status}"),
+                body=push_msgs.get("body", f"Your lab order status changed to {status_update.status}"),
+                target_email=patient_email,
+                data={"type": "lab_order", "order_id": order.get("booking_id", order_id), "status": status_update.status, "url": "/track"}
+            )
+    except Exception as e:
+        logger.warning(f"Could not send push notification for diagnostic order: {e}")
+
     return {
         "success": True,
         "order_id": order_id,
         "new_status": status_update.status,
         "notification": notification_result,
         "email": email_result,
-        "invoice": invoice_result
+        "invoice": invoice_result,
+        "push": push_result
     }
-@router.get("/pharmacy/count")
 async def get_medicine_count(store: str = None):
     """Get total medicine count in inventory - checks database first"""
     db = get_db()

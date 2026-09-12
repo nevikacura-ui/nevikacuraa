@@ -193,7 +193,8 @@ async def create_appointment(input: AppointmentCreate, user=Depends(get_current_
     # Normalize time BEFORE duplicate check to prevent double-booking
     normalized_time = normalize_time_to_24h(input.time) if input.time else input.time
 
-    await assert_slot_not_blocked(db, input.doctor, normalized_date, normalized_time)
+    await assert_slot_not_blocked(db, input.doctor, normalized_date, normalized_time,
+                                   source="standard_booking", patient_name=input.patient_name, patient_phone=input.patient_phone)
 
     existing = await db.appointments.find_one({
         "doctor": input.doctor, "clinic": input.clinic,
@@ -550,7 +551,28 @@ async def get_doctor_schedule_by_name(db, doctor: str):
     return None
 
 
-async def assert_slot_not_blocked(db, doctor: str, date: str, time_str: str):
+async def log_blocked_attempt(db, doctor: str, date: str, time_str: str, block_type: str, reason: str,
+                                source: str = "unknown", patient_name: str = None, patient_phone: str = None):
+    """Record a rejected booking attempt onto a doctor's leave day/session for staff audit visibility."""
+    try:
+        await db.blocked_slot_attempts.insert_one({
+            "id": str(uuid.uuid4()),
+            "doctor": doctor,
+            "date": date,
+            "time": time_str,
+            "block_type": block_type,  # "full_day" | "session"
+            "reason": reason,
+            "source": source,
+            "patient_name": patient_name,
+            "patient_phone": patient_phone,
+            "attempted_at": datetime.now(timezone.utc).isoformat(),
+        })
+    except Exception as e:
+        logger.warning(f"Failed to log blocked slot attempt: {e}")
+
+
+async def assert_slot_not_blocked(db, doctor: str, date: str, time_str: str,
+                                    source: str = "unknown", patient_name: str = None, patient_phone: str = None):
     """Reject booking/rescheduling onto a doctor's leave day or blocked session. Call before insert/update."""
     doctor_schedule = await get_doctor_schedule_by_name(db, doctor)
     if not doctor_schedule:
@@ -558,6 +580,7 @@ async def assert_slot_not_blocked(db, doctor: str, date: str, time_str: str):
     for blocked_date in doctor_schedule.get("blocked_dates", []):
         if blocked_date.get("date") == date:
             reason = blocked_date.get("reason", "Leave")
+            await log_blocked_attempt(db, doctor, date, time_str, "full_day", reason, source, patient_name, patient_phone)
             raise HTTPException(status_code=400, detail=f"{doctor} is on leave on {date} ({reason}). Please pick another date.")
     for session in doctor_schedule.get("blocked_sessions", []):
         if session.get("date") != date:
@@ -567,7 +590,9 @@ async def assert_slot_not_blocked(db, doctor: str, date: str, time_str: str):
             s = datetime.strptime(session["start_time"], "%H:%M")
             e = datetime.strptime(session["end_time"], "%H:%M")
             if s.time() <= t.time() < e.time():
-                raise HTTPException(status_code=400, detail=f"{doctor} is unavailable at {time_str} on {date} ({session.get('reason', 'Leave')}). Please pick another slot.")
+                reason = session.get('reason', 'Leave')
+                await log_blocked_attempt(db, doctor, date, time_str, "session", reason, source, patient_name, patient_phone)
+                raise HTTPException(status_code=400, detail=f"{doctor} is unavailable at {time_str} on {date} ({reason}). Please pick another slot.")
         except HTTPException:
             raise
         except (ValueError, KeyError):
@@ -780,7 +805,8 @@ async def create_guest_appointment(input: GuestAppointmentCreate):
 
     normalized_date = normalize_date_format(input.date)
     date_patterns = get_date_patterns(normalized_date)
-    await assert_slot_not_blocked(db, input.doctor, normalized_date, input.time)
+    await assert_slot_not_blocked(db, input.doctor, normalized_date, input.time,
+                                   source="guest_booking", patient_name=input.patient_name, patient_phone=input.patient_phone)
     existing = await db.appointments.find_one({
         "doctor": input.doctor, "clinic": input.clinic,
         "date": {"$in": date_patterns}, "time": input.time,
@@ -1691,7 +1717,8 @@ async def patient_reschedule_appointment(appointment_id: str, data: PatientResch
 
     # Check new slot availability
     date_patterns = get_date_patterns(normalized_new_date)
-    await assert_slot_not_blocked(db, appointment["doctor"], normalized_new_date, normalized_new_time)
+    await assert_slot_not_blocked(db, appointment["doctor"], normalized_new_date, normalized_new_time,
+                                   source="reschedule", patient_name=appointment.get("patient_name"), patient_phone=appointment.get("patient_phone"))
     existing = await db.appointments.find_one({
         "doctor": appointment["doctor"],
         "clinic": appointment["clinic"],

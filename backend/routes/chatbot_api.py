@@ -334,7 +334,8 @@ async def chatbot_book_appointment(data: ChatbotBookingRequest):
 
     from routes.appointment_routes import assert_slot_not_blocked
     try:
-        await assert_slot_not_blocked(db, data.doctor, data.date, time_24h)
+        await assert_slot_not_blocked(db, data.doctor, data.date, time_24h,
+                                       source="chatbot", patient_name=getattr(data, "patient_name", None), patient_phone=getattr(data, "patient_phone", None))
     except HTTPException as e:
         return {"success": False, "message": e.detail}
     

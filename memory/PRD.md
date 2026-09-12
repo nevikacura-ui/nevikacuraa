@@ -104,6 +104,28 @@ Build a production-ready healthcare super-app (Nevika Cura) with:
 - Note for user: if this recurs again, check whether a NEW alternate booking UI component was added
   that duplicates slot-generation logic without importing the blocked_sessions filter.
 
+## Session Update (Sep 12, 2026, cont'd) - Booking Audit Log + Staff Blocking + Order Push Alerts
+- New `backend/routes/diagyn_staff/schedule.py`: staff (any role) can block/unblock full-day leave or
+  partial time windows for any doctor via new /api/diagyn-staff/schedule/* endpoints. Conflict-detection
+  flow: if existing appointments fall in the range, returns a conflict payload; force_override cancels
+  those appointments + sends WhatsApp cancellation notice, then applies the block.
+- `assert_slot_not_blocked()` (appointment_routes.py) now logs every rejected booking attempt to
+  `db.blocked_slot_attempts` (doctor, date, time, block_type, reason, source, patient info, timestamp).
+  Wired into all booking endpoints with a per-endpoint `source` tag (standard_booking, guest_booking,
+  reschedule, follow_up, chatbot, walk_in, voice_command, teleconsultation).
+- New Staff Portal "Schedule" tab (`frontend/src/pages/diagyn/StaffScheduleView.jsx`) with two sub-tabs:
+  Block Dates/Slots (form + list + conflict warning UI) and Audit Log (rejected attempts feed). Visible
+  to all DiaGyn staff.
+- Order Status push notifications: extracted `send_fcm_notification()` as a reusable helper in
+  `routes/fcm.py`; wired into pharmacy/diagnostic order status update endpoints (`payment_links.py`) -
+  fires only when the order has a real (non-guest-synthetic) `patient_email`, per user's explicit choice
+  to support logged-in patients only. Fixed `PushNotificationManager.jsx` (on /settings) to actually pass
+  `user.email` into `usePushNotifications()` - previously it registered FCM tokens with `user_email: null`,
+  so push could never be targeted to a specific patient.
+- Tested via testing_agent (iteration_402, 17/17 backend pytest passed) + manual screenshots. Fixed 2
+  issues found: (1) walk-in booking 500 on duplicate slot -> now clean 409, (2) StaffScheduleView FAB
+  button visually overlapping the blocked-session unblock (X) button on mobile -> added bottom padding.
+
 ## Pending/Backlog
 - Push notifications for status updates (P2 backlog).
 - Light Mode: DISABLED APP-WIDE (Sep 2026) per user request — styling wasn't fixed, user asked to stop spending credits on it. `ThemeLanguageContext.jsx` now hardcodes `isDarkMode=true`, toggle button removed from `ServiceHeader.jsx`. Do NOT re-introduce light mode toggle unless explicitly asked.

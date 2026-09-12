@@ -36,6 +36,7 @@ import StaffHistoryView from './diagyn/StaffHistoryView';
 import StaffSummaryView from './diagyn/StaffSummaryView';
 import StaffTokenView from './diagyn/StaffTokenView';
 import StaffQRScanView from './diagyn/StaffQRScanView';
+import StaffScheduleView from './diagyn/StaffScheduleView';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -987,6 +988,7 @@ const DiaGynStaffPortal = () => {
               { id: 'history', icon: ClipboardList, label: 'History', color: '#06B6D4' },
               { id: 'token', icon: Volume2, label: 'Token', color: '#EF4444' },
               { id: 'summary', icon: TrendingUp, label: 'Summary', color: '#F97316' },
+              { id: 'schedule', icon: Shield, label: 'Schedule', color: '#DC2626' },
             ].map(tab => (
               <button key={tab.id} onClick={() => switchToView(tab.id)}
                 className={`flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl font-medium transition-all staff-tab-anim ${activeView === tab.id ? 'shadow-md' : ''}`}
@@ -1011,6 +1013,7 @@ const DiaGynStaffPortal = () => {
           {activeView === 'history' && <StaffHistoryView />}
           {activeView === 'token' && <StaffTokenView />}
           {activeView === 'summary' && <StaffSummaryView />}
+          {activeView === 'schedule' && <StaffScheduleView />}
 
           {/* Code Verification Modal */}
           {showCodeVerification && verifyingAppointment && (

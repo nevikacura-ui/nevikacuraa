@@ -23,12 +23,12 @@ const PushNotificationManager = () => {
     subscribe,
     unsubscribe,
     sendTestNotification
-  } = usePushNotifications();
+  } = usePushNotifications(user?.email);
 
   const [testing, setTesting] = useState(false);
 
   const handleSubscribe = async () => {
-    const success = await subscribe(token);
+    const success = await subscribe();
     if (success) {
       toast.success('Push notifications enabled! You\'ll receive updates even when the app is closed.');
     }

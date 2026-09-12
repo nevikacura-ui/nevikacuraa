@@ -37,6 +37,7 @@ from .reviews import router as _reviews            # noqa: E402
 from .checkin import router as _checkin            # noqa: E402
 from .payments import router as _payments          # noqa: E402
 from .queue import router as _queue                # noqa: E402
+from .schedule import router as _schedule          # noqa: E402
 
 # Main router — same prefix + tags the old monolith had
 router = APIRouter(prefix="/diagyn-staff", tags=["DiaGyn Staff Portal"])
@@ -50,6 +51,7 @@ router.include_router(_reviews)
 router.include_router(_checkin)
 router.include_router(_payments)
 router.include_router(_queue)
+router.include_router(_schedule)
 
 
 # ── Dependency-injection helpers (called from server.py) ─────────

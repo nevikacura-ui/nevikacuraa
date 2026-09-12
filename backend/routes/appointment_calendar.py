@@ -145,7 +145,8 @@ async def book_follow_up(
 
     if original.get("doctor"):
         from routes.appointment_routes import assert_slot_not_blocked
-        await assert_slot_not_blocked(db, original.get("doctor"), preferred_date, preferred_time)
+        await assert_slot_not_blocked(db, original.get("doctor"), preferred_date, preferred_time,
+                                       source="follow_up", patient_name=original.get("patient_name"), patient_phone=original.get("patient_phone"))
 
     follow_up = {
         "id": f"APT-{datetime.now().strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:4].upper()}",

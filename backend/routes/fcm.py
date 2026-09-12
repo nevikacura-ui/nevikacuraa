@@ -76,43 +76,48 @@ async def register_fcm_token(req: TokenRegister):
 @router.post("/send")
 async def send_push_notification(req: PushNotification):
     """Send push notification to a specific user or topic"""
+    if not req.target_token and not req.target_email and not req.topic:
+        raise HTTPException(status_code=400, detail="No target specified (token, email, or topic)")
+    result = await send_fcm_notification(
+        title=req.title, body=req.body, target_email=req.target_email,
+        target_token=req.target_token, data=req.data, topic=req.topic
+    )
+    return {"success": True, "sent": result["sent"], "failed": result["failed"]}
+
+
+async def send_fcm_notification(title: str, body: str, target_email: Optional[str] = None,
+                                  target_token: Optional[str] = None, data: Optional[dict] = None,
+                                  topic: Optional[str] = None):
+    """Reusable FCM sender - importable by other route modules (e.g. order status updates)."""
     tokens = []
 
-    if req.target_token:
-        tokens = [req.target_token]
-    elif req.target_email:
+    if target_token:
+        tokens = [target_token]
+    elif target_email:
         cursor = db.fcm_tokens.find(
-            {"user_email": req.target_email, "active": True},
+            {"user_email": target_email, "active": True},
             {"_id": 0, "token": 1},
         )
         tokens = [doc["token"] async for doc in cursor]
 
-    data_payload = req.data or {}
+    data_payload = data or {}
     data_payload["timestamp"] = datetime.now(timezone.utc).isoformat()
 
-    notification = messaging.Notification(
-        title=req.title,
-        body=req.body,
-    )
+    notification = messaging.Notification(title=title, body=body)
     webpush = messaging.WebpushConfig(
         notification=messaging.WebpushNotification(
-            title=req.title,
-            body=req.body,
-            icon="/logo192.png",
-            badge="/logo192.png",
+            title=title, body=body, icon="/logo192.png", badge="/logo192.png",
         ),
     )
 
     sent = 0
     failed = 0
 
-    if req.topic:
+    if topic:
         try:
             msg = messaging.Message(
-                notification=notification,
-                webpush=webpush,
-                data={k: str(v) for k, v in data_payload.items()},
-                topic=req.topic,
+                notification=notification, webpush=webpush,
+                data={k: str(v) for k, v in data_payload.items()}, topic=topic,
             )
             messaging.send(msg)
             sent = 1
@@ -123,10 +128,8 @@ async def send_push_notification(req: PushNotification):
         for token in tokens:
             try:
                 msg = messaging.Message(
-                    notification=notification,
-                    webpush=webpush,
-                    data={k: str(v) for k, v in data_payload.items()},
-                    token=token,
+                    notification=notification, webpush=webpush,
+                    data={k: str(v) for k, v in data_payload.items()}, token=token,
                 )
                 messaging.send(msg)
                 sent += 1
@@ -137,21 +140,15 @@ async def send_push_notification(req: PushNotification):
                 logger.error(f"Send to token failed: {e}")
                 failed += 1
     else:
-        raise HTTPException(status_code=400, detail="No target specified (token, email, or topic)")
+        return {"sent": 0, "failed": 0, "reason": "no_target"}
 
-    # Log notification
     await db.push_notifications_log.insert_one({
-        "title": req.title,
-        "body": req.body,
-        "target_email": req.target_email,
-        "topic": req.topic,
-        "tokens_count": len(tokens),
-        "sent": sent,
-        "failed": failed,
+        "title": title, "body": body, "target_email": target_email, "topic": topic,
+        "tokens_count": len(tokens), "sent": sent, "failed": failed,
         "created_at": datetime.now(timezone.utc).isoformat(),
     })
 
-    return {"success": True, "sent": sent, "failed": failed}
+    return {"sent": sent, "failed": failed}
 
 
 @router.post("/send-to-all")

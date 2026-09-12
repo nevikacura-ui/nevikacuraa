@@ -1,0 +1,52 @@
+{
+  "summary": "Tested new DiaGyn Staff Schedule feature (Block Dates/Sessions + Audit Log) and pharmacy/diagnostic order-status push field. 17/17 backend pytest passed (basics, block/unblock full-day, block/unblock session, conflict-detect + force-override cancels-and-blocks flow, audit-log entry generation on rejected walk-in, and push:{sent:0} field returned for both pharmacy and diagnostic status endpoints for synthetic + real emails). Frontend UI verified end-to-end via Playwright on mobile viewport: Schedule nav tab renders, both sub-tabs render, doctor selection works, all 8 form data-testids present, blocking a full-day and unblocking via UI works, session block persists and appears in list, audit tab renders without error.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "POST /api/staff/appointments/walk-in",
+        "issue": "Returns HTTP 500 (raw pymongo DuplicateKeyError leak) when trying to insert a walk-in that collides with the unique_slot_booking index (same doctor+clinic+date+time already booked). Should return a clean 409/400 with a friendly message instead of a 500."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "StaffScheduleView (Block sub-tab)",
+        "issue": "After clicking the session unblock (X) button for a blocked_session, the entry still appears in the list on next Playwright poll (count remained 1). Backend DELETE endpoint works correctly (test_unblock_session_success passes), so this looks like either (a) the floating FAB (+) button overlays the X icon at bottom-right of the block-session list rows on mobile viewport, or (b) the list isn't re-fetched/re-rendered after the unblock call. Full-day unblock works correctly (count went 1 -> 0).",
+        "selector": "[data-testid='unblock-session-btn-{date}-{start_time}']",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "DiaGyn Staff Portal - Schedule tab (mobile)",
+        "issues": ["FAB (+) floating action button at bottom-right can visually overlap the last row of blocked-sessions list, potentially hiding the unblock (X) button on small screens."]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_staff_schedule_and_push.py",
+    "/app/test_reports/pytest/schedule_push.xml"
+  ],
+  "action_items": [
+    "Investigate UI unblock-session refresh / z-index overlap with the FAB on the Schedule > Block sub-tab (see frontend_issues.ui_bugs).",
+    "Wrap the walk-in insert in try/except pymongo.errors.DuplicateKeyError and return HTTP 409 with a user-friendly duplicate-slot message (staff.py:320)."
+  ],
+  "critical_code_review_comments": [
+    "backend/routes/staff.py create_walkin_appointment does not handle DuplicateKeyError from the unique_slot_booking index - any duplicate slot booking crashes with 500.",
+    "backend/routes/diagyn_staff/schedule.py handles conflict flow cleanly with force_override; source-of-truth is doctor_schedules collection - keys match the /api/appointments/... blocked-slot enforcement, so integration is consistent.",
+    "log_blocked_attempt correctly persists all required fields (doctor, date, time, block_type, reason, source, patient_name, patient_phone, attempted_at) and is called from every branch of assert_slot_not_blocked - audit log accuracy confirmed via walk-in rejection test."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_staff_schedule_and_push.py (new pytest file, 17 tests)"
+  ],
+  "success_rate": {"backend": "100% (17/17)", "frontend": "~90% (all data-testids present, both tabs load, block/unblock full-day works, session unblock refresh questionable)"},
+  "test_credentials": "staff_diagyn / test1234 (DiaGyn portal)",
+  "seed_data_creation": "Created and cleaned: TEST admin user in users collection (for pharmacy/diagnostic push endpoint auth), TEST pharmacy_orders x2, TEST diagnostic_orders x1, TEST walk-in appointments on today with phone 9991112222, TEST audit entries. All cleaned via test teardown + explicit post-run mongo cleanup.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend endpoints at /api/diagyn-staff/schedule/* fully validated. Push field returns {sent:0} for synthetic pharmacy emails (@pharmacy.nevikacura.com) and {sent:0, failed:0, reason:'no_target'} for real emails with no registered FCM token - both non-erroring. If retesting UI unblock-session refresh, check StaffScheduleView.jsx list re-fetch after unblockSession() and whether the FAB button z-index blocks click targets on mobile.",
+  "rca of the issue": "Walk-in 500: pymongo unique index violation not caught. Session unblock UI: likely stale render OR click intercepted by FAB overlay; API DELETE itself confirmed working via pytest."
+}
