@@ -1,0 +1,27 @@
+{
+  "summary": "Iteration 401 - Regression pass on FRONTEND leave-block filtering in the main patient booking flow (DoctorDetailModal on /diagyn Consult tab) + sanity checks on backend /api/doctors/blocked-dates, /api/appointments/booked-slots, /api/health, /api/doctors/search (route ordering fix), and /api/pharmacy/medicines contains-search. Set up TEST blocked_dates=[2026-09-22] and blocked_sessions=[2026-09-24 11:00-14:00] on Dr. Vikas Jha (doctor_id d9ece1ab-...) directly in the doctor_schedules collection, then verified via Playwright on the preview URL. All primary bug-fix verifications PASS. Cleaned up test data.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "MEDIUM: /app/frontend/src/pages/Teleconsultation.js is an orphan file - it is NOT routed anywhere in the app. The active /teleconsult route uses pages/TeleconsultPage.jsx (Pre-Call Checklist screen only). Any fix applied to pages/Teleconsultation.js (blocked_sessions filtering) is dead code and unreachable from the UI. The real patient teleconsult booking is done via DoctorDetailModal.jsx (Video Consultation toggle) on /diagyn - which was already verified to correctly filter blocked_sessions. Please either (a) delete pages/Teleconsultation.js if truly unused, or (b) route it and remove the pre-call-only TeleconsultPage.jsx flow, or (c) confirm intended design and update this test note."
+  ],
+  "critical_code_review_comments": [
+    "Dead-code risk: pages/Teleconsultation.js (33.5KB) not imported by App.js or any route - the 'fix' claimed for this file is unreachable. Recommend cleanup.",
+    "Frontend blocked-session filter in DoctorDetailModal.jsx (lines 183-198) correctly excludes slots inside any blocked_sessions window using half-open interval [start, end) and re-fires when blockedSessions state changes - implementation looks solid.",
+    "isDoctorAvailable() at line 212 correctly disables the calendar cell for entries in blockedDates - visually verified as grey/disabled for Sept 22.",
+    "Booked-slots API returns entire day as booked when blocked_dates matches - defence-in-depth, good."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "sanity-checked 5/5 endpoints (blocked-dates, booked-slots, health, search, pharmacy)", "frontend": "100% on primary booking flow (DoctorDetailModal full-day + partial-day block)"},
+  "test_credentials": "See /app/memory/test_credentials.md (dr_vikas/test1234, staff_orange/test1234)",
+  "seed_data_creation": "Temporarily set doctor_schedules for Dr. Vikas Jha with blocked_dates=[2026-09-22 TEST_FullDay_Leave] and blocked_sessions=[2026-09-24 11:00-14:00 TEST_Partial_Leave]. Torn down at end (schedule reset to empty arrays). Also deleted 12 leftover TEST_ prefixed appointments from previous iteration runs.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Playwright regression proved: (1) Sept 22 (full-day blocked) calendar cell disabled=True with grey color rgb(209,213,219). Sept 24 (partial blocked) cell enabled. (2) On Sept 24, Morning filter tab auto-disabled (opacity-30) because all Morning slots (11:00-14:00) fell inside the blocked window and were filtered out - confirms fetchSlots() isInBlockedSession() correctly excludes those slots from availableSlots. (3) Backend /api/doctors/blocked-dates returns correct blocked_dates + blocked_sessions arrays. (4) /api/doctors/search?query=vikas now returns doctor list (no longer shadowed by /{doctor_id} route). (5) /api/pharmacy/medicines?search=para returns PARACIP etc. (contains search works after duplicate-key fix). (6) /api/health returns {status:'ok'}. (7) Backend booking-rejection was fully covered in iterations 394-400 (all pass); guest endpoint now requires OTP field so cannot be curl-tested without OTP setup - not re-tested here. Teleconsult booking via DoctorDetailModal Video Consultation toggle uses the same slot filter path, so it inherits the fix. pages/Teleconsultation.js is an ORPHAN and its fix is unreachable UI-wise.",
+  "rca of the issue": "Original user complaint (patients seeing blocked slots) was due to the frontend not filtering blocked_sessions from the slot list in DoctorDetailModal.jsx - only full-day blocked_dates were greyed out. This iteration's fix (adding fetch of blocked_sessions + isInBlockedSession() filter at line 184-188/198 of DoctorDetailModal.jsx) is verified working end-to-end on the preview URL. Backend enforcement (assert_slot_not_blocked across 9 endpoints) was already validated in iterations 394-400."
+}

@@ -90,6 +90,20 @@ Build a production-ready healthcare super-app (Nevika Cura) with:
   and grey out the affected time slots. Verified end-to-end via screenshot with seeded test data
   (full-day leave + partial morning-session leave), then cleaned up test data.
 
+## Session Update (Sep 12, 2026) - ROOT CAUSE FIX for recurring "blocked slots still bookable" bug
+- Root cause found: DoctorDetailModal.jsx (the MAIN patient booking flow on /diagyn) only greyed out
+  full-day `blocked_dates` on the calendar, but never filtered `blocked_sessions` (partial-day leave,
+  e.g. 11:00-14:00) out of the displayed time-slot list. Backend rejection existed, but patients could
+  still SEE and tap a session-blocked slot, only getting an error at submit. Fixed `fetchSlots()` in
+  DoctorDetailModal.jsx to fetch blocked_sessions and exclude any slot inside a blocked window.
+  Verified via screenshot + testing_agent (iteration_401, PASS): blocked evening slots correctly
+  disappear from the slot list; unaffected slots still show.
+- Deleted `frontend/src/pages/Teleconsultation.js` - confirmed orphaned/unrouted dead file (not used
+  by App.js; real teleconsult flow goes through DoctorDetailModal's Video Consultation toggle, which
+  already inherits the blocked_sessions fix).
+- Note for user: if this recurs again, check whether a NEW alternate booking UI component was added
+  that duplicates slot-generation logic without importing the blocked_sessions filter.
+
 ## Pending/Backlog
 - Push notifications for status updates (P2 backlog).
 - Light Mode: DISABLED APP-WIDE (Sep 2026) per user request — styling wasn't fixed, user asked to stop spending credits on it. `ThemeLanguageContext.jsx` now hardcodes `isDarkMode=true`, toggle button removed from `ServiceHeader.jsx`. Do NOT re-introduce light mode toggle unless explicitly asked.

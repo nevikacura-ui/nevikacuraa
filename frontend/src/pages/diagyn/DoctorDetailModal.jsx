@@ -102,6 +102,7 @@ const DoctorDetailModal = ({
   const [clinicOverrides, setClinicOverrides] = useState([]);
   const [timeFilter, setTimeFilter] = useState('Morning');
   const [blockedDates, setBlockedDates] = useState([]);
+  const [blockedSessions, setBlockedSessions] = useState([]);
 
   const theme = DOCTOR_BOOKING_THEMES[doctor?.id] || DOCTOR_BOOKING_THEMES.vikas;
   const isDark = isDarkTheme(theme);
@@ -113,10 +114,11 @@ const DoctorDetailModal = ({
   }, []);
 
   useEffect(() => {
-    if (!doctor?.name) { setBlockedDates([]); return; }
+    if (!doctor?.name) { setBlockedDates([]); setBlockedSessions([]); return; }
     axios.get(`${API}/doctors/blocked-dates`, { params: { doctor: doctor.name } }).then(res => {
       setBlockedDates((res.data.blocked_dates || []).map(b => b.date));
-    }).catch(() => setBlockedDates([]));
+      setBlockedSessions(res.data.blocked_sessions || []);
+    }).catch(() => { setBlockedDates([]); setBlockedSessions([]); });
   }, [doctor]);
 
   const getCurrentFee = () => {
@@ -178,6 +180,12 @@ const DoctorDetailModal = ({
         const istTime = new Date(utcTime + (5.5 * 60 * 60 * 1000));
         const isTodayCheck = format(selectedDate, 'yyyy-MM-dd') === format(istTime, 'yyyy-MM-dd');
         const currentTimeInMinutes = istTime.getHours() * 60 + istTime.getMinutes() + 60;
+        const todaysBlockedSessions = blockedSessions.filter(s => s.date === dateStr);
+        const isInBlockedSession = (slotMins) => todaysBlockedSessions.some(s => {
+          const [sh, sm] = s.start_time.split(':').map(Number);
+          const [eh, em] = s.end_time.split(':').map(Number);
+          return slotMins >= (sh * 60 + sm) && slotMins < (eh * 60 + em);
+        });
         effectiveSchedule.forEach(schedule => {
           if (schedule.days.includes(dayName)) {
             const [startTime, endTime] = schedule.time.split('-');
@@ -187,7 +195,7 @@ const DoctorDetailModal = ({
             while (ch < endHour || (ch === endHour && cm < endMin)) {
               const slotTime = `${String(ch).padStart(2,'0')}:${String(cm).padStart(2,'0')}`;
               const slotMins = ch * 60 + cm;
-              if (!booked.includes(slotTime) && !(isTodayCheck && slotMins <= currentTimeInMinutes)) slots.push(slotTime);
+              if (!booked.includes(slotTime) && !(isTodayCheck && slotMins <= currentTimeInMinutes) && !isInBlockedSession(slotMins)) slots.push(slotTime);
               cm += 15; if (cm >= 60) { cm = 0; ch++; }
             }
           }
@@ -199,7 +207,7 @@ const DoctorDetailModal = ({
       finally { setLoadingSlots(false); }
     };
     fetchSlots();
-  }, [doctor, selectedClinic, selectedDate, clinicOverrides]);
+  }, [doctor, selectedClinic, selectedDate, clinicOverrides, blockedSessions]);
 
   const isDoctorAvailable = (date) => {
     if (!doctor || !selectedClinic) return false;
