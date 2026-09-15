@@ -68,7 +68,8 @@ async def book_appointment(data: AppointmentBook, staff=Depends(verify_staff)):
     if data.appointment_type != "EMERGENCY" and data.time:
         norm_time = normalize_time_to_24h(data.time, for_sorting=False)
         from routes.appointment_routes import assert_slot_not_blocked
-        await assert_slot_not_blocked(shared.db, data.doctor, data.date, norm_time)
+        await assert_slot_not_blocked(shared.db, data.doctor, data.date, norm_time,
+                                       source="staff_book", patient_name=data.patient_name, patient_phone=data.patient_mobile)
         existing = await shared.db.appointments.find_one(
             {
                 "clinic": data.clinic,
