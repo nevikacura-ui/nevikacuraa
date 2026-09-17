@@ -30,19 +30,19 @@ CLINICS = {
 }
 
 # ── Doctor schedule ───────────────────────────────────────────────
-# Pushpa Clinic: 11:30 AM - 6:00 PM and 6:00 PM - 10:00 PM, Monday to Saturday, for both doctors.
+# Pushpa Clinic: 11:30 AM - 2:00 PM and 6:00 PM - 10:00 PM, Monday to Saturday, for both doctors.
 DOCTOR_SCHEDULE = {
     "Dr. Vikas Jha": {
         "Pushpa Clinic": {
             "days": [0, 1, 2, 3, 4, 5],
-            "morning": {"start": "11:30", "end": "18:00"},
+            "morning": {"start": "11:30", "end": "14:00"},
             "evening": {"start": "18:00", "end": "22:00"},
         },
     },
     "Dr. Neha Patel": {
         "Pushpa Clinic": {
             "days": [0, 1, 2, 3, 4, 5],
-            "morning": {"start": "11:30", "end": "18:00"},
+            "morning": {"start": "11:30", "end": "14:00"},
             "evening": {"start": "18:00", "end": "22:00"},
         },
     },

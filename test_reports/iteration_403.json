@@ -1,0 +1,62 @@
+{
+  "summary": "End-to-end UI-click testing of DiaGyn Staff Portal Schedule tab (Block Dates/Slots) and the patient-facing /diagyn calendar reflection. Tested all three scenarios (A: no-conflict block, B: conflict + override cancel-and-block, C: session block partial-day) via real browser clicks on mobile viewport (390x844). ALL three scenarios PASSED with zero UI bugs. No console errors, no failed API calls, no double-submission risk (override button correctly toggles to `disabled` mid-request via `submitting` state, confirmed programmatically). The reported user complaint 'appointments aren't being cancelled even after blocking dates / slots still open' could NOT be reproduced on the preview environment.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "detailed_scenario_results": {
+    "scenario_A_no_conflict": {
+      "steps": "Staff login -> Schedule -> Dr. Vikas Jha -> block-date-input=2026-09-29, reason=TEST_UI_Leave_A -> Block Date",
+      "api_response": "200 {success:true, message:'Blocked 2026-09-29 for Dr. Vikas Jha', cancelled_count:0}",
+      "ui_result": "Toast shown, form cleared, blocked-date-item-2026-09-29 appears in list immediately without page reload",
+      "patient_side": "On /diagyn -> Consult -> Dr. Vikas Jha, calendar-day-29 button rendered with disabled=true",
+      "status": "PASS"
+    },
+    "scenario_B_conflict_override": {
+      "seed": "POST /api/diagyn-staff/appointments/book -> booking DGO-170926-9668 for phone 9990001111 on 2026-09-28 at 6:00 PM (Pushpa Clinic)",
+      "step1_block_without_override": "200 {success:false, conflict:true, appointment_count:1, patients:[{name:ConflictUITest, time:'18:00', phone:'9990001111', booking_id:'DGO-170926-9668'}], message:'1 appointment(s) booked on 2026-09-28. Override to cancel and notify patients.'} -> schedule-conflict-warning card rendered with the ConflictUITest patient row",
+      "step2_override_click": "override button was NOT disabled before click (correct), but became disabled DURING the pending POST (verified programmatically) -- prevents accidental double-submit. Response: 200 {success:true, message:'Blocked 2026-09-28 for Dr. Vikas Jha', cancelled_count:1}",
+      "step3_after_override": "Conflict warning card removed from DOM, blocked-date-item-2026-09-28 appeared in blocked list, MongoDB confirms appointment DGO-170926-9668 status='Cancelled'",
+      "patient_side": "calendar-day-28 rendered with disabled=true on /diagyn Dr. Vikas Jha modal",
+      "status": "PASS"
+    },
+    "scenario_C_session_block": {
+      "steps": "block-session-date-input=2026-09-30 (used Wednesday since spec's Sep 27 is Sunday and doctor has no Sunday availability), start=17:00, end=18:00, reason=TEST_UI_Session_D -> Block Time Window",
+      "api_response": "200 {success:true, message:'Blocked 17:00-18:00 on 2026-09-30 for Dr. Vikas Jha', cancelled_count:0}",
+      "ui_result": "blocked-session-item entry appears in list, form cleared",
+      "patient_side_slot_filter": "On /diagyn Dr. Vikas Jha -> pick 30 -> Evening tab. Slots shown: [6:00,6:15,6:30,6:45,7:00,7:15,7:30,7:45] PM. Slots hidden (correctly): [5:00,5:15,5:30,5:45] PM. Filter working exactly as expected.",
+      "status": "PASS"
+    },
+    "double_submission_check": "Override button becomes disabled synchronously via `disabled={submitting}` prop while POST is in flight (verified). Block Date & Block Time Window buttons also use the same shared `submitting` state so all three action buttons are guarded. No double MongoDB writes observed in DB after test.",
+    "list_refresh_after_block": "Confirmed: `loadBlocks()` is called at end of both submitBlockDate and submitBlockSession success paths; blocked list re-renders immediately without page reload.",
+    "doctor_switch_reset": "Switching doctor triggers loadBlocks() reload correctly. The dateForm/sessionForm are NOT explicitly reset on doctor-switch (only after successful submit) but this is not a bug -- staff switching mid-input should keep their draft. Reason default 'Leave' preserved."
+  },
+  "console_and_network": {
+    "console_errors": "None during the flow (only unrelated preload warnings for icon assets and 404s for a few customer-assets image URLs on /diagyn hero that are unrelated to blocking flow).",
+    "unexpected_4xx_5xx": "None on any of the /api/diagyn-staff/schedule/* calls."
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_staff_schedule_and_push.py (existing pytest from iteration_402, still valid)"
+  ],
+  "action_items": [
+    "No code changes required. The block/override + calendar-reflection flow is working correctly end-to-end on the preview environment.",
+    "Most likely root cause of user report: user is testing on production nevikacura.com which lacks the schedule.py / DoctorDetailModal deploy, OR user is not clicking the 'Cancel Appointments & Block' override button when the red conflict card appears (UX confusion -- they may think the block silently failed because the initial 'Block Date' click returns success:false without a toast).",
+    "MINOR UX SUGGESTION (optional, not a bug): When the initial block-date/block-session POST returns {conflict:true} the code silently sets state and returns without any toast. If the conflict card is scrolled below the fold on small screens, the staff might not realize they need to click override. Consider adding `toast.warning('Conflict detected -- review appointments and choose action')` alongside setConflict() so users get an auditory cue that the click did register."
+  ],
+  "critical_code_review_comments": [
+    "StaffScheduleView.jsx submitBlockDate/submitBlockSession: cleanly guard with `submitting` boolean; force_override flows are correct; loadBlocks re-fetch after success is correct.",
+    "DoctorDetailModal.jsx: fetches /api/doctors/blocked-dates on doctor+clinic select; isDoctorAvailable correctly disables full-day blocks; slot fetch correctly filters out session windows.",
+    "Backend schedule.py conflict payload shape ({conflict, patients:[{name,time,phone,booking_id}], message}) exactly matches what the frontend consumes. No shape mismatch.",
+    "Response for conflict returns HTTP 200 (not 4xx) which is intentional so frontend can render the warning without a toast.error, but this is easy to misinterpret as success -- consider adding an in-JSON `severity:'warning'` hint or a toast on the frontend for the initial conflict return."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100% (all 3 endpoint flows verified via real browser)", "frontend": "100% (all 3 scenarios PASS)"},
+  "test_credentials": "staff_diagyn / test1234 (DiaGyn portal)",
+  "seed_data_creation": "Created during test: 1 appointment (patient_phone=9990001111, booking DGO-170926-9668), 2 blocked_dates (2026-09-28, 2026-09-29), 2 blocked_sessions (2026-09-27 17:00-18:00, 2026-09-30 17:00-18:00). ALL CLEANED UP via mongo pull/delete at end of run. Post-cleanup verification: doctor_schedules for d9ece1ab-1712-40e4-af1f-a1875927c2d5 has blocked_dates=[], blocked_sessions=[].",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Preview environment schedule feature is fully working. If user files this complaint again, first confirm the URL they are testing on (production nevikacura.com has NOT been redeployed). Sep 27 2026 is a Sunday (doctor unavailable) -- use Sep 28+ for weekday testing. Doctor id for Dr. Vikas Jha: d9ece1ab-1712-40e4-af1f-a1875927c2d5.",
+  "rca of the issue": "No reproducible UI bug on preview. Verified via real browser clicks: (1) conflict warning card appears with correct patient info, (2) override button is disabled during submit preventing double-clicks, (3) override POST sends force_override:true correctly, (4) appointment status becomes 'Cancelled' in MongoDB, (5) date appears in blocked list without reload, (6) patient-facing /diagyn calendar disables the blocked date and slot picker filters out blocked session windows correctly. Most probable root cause of the recurring user report is either (a) user testing production (which has NOT been deployed), or (b) UX confusion where staff doesn't see/click the red 'Cancel Appointments & Block' override button when the conflict warning card is scrolled below the fold on their device."
+}

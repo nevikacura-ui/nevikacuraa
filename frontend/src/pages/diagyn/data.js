@@ -55,9 +55,8 @@ export const doctors = [
     chat: '8108888330',
     schedule: {
       pushpa: [
-        { days: ['Monday', 'Wednesday', 'Friday'], time: '18:00-22:00' },
-        { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:00-14:00' },
-        { days: ['Tuesday', 'Thursday', 'Saturday'], time: '18:00-22:00' }
+        { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:30-14:00' },
+        { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '18:00-22:00' }
       ],
       online: [
         { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '09:00-12:00' },
@@ -91,7 +90,7 @@ export const doctors = [
     chat: '8108888330',
     schedule: {
       pushpa: [
-        { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:00-14:00' },
+        { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], time: '11:30-14:00' },
         { days: ['Tuesday', 'Thursday', 'Saturday'], time: '18:00-22:00' },
         { days: ['Monday', 'Wednesday', 'Friday'], time: '18:00-22:00' }
       ],

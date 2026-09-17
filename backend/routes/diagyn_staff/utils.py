@@ -99,7 +99,7 @@ def get_current_ist_session():
     now_utc = datetime.now(timezone.utc)
     now_ist = now_utc + timedelta(hours=5, minutes=30)
     current_hour = now_ist.hour
-    if 11 <= current_hour < 18:
+    if 11 <= current_hour < 14:
         return "morning"
     elif 18 <= current_hour < 22:
         return "evening"

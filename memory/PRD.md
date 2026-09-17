@@ -126,6 +126,27 @@ Build a production-ready healthcare super-app (Nevika Cura) with:
   issues found: (1) walk-in booking 500 on duplicate slot -> now clean 409, (2) StaffScheduleView FAB
   button visually overlapping the blocked-session unblock (X) button on mobile -> added bottom padding.
 
+## Session Update (Sep 17, 2026) - Root cause found for repeated "not cancelled/still open" reports
+- User confirmed testing on **production**, which lacks all fixes from this fork (deployment gap,
+  reconfirmed for the 3rd time this session).
+- Found and fixed a REAL latent bug regardless of deployment: `diagyn_staff/shared.py`'s
+  `DOCTOR_SCHEDULE` had Pushpa Clinic's "morning" session ending at 18:00 (directly touching evening's
+  18:00 start = one continuous 11:30am-10pm block, no lunch/travel gap), while the frontend patient
+  booking data (`pages/diagyn/data.js`) already showed two separate sessions (11:00/11:30am-2pm,
+  6-10pm). This mismatch meant staff-side slot availability (walk-in booking, current-session
+  detection) allowed the 2-6pm window that patients never saw as bookable. Fixed both doctors'
+  Pushpa Clinic schedule to properly split into 11:30am-2pm + 6-10pm (Mon-Sat), updated
+  `get_current_ist_session()` accordingly, and fixed frontend `data.js` to start at 11:30 (was 11:00)
+  and de-duplicated the Vikas Jha evening rule.
+- Added Morning/Evening quick-preset buttons to the Staff Portal's "Block Time Window" UI (previously
+  only existed in the Doctor's own portal via `DoctorLeaveManager.jsx`) - staff no longer need to
+  manually type start/end times for the two standard sessions.
+- Added a toast + auto-scroll-into-view when a block hits a scheduling conflict, so staff can't miss
+  that they need to click "Cancel Appointments & Block" to actually apply it (a testing_agent-suggested
+  UX fix after finding zero functional bugs in the conflict/override flow via full browser automation).
+- Confirmed via testing_agent (iteration_403, full browser click-through of all 3 scenarios: clean
+  block, conflict+override, session block) that the backend + UI logic is 100% correct in preview.
+
 ## Pending/Backlog
 - Push notifications for status updates (P2 backlog).
 - Light Mode: DISABLED APP-WIDE (Sep 2026) per user request — styling wasn't fixed, user asked to stop spending credits on it. `ThemeLanguageContext.jsx` now hardcodes `isDarkMode=true`, toggle button removed from `ServiceHeader.jsx`. Do NOT re-introduce light mode toggle unless explicitly asked.

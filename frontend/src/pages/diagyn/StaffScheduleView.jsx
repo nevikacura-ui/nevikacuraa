@@ -24,9 +24,16 @@ const StaffScheduleView = () => {
   const [sessionForm, setSessionForm] = useState({ date: '', start_time: '', end_time: '', reason: 'Break' });
   const [submitting, setSubmitting] = useState(false);
   const [conflict, setConflict] = useState(null); // { type: 'date'|'session', data, message, patients }
+  const conflictRef = React.useRef(null);
 
   const [attempts, setAttempts] = useState([]);
   const [loadingAttempts, setLoadingAttempts] = useState(false);
+
+  useEffect(() => {
+    if (conflict && conflictRef.current) {
+      conflictRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [conflict]);
 
   useEffect(() => {
     axios.get(`${API}/api/diagyn-staff/schedule/doctors`, { headers }).then(res => {
@@ -77,6 +84,7 @@ const StaffScheduleView = () => {
       }, { headers });
       if (res.data.conflict) {
         setConflict({ type: 'date', message: res.data.message, patients: res.data.patients });
+        toast.warning('Conflict found — review the appointment(s) below and click Cancel Appointments & Block to proceed');
         return;
       }
       toast.success(res.data.message);
@@ -99,6 +107,7 @@ const StaffScheduleView = () => {
       }, { headers });
       if (res.data.conflict) {
         setConflict({ type: 'session', message: res.data.message, patients: res.data.patients });
+        toast.warning('Conflict found — review the appointment(s) below and click Cancel Appointments & Block to proceed');
         return;
       }
       toast.success(res.data.message);
@@ -166,7 +175,7 @@ const StaffScheduleView = () => {
 
           {/* Conflict warning */}
           {conflict && (
-            <div className="rounded-2xl p-4" style={{ background: '#FEF2F2', border: '1px solid #FECACA' }} data-testid="schedule-conflict-warning">
+            <div ref={conflictRef} className="rounded-2xl p-4" style={{ background: '#FEF2F2', border: '1px solid #FECACA' }} data-testid="schedule-conflict-warning">
               <div className="flex items-start gap-2 mb-2">
                 <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: COLORS.danger }} />
                 <p className="text-sm font-medium" style={{ color: COLORS.danger }}>{conflict.message}</p>
@@ -222,6 +231,16 @@ const StaffScheduleView = () => {
             <label className="text-xs font-bold mb-3 block" style={{ color: COLORS.textMuted }}>
               <Ban className="w-4 h-4 inline mr-1.5" /> BLOCK A TIME WINDOW ON A DATE
             </label>
+            <div className="flex gap-2 mb-3">
+              <button type="button" onClick={() => setSessionForm(f => ({ ...f, start_time: '11:30', end_time: '14:00', reason: f.reason || 'Morning session leave' }))}
+                className="flex-1 py-2 rounded-xl text-xs font-bold" style={{ background: '#FFFBEB', color: COLORS.warning }} data-testid="session-preset-morning">
+                Morning (11:30 AM - 2:00 PM)
+              </button>
+              <button type="button" onClick={() => setSessionForm(f => ({ ...f, start_time: '18:00', end_time: '22:00', reason: f.reason || 'Evening session leave' }))}
+                className="flex-1 py-2 rounded-xl text-xs font-bold" style={{ background: '#EFF6FF', color: COLORS.info }} data-testid="session-preset-evening">
+                Evening (6:00 PM - 10:00 PM)
+              </button>
+            </div>
             <div className="grid grid-cols-2 gap-2 mb-2">
               <Input type="date" value={sessionForm.date} onChange={e => setSessionForm(f => ({ ...f, date: e.target.value }))}
                 className="h-11 rounded-xl" style={{ background: COLORS.bgCardHover }} data-testid="block-session-date-input" />

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* global clients */
 const CACHE_VERSION = 13;
 const CACHE_NAME = `nevika-cura-v${CACHE_VERSION}`;

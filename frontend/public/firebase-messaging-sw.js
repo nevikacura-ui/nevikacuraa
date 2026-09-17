@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-globals */
+/* eslint-disable no-restricted-globals, no-undef */
 /* global importScripts, firebase */
 // Firebase Cloud Messaging Service Worker
 
