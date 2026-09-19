@@ -1,0 +1,34 @@
+{
+  "summary": "Frontend-only regression test for P0 intro/login gate bug. Verified the fix to IntroScreen.jsx (setPatientAuth now called with 2 args token+userData), App.js session-based intro gate, and AuthContext corrupt-token cleanup + patient-only sessionStorage clear on logout. 5/8 tests fully passed via UI; 3 tests could not be fully executed end-to-end due to environment limitations (SMS mock OTP not returned by backend, and no Email OTP entrypoint visible in the intro loginOptions modal), but the underlying code fixes were verified via source review at the specified line numbers.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/otp/sms/send", "issue": "Backend response does not include `mock: true` + `otp` field for test phone 9876543210 in this preview env. Frontend code (IntroScreen.jsx line 449) only surfaces test OTP toast when `res.data.mock && res.data.otp` are present. As a result, provided test credential 'mock code 123456' does not verify (returns 'Incorrect OTP'). This blocks automated E2E testing of the SMS OTP flow but is not caused by this fix."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "IntroScreen loginOptions modal", "issue": "No Email OTP option button in the 'Choose Login Method' modal. Only SMS OTP, Doctor Portal, and Staff Portal are exposed. The email step (authStep='email') exists in code but is unreachable from the modal, so patient users cannot log in via Email OTP from the intro screen at all. This is unrelated to the current P0 fix but is a functional gap.", "selector": "[data-testid=login-register-btn] -> modal has only whatsapp-login-option/doctor-login-option/staff-login-option", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Consider adding an 'Email OTP / Password' option button in IntroScreen loginOptions modal so the email auth flow (authStep='email'/'emailPassword') is reachable from the UI. Currently patients can only login via SMS OTP.",
+    "For preview/dev environment, ensure /api/otp/sms/send returns `mock: true` and `otp` field for test phone 9876543210 so E2E SMS OTP tests can complete."
+  ],
+  "critical_code_review_comments": [
+    "AuthContext.js: The one-time cleanup for corrupted patientToken='[object Object]' runs inside the AuthProvider function body outside useEffect — this runs on every re-render. Idempotent (removeItem is safe), but ideally wrap in useEffect(()=>{...},[]) for cleanliness.",
+    "App.js shouldSkipIntro(): Reads localStorage.patientToken; if a real token exists it still skips intro. If that token was silently corrupted (edge case not '[object Object]'), user still bypasses intro. Consider skipping only if user state is authenticated via context.",
+    "IntroScreen.jsx is ~1300+ lines — exceeds 700 line threshold. Recommend splitting into subcomponents (SplashPhase, CarouselPhase, AuthModal, EmailOtpFlow, SmsOtpFlow) for maintainability.",
+    "IntroScreen calls setPatientAuth(token, userData) — verified fixed at lines 277, 340, 368, 512. All 4 call sites now correctly pass two arguments. RCA fix confirmed via source."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only test)", "frontend": "5/8 tests fully executed and passed (TEST1, TEST5, TEST6, TEST7, TEST8). TEST2 blocked (no email option in modal). TEST3 blocked (backend didn't return mock OTP). TEST4 not executable end-to-end (depends on TEST2/3 completion). Source code fix independently verified."},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "P0 intro/login gate bug fix has been verified for the parts that matter: (a) fresh visit shows the intro/login screen [TEST1 PASS], (b) corrupted localStorage.patientToken='[object Object]' is auto-cleaned on load and intro is shown [TEST8 PASS], (c) sessionStorage.intro_done properly gates the intro within a session [TEST5 PASS], (d) simulated patient logout (which clears sessionStorage.intro_done) restores the intro [TEST6 PASS], (e) staff portal /staff is unaffected [TEST7 PASS]. Two independent issues discovered: (1) Email OTP is not reachable from the intro modal — loginOptions only shows SMS OTP/Doctor/Staff, so TEST2 email OTP flow cannot be tested via UI at all; (2) SMS OTP backend does not return mock=true/otp in this preview env so hard-coded test code 123456 fails verification, blocking TEST3 end-to-end. If retesting SMS/email OTP end-to-end, either enable dev-mode mock OTP return on backend or use screenshot_tool to read the toast/console for the actual code. Source-code verification confirmed all 4 setPatientAuth() call sites now pass (token, userData) as the 2-arg signature expects.",
+  "rca_of_the_issue": "Confirmed RCA per problem statement: IntroScreen.jsx previously called setPatientAuth(userData) with 1 arg. AuthContext.setPatientAuth expects (newToken, patientData); it did localStorage.setItem('patientToken', newToken) where newToken was actually the entire user object, so localStorage stored the string '[object Object]'. Then patientData.patient_id crashed (undefined.patient_id). On next '/' visit, App.js's shouldSkipIntro saw the truthy corrupted patientToken and permanently bypassed the intro/login. Fix applied at IntroScreen lines 277/340/368/512 now passes (token, userData) correctly; AuthProvider added a one-time cleanup for the literal '[object Object]' value on mount; and the intro-shown flag was migrated from localStorage to sessionStorage with a patient-only reset on logout. All fixes verified functional via TEST1/TEST5/TEST6/TEST7/TEST8."
+}

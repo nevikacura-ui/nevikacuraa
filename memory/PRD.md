@@ -147,6 +147,40 @@ Build a production-ready healthcare super-app (Nevika Cura) with:
 - Confirmed via testing_agent (iteration_403, full browser click-through of all 3 scenarios: clean
   block, conflict+override, session block) that the backend + UI logic is 100% correct in preview.
 
+## Session Update (Sep 2026) - P0 FIX: root domain login gate bypass
+- Root cause: `IntroScreen.jsx` had 4 call sites (Email OTP login, Set Password, Password login,
+  WhatsApp/SMS OTP login) calling `setPatientAuth(userData)` with 1 arg, but `AuthContext.js`'s
+  `setPatientAuth(newToken, patientData)` expects 2. This crashed on `patientData.patient_id`
+  (undefined) — but only AFTER `localStorage.setItem('patientToken', newToken)` already ran with
+  `newToken` being the whole user OBJECT, corrupting `localStorage.patientToken` to the literal
+  string `"[object Object]"`. On the next visit to `/`, `App.js`'s `shouldSkipIntro()` saw this
+  truthy corrupted value and permanently skipped the login/intro screen straight to Home —
+  exactly matching the user's report ("used to see login page, now goes straight to homepage").
+- Fixed all 4 `setPatientAuth()` calls in `IntroScreen.jsx` to pass `(token, userData)` correctly.
+- Added one-time cleanup in `AuthContext.js` (`AuthProvider`) to auto-remove the literal
+  `"[object Object]"` corrupted value from already-affected production browsers.
+- Migrated the "intro already shown" flag from permanent `localStorage.intro_done` to
+  `sessionStorage.intro_done` (App.js + IntroScreen.jsx) so logged-out patients see the login
+  gate again each new browser session instead of never again. `logout()` now also clears
+  `sessionStorage.intro_done`/`auth_completed_this_session` — but ONLY for patient sessions
+  (`wasPatient = !!patientToken` check), per user's explicit request to leave staff/doctor
+  portals (separate `staffToken`/`doctorToken` keys) unaffected.
+- Verified via testing_agent (iteration_404): fresh visit shows intro/login gate (PASS), corrupted
+  token auto-cleaned on load (PASS), session-scoped gate works (PASS), patient logout restores
+  gate (PASS), staff portal unaffected (PASS). Two pre-existing/unrelated gaps noted (not caused by
+  this fix, not blocking): Email OTP option isn't exposed as a button in the intro modal (only SMS
+  OTP/Doctor/Staff options shown — email flow code exists but unreachable from UI); backend
+  `/api/otp/sms/send` doesn't return `mock`/`otp` fields in this preview env for test phone
+  9876543210, blocking automated E2E SMS OTP testing (works, just can't read the OTP without SMS).
+
 ## Pending/Backlog
 - Push notifications for status updates (P2 backlog).
 - Light Mode: DISABLED APP-WIDE (Sep 2026) per user request — styling wasn't fixed, user asked to stop spending credits on it. `ThemeLanguageContext.jsx` now hardcodes `isDarkMode=true`, toggle button removed from `ServiceHeader.jsx`. Do NOT re-introduce light mode toggle unless explicitly asked.
+- User asked about adding mobile number + SMS OTP to "appointment booking page" — investigated and
+  found this ALREADY EXISTS in the main DiaGyn doctor booking flow (`PatientInfoModal.jsx` via
+  `useUnifiedAuth` hook, `/api/otp/sms/send` + `/verify`). Asked user to clarify if they meant a
+  different page (Mango Labs checkout, Pharmacy checkout, etc.) — no response yet, marked as open
+  clarification for next session.
+- Minor gap surfaced by testing_agent: Email OTP login option is not exposed as a button in the
+  IntroScreen "Choose Login Method" modal (only SMS OTP / Doctor Portal / Staff Portal shown).
+  The email flow code exists (`authStep='email'`) but has no entry point in the UI.
