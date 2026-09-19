@@ -37,6 +37,12 @@ const safeParseJSON = (key) => {
 };
 
 export const AuthProvider = ({ children }) => {
+  // One-time cleanup: a past bug stringified a user object into patientToken ("[object Object]")
+  if (localStorage.getItem('patientToken') === '[object Object]') {
+    localStorage.removeItem('patientToken');
+    localStorage.removeItem('authToken');
+  }
+
   // Hydrate user immediately from localStorage cache for instant session restore
   const [user, setUser] = useState(() => {
     const cached = safeParseJSON('userInfo') || safeParseJSON('patientInfo');
@@ -425,6 +431,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    const wasPatient = !!patientToken;
     setToken(null);
     setPatientToken(null);
     setUser(null);
@@ -434,6 +441,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('patientInfo');
     localStorage.removeItem('userInfo');
     localStorage.removeItem('remember_me');
+    // Only reset the patient login gate for patient sessions — staff/doctor portals use separate tokens
+    if (wasPatient) {
+      sessionStorage.removeItem('intro_done');
+      sessionStorage.removeItem('auth_completed_this_session');
+    }
   };
   
   // Google OAuth login

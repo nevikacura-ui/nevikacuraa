@@ -79,7 +79,7 @@ function AppContent() {
   const { user } = useAuth();
 
   const shouldSkipIntro = () => {
-    if (localStorage.getItem('intro_done')) return true;
+    if (sessionStorage.getItem('intro_done')) return true;
     const isRootPath = window.location.pathname === '/' || window.location.pathname === '';
     if (!isRootPath) return true;
     const patientToken = localStorage.getItem('patientToken');
@@ -92,20 +92,20 @@ function AppContent() {
   useEffect(() => {
     if (showIntro && user) {
       setShowIntro(false);
-      localStorage.setItem('intro_done', '1');
+      sessionStorage.setItem('intro_done', '1');
     }
   }, [user, showIntro]);
 
   const handleIntroComplete = () => {
     setShowIntro(false);
-    localStorage.setItem('intro_done', '1');
+    sessionStorage.setItem('intro_done', '1');
     if (!localStorage.getItem('onboarding_done')) {
       setTimeout(() => setShowOnboarding(true), 800);
     }
   };
 
   const [showOnboarding, setShowOnboarding] = useState(() => {
-    return !!localStorage.getItem('intro_done') && !localStorage.getItem('onboarding_done');
+    return !!sessionStorage.getItem('intro_done') && !localStorage.getItem('onboarding_done');
   });
 
   useEffect(() => {

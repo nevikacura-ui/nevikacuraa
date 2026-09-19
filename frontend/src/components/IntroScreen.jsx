@@ -114,7 +114,7 @@ const IntroScreen = ({ onComplete, user }) => {
   // Wrap onComplete with smooth logo transition
   const handleTransitionToHome = useCallback(() => {
     sessionStorage.setItem('auth_completed_this_session', '1');
-    localStorage.setItem('intro_done', '1');
+    sessionStorage.setItem('intro_done', '1');
     setTransitioning(true);
     setTimeout(() => onComplete(), 250);
   }, [onComplete]);
@@ -274,7 +274,7 @@ const IntroScreen = ({ onComplete, user }) => {
           localStorage.setItem('authMethod', 'email');
           if (userData) {
             localStorage.setItem('userData', JSON.stringify(userData));
-            setPatientAuth(userData);
+            setPatientAuth(token, userData);
           }
           await new Promise(r => setTimeout(r, wait));
           setOtpVerifyState('success');
@@ -337,7 +337,7 @@ const IntroScreen = ({ onComplete, user }) => {
       localStorage.setItem('patientToken', token);
       if (userData) {
         localStorage.setItem('userData', JSON.stringify(userData));
-        setPatientAuth(userData);
+        setPatientAuth(token, userData);
       }
       toast.dismiss();
       setAuthAnim({ type: 'success', message: 'Account created! Welcome!' });
@@ -365,7 +365,7 @@ const IntroScreen = ({ onComplete, user }) => {
       localStorage.setItem('patientToken', token);
       if (userData) {
         localStorage.setItem('userData', JSON.stringify(userData));
-        setPatientAuth(userData);
+        setPatientAuth(token, userData);
       }
       toast.dismiss();
       setAuthAnim({ type: 'success', message: 'Login successful!' });
@@ -509,7 +509,7 @@ const IntroScreen = ({ onComplete, user }) => {
           }));
           if (res.data.user) {
             localStorage.setItem('userData', JSON.stringify(res.data.user));
-            setPatientAuth(res.data.user);
+            setPatientAuth(res.data.token, res.data.user);
           }
           await new Promise(r => setTimeout(r, wait));
           setWaVerifyState('success');
