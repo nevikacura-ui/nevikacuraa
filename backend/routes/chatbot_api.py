@@ -8,8 +8,9 @@ import logging
 import uuid
 from datetime import datetime, timezone, timedelta
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from pydantic import BaseModel
+from routes.diagyn_staff.auth import verify_staff as _verify_staff
 
 logger = logging.getLogger(__name__)
 
@@ -180,7 +181,10 @@ async def get_available_slots(
         "date": date,
         "clinic": clinic,
         "available_slots": all_available,
-        "available_count": len(all_available)
+        "available_count": len(all_available),
+        **({"leave_note": f"{doctor} is partially unavailable on {date} due to: " +
+            ", ".join(sorted({s.get('reason', 'a scheduling block') for s in blocked_sessions_today}))}
+           if blocked_sessions_today else {})
     }
 
 
@@ -283,7 +287,11 @@ async def get_available_slots_text(
     
     if results:
         header = f"Available slots for {doctor} on {date}:\n\n"
-        return PlainTextResponse(header + "\n\n".join(results))
+        footer = ""
+        if blocked_sessions_today:
+            reasons = ", ".join(sorted({s.get("reason", "a scheduling block") for s in blocked_sessions_today}))
+            footer = f"\n\nNote: {doctor} is partially unavailable today due to: {reasons}"
+        return PlainTextResponse(header + "\n\n".join(results) + footer)
     else:
         # No slots for this date — auto-find next 3 available dates
         next_dates = []
@@ -476,3 +484,116 @@ async def get_services():
             {"id": "genetic", "title": "Genetic Testing", "description": "Nexugene - Advanced genetic tests"},
         ]
     }
+
+
+@router.get("/admin/slot-sync-check")
+async def slot_sync_check(
+    doctor: str = Query(..., description="Doctor name"),
+    date: str = Query(..., description="Date in YYYY-MM-DD format"),
+    clinic: str = Query(..., description="Clinic name"),
+    staff: dict = Depends(_verify_staff),
+):
+    """Staff/admin-only check: independently recompute the 'ground truth' available slots
+    (booked appointments + doctor leave/blocked sessions, same primitives every other
+    correct booking surface uses) and diff it against what the chatbot slots endpoint
+    actually returns. Used to catch any future drift where the WhatsApp chatbot calendar
+    falls out of sync with the live doctor schedule."""
+    from routes.diagyn_staff import get_slots_for_doctor_clinic_date
+    from routes.appointment_routes import get_doctor_schedule_by_name
+    from utils.timezone_utils import normalize_time_to_24h, format_time_for_display
+
+    booked = await db.appointments.find(
+        {"doctor": {"$regex": doctor, "$options": "i"}, "clinic": clinic, "date": date,
+         "status": {"$nin": ["Cancelled", "NoShow", "No Show"]}},
+        {"_id": 0, "time": 1, "time_slot": 1, "slot": 1}
+    ).to_list(200)
+    booked_times = set()
+    for b in booked:
+        for field in ["time", "time_slot", "slot"]:
+            t = (b.get(field) or "").strip()
+            if t:
+                booked_times.add(t)
+                booked_times.add(normalize_time_to_24h(t))
+                booked_times.add(format_time_for_display(t))
+
+    doctor_schedule = await get_doctor_schedule_by_name(db, doctor)
+    date_on_leave = False
+    leave_reason = None
+    blocked_sessions_today = []
+    if doctor_schedule:
+        for bd in doctor_schedule.get("blocked_dates", []):
+            if bd.get("date") == date:
+                date_on_leave = True
+                leave_reason = bd.get("reason", "Leave")
+                break
+        blocked_sessions_today = [s for s in doctor_schedule.get("blocked_sessions", []) if s.get("date") == date]
+
+    ground_truth_slots = set()
+    if not date_on_leave:
+        slot_data = get_slots_for_doctor_clinic_date(doctor, clinic, date, session_filter=None)
+        for s in slot_data.get("all", []):
+            if s["value"] in booked_times or s["display"] in booked_times:
+                continue
+            if _slot_in_blocked_session(s["value"], blocked_sessions_today):
+                continue
+            ground_truth_slots.add(s["display"])
+
+    chatbot_result = await get_available_slots(doctor=doctor, date=date, clinic=clinic)
+    chatbot_slots = set(chatbot_result.get("available_slots", []))
+
+    missing_in_chatbot = sorted(ground_truth_slots - chatbot_slots)
+    extra_in_chatbot = sorted(chatbot_slots - ground_truth_slots)
+
+    return {
+        "doctor": doctor,
+        "date": date,
+        "clinic": clinic,
+        "in_sync": not missing_in_chatbot and not extra_in_chatbot,
+        "date_on_leave": date_on_leave,
+        "leave_reason": leave_reason,
+        "chatbot_slot_count": len(chatbot_slots),
+        "ground_truth_slot_count": len(ground_truth_slots),
+        "missing_in_chatbot": missing_in_chatbot,
+        "extra_in_chatbot": extra_in_chatbot,
+    }
+
+
+@router.delete("/appointments/{appointment_id}")
+async def delete_chatbot_appointment(
+    appointment_id: str,
+    hard_delete: bool = Query(False, description="If true, permanently delete. If false (default), soft-cancel."),
+    reason: str = Query("Cancelled by staff", description="Cancellation reason (soft-cancel only)"),
+    staff: dict = Depends(_verify_staff),
+):
+    """Secure staff/QA endpoint to cancel or permanently delete a chatbot-created (WhatsApp)
+    booking. Restricted to appointments with source == 'WhatsApp' — use the staff portal's
+    generic appointment status-update endpoint to cancel appointments from other channels."""
+    appointment = await db.appointments.find_one({"id": appointment_id})
+    if not appointment:
+        appointment = await db.appointments.find_one({"booking_id": appointment_id})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    if appointment.get("source") != "WhatsApp":
+        raise HTTPException(
+            status_code=400,
+            detail="This endpoint only cancels/deletes chatbot (WhatsApp) created bookings. "
+                   "Use the staff appointment status-update endpoint for other sources."
+        )
+
+    staff_name = staff.get("name") or staff.get("sub") or "Staff"
+    if hard_delete:
+        await db.appointments.delete_one({"id": appointment["id"]})
+        logger.info(f"[CHATBOT] Appointment {appointment['id']} permanently deleted by {staff_name}")
+        return {"success": True, "message": "Chatbot appointment permanently deleted", "appointment_id": appointment["id"]}
+
+    await db.appointments.update_one(
+        {"id": appointment["id"]},
+        {"$set": {
+            "status": "Cancelled",
+            "cancellation_reason": reason,
+            "cancelled_at": datetime.now(timezone.utc).isoformat(),
+            "cancelled_by": staff_name,
+        }}
+    )
+    logger.info(f"[CHATBOT] Appointment {appointment['id']} cancelled by {staff_name}")
+    return {"success": True, "message": "Chatbot appointment cancelled", "appointment_id": appointment["id"]}
