@@ -1,0 +1,32 @@
+{
+  "summary": "Independent verification of 3 new chatbot/admin features from this session (post iteration_405): (1) GET /api/chatbot/admin/slot-sync-check staff-auth drift checker, (2) leave_note/Note text for session blocks on /slots and /slots-text (full-day leave unchanged), (3) DELETE /api/chatbot/appointments/{id} with hard_delete query and WhatsApp-source safety guard. Pytest suite written at /app/backend/tests/test_chatbot_new_features_406.py — 12/12 tests PASS. All features behave exactly per spec: 401 w/o auth, in_sync=true in all probed scenarios, session-block count <= baseline, leave_note present only when a session block exists on that date, full-day leave reason surfaces in main message, soft-cancel keeps doc with status=Cancelled, hard-delete removes doc, standard (source != 'WhatsApp') booking cannot be deleted via chatbot endpoint (400 with informative message). DB cleaned post-run: /api/doctors/blocked-dates returns empty blocked_dates and blocked_sessions.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "GET /api/appointments/{id}", "issue": "No public GET-by-id route for appointments (returns 404 even for existing docs). Not a regression and not in scope here — just an observation; tests were adapted to prove existence via a second DELETE call."}
+    ]
+  },
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_chatbot_new_features_406.py",
+    "/app/test_reports/pytest/iter406_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "chatbot_api.py: delete_chatbot_appointment handles both 'id' and 'booking_id' fields (good). Logs cancellations with staff name (good). hard_delete flag defaults to false so staff can't accidentally wipe data.",
+    "slot_sync_check calls get_available_slots() in-process (not via HTTP) — fast and avoids extra network hop, good design. Ground-truth computation mirrors /slots blocking logic 1:1, so drift detection will catch any divergence.",
+    "leave_note is correctly emitted ONLY when blocked_sessions_today is non-empty and when date is NOT on full-day leave (full-day short-circuits earlier with a 'message' field — behaviour unchanged).",
+    "File length: chatbot_api.py now ~600 lines, approaching the 700-line soft cap; consider splitting admin/* endpoints into a sub-module if more are added.",
+    "Reserved-slots set {'11:00','11:15'} is hardcoded in two places (slots and slot_sync_check) — small DRY nit; extract to a constant."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_chatbot_new_features_406.py (new)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "N/A"},
+  "test_credentials": "staff_diagyn / test1234 (POST /api/staff/login)",
+  "seed_data_creation": "Transient-only: session block (18:00-20:00 reason='TEST_Conference_406') and full-day block (reason='TEST_FullLeave_406') created on future dates for Dr. Vikas Jha; 2 chatbot appointments and 1 standard appointment created and all cleaned up in teardown. Also cleaned leftover DGO-131026-4180 from earlier test attempts (test now generates unique phone each run to avoid collisions).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Suite /app/backend/tests/test_chatbot_new_features_406.py is self-contained and reusable; uses future dates _BASE+45..+60d, dynamic slot picking, and unique phone numbers to avoid cross-run collisions. Teardown deletes blocks and hard-deletes chatbot appointments; std appointment is cancelled via /api/diagyn-staff/appointments/{id}/status.",
+  "rca of the issue": "N/A — no bugs found. During test authoring, initial attempts failed because (a) standard booking endpoint enforces clinic-hours (11-14, 18-22), one-booking-per-doctor-per-date and 24h-per-phone guards; (b) hard-coded phone numbers from earlier runs left leftover appointments that then collided. Fixed in the suite by: dynamic available-slot lookup, evening-slot pick (21:xx), unique phone per run (based on time.time()), and proper staff-side cancellation in cleanup."
+}

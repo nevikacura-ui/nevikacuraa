@@ -52,6 +52,10 @@ def _slot_in_blocked_session(slot_value: str, blocked_sessions_today: list) -> b
     return False
 
 
+# Reserved slots (doctor prep time) — not bookable by patients, shared across all slot-listing endpoints
+RESERVED_SLOTS = {"11:00", "11:15"}
+
+
 # ============ Models ============
 
 class ChatbotBookingRequest(BaseModel):
@@ -136,7 +140,7 @@ async def get_available_slots(
                 booked_times.add(format_time_for_display(t))
 
     # Reserved slots (doctor prep time) — not bookable by patients
-    reserved_slots = {"11:00", "11:15"}
+    reserved_slots = RESERVED_SLOTS
 
     # Doctor leave / blocked sessions (set via Doctor Portal or Staff Portal)
     from routes.appointment_routes import get_doctor_schedule_by_name
@@ -233,7 +237,7 @@ async def get_available_slots_text(
                 booked_times.add(format_time_for_display(t))
     
     # Reserved slots (doctor prep time) — not bookable by patients
-    reserved_slots = {"11:00", "11:15"}
+    reserved_slots = RESERVED_SLOTS
 
     # Doctor leave / blocked sessions (set via Doctor Portal or Staff Portal)
     from routes.appointment_routes import get_doctor_schedule_by_name
@@ -533,6 +537,8 @@ async def slot_sync_check(
         slot_data = get_slots_for_doctor_clinic_date(doctor, clinic, date, session_filter=None)
         for s in slot_data.get("all", []):
             if s["value"] in booked_times or s["display"] in booked_times:
+                continue
+            if s["value"] in RESERVED_SLOTS:
                 continue
             if _slot_in_blocked_session(s["value"], blocked_sessions_today):
                 continue

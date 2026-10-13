@@ -198,6 +198,29 @@ Build a production-ready healthcare super-app (Nevika Cura) with:
   consistency, clean DB state after). New regression suite: `/app/backend/tests/test_chatbot_slots_blocking.py`.
 - Deployed to production (user-approved) on Oct 2026.
 
+## Session Update (Oct 2026) - 3 follow-up enhancements to chatbot booking (user-requested)
+- **WhatsApp Slot Sync admin check**: new `GET /api/chatbot/admin/slot-sync-check?doctor=&date=&clinic=`
+  (staff-auth only). Independently recomputes a ground-truth available-slot list (booked
+  appointments + doctor_schedules blocked_dates/blocked_sessions, same primitives as every other
+  correct booking surface) and diffs it against what `/api/chatbot/slots` actually returns.
+  Returns `in_sync`, `missing_in_chatbot`, `extra_in_chatbot` etc. Lets staff verify the chatbot
+  calendar is aligned with the live doctor schedule on demand, and will catch any future drift.
+- **Leave Reason Display**: `/api/chatbot/slots` now includes a `leave_note` field (and
+  `/slots-text` appends a "Note: ..." line) with the block's reason when a SESSION block reduces
+  availability on a date (full-day leave already showed the reason pre-existing).
+- **Appointment Cancel/Delete API**: new `DELETE /api/chatbot/appointments/{appointment_id}`
+  (staff-auth, `?hard_delete=true|false`, default soft-cancel). Restricted to `source == "WhatsApp"`
+  appointments only — returns 400 for any other source, directing staff to the existing generic
+  `PUT /api/diagyn-staff/appointments/{id}/status` for those. Lets staff/QA clean up chatbot test
+  or erroneous bookings without needing DB access.
+- All 3 verified via testing_agent (iteration_406, 12/12 passed) + main agent's own curl tests.
+  Minor DRY fix applied after testing feedback: extracted shared `RESERVED_SLOTS` constant (was
+  hardcoded `{"11:00","11:15"}` in 2 places) and reused it in the new slot-sync-check's ground-truth
+  calc too (previously missing there, which could have caused false drift alerts for doctors whose
+  morning hours include 11:00/11:15). Re-ran full pytest suite (28/28 passed) after this fix.
+- Files touched: `backend/routes/chatbot_api.py` only. Preview DB confirmed restored to exact
+  baseline (71 appointments, 0 blocked_dates/sessions) after all test cycles.
+
 ## Pending/Backlog
 - Push notifications for status updates (P2 backlog).
 - Light Mode: DISABLED APP-WIDE (Sep 2026) per user request — styling wasn't fixed, user asked to stop spending credits on it. `ThemeLanguageContext.jsx` now hardcodes `isDarkMode=true`, toggle button removed from `ServiceHeader.jsx`. Do NOT re-introduce light mode toggle unless explicitly asked.
