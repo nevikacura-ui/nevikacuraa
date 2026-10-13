@@ -1,0 +1,37 @@
+{
+  "summary": "Verified Phase 2 fix for chatbot calendar-listing endpoints (GET /api/chatbot/slots and GET /api/chatbot/slots-text). Wrote pytest suite covering all 7 scenarios from the review request; all 16 tests passed on first run. Full-day blocks hide all slots (JSON empty + leave message, text shows leave message). Session blocks hide only the blocked time range (11:30-14:00 morning hidden, evening 06:00 PM onward preserved). Other doctors (Dr. Neha Patel) on same blocked date unaffected. Existing booked-appointment exclusion still works (06:00 PM booked slot removed from available_slots). Server-side /book rejection unchanged for both full-day and session blocks. JSON and text endpoints return consistent slot sets. Final cleanup verified blocked_dates/blocked_sessions removed. Residual test appointment & audit log entries cleaned directly in Mongo (test cleanup fallback did not have a working appointment-delete endpoint, see action item).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "DELETE /api/appointments/{id}", "issue": "Could not confirm an authenticated DELETE endpoint for chatbot-created appointments; test suite's inline cleanup fell back to direct Mongo deletion. Not a product bug, but worth confirming the staff-side cancel route for WhatsApp bookings."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_chatbot_slots_blocking.py",
+    "/app/test_reports/pytest/chatbot_slots_blocking.xml"
+  ],
+  "action_items": [
+    "No code fixes required. Fix is working correctly across all 7 scenarios.",
+    "(Optional) Consider documenting / exposing a single authoritative appointment cancel endpoint for WhatsApp/chatbot-created bookings to simplify future automated-test cleanup."
+  ],
+  "critical_code_review_comments": [
+    "chatbot_api.py: fix correctly reuses the canonical get_doctor_schedule_by_name() helper and _slot_in_blocked_session() mirrors the same half-open interval check (s <= slot_t < e) used elsewhere — consistent with other correct endpoints.",
+    "chatbot_api.py get_available_slots() returns status 200 with available_slots=[] + an informative 'on leave' message on full-day block (good UX for chatbot).",
+    "Minor: file is 479 lines, still well under the 700-line split threshold; no refactor needed."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_chatbot_slots_blocking.py (new)"
+  ],
+  "success_rate": {"backend": "100% (16/16)", "frontend": "n/a"},
+  "test_credentials": "staff_diagyn/test1234, dr_vikas/test1234 — both worked via POST /api/staff/login",
+  "seed_data_creation": "Created and then cleaned up: full-day block on 2026-11-27 (DATE_FULL_BLOCK=today+45), morning session block 11:30-14:00 on 2026-11-28 (DATE_SESSION_BLOCK=today+46), and a booked 06:00 PM appointment on 2026-11-29 (DATE_BOOKING=today+47). All blocks removed via DELETE endpoints during final cleanup tests; the one booked appointment + 2 blocked_slot_attempts audit entries created by server-side rejection tests were removed via a direct Mongo cleanup step after pytest completed (verified empty afterward).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Phase 2 fix verified end-to-end. If re-running the suite, note it uses dates at today+45/46/47 IST to avoid collision; it fully self-cleans via DELETE endpoints but the booked appointment created inside test_book_real_appointment must be cleaned separately (currently handled by direct DB script after pytest). The test file is reusable as a regression suite — all 7 review scenarios map 1:1 to test methods in TestFullDayBlock, TestSessionBlock, TestBookedAppointmentExclusion, TestFinalCleanup.",
+  "rca of the issue": "Pre-fix: get_available_slots and get_available_slots_text in chatbot_api.py filtered only booked appointments and reserved slots, never consulting doctor_schedules.blocked_dates/blocked_sessions. Fix: both endpoints now (1) call get_doctor_schedule_by_name(db, doctor), (2) early-return an empty/leave-message response when the requested date matches any blocked_dates entry, and (3) filter out slots whose 24h value falls inside any blocked_sessions time range via the new _slot_in_blocked_session() helper. Verified behavior matches the canonical booking enforcement in assert_slot_not_blocked()."
+}

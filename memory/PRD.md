@@ -173,6 +173,31 @@ Build a production-ready healthcare super-app (Nevika Cura) with:
   `/api/otp/sms/send` doesn't return `mock`/`otp` fields in this preview env for test phone
   9876543210, blocking automated E2E SMS OTP testing (works, just can't read the OTP without SMS).
 
+## Session Update (Oct 2026) - Phase 1 RCA + Phase 2 Fix: "blocked slots still bookable" (chatbot channel)
+- User reported recurring "blocked slots still bookable" complaints. Ran a strict read-only Phase 1
+  audit (no code/data changes) across all booking surfaces: standard/guest patient booking
+  (DoctorDetailModal -> POST /api/appointments), reschedule, staff walk-in/advance booking
+  (diagyn-staff/appointments.py, staff.py), teleconsultation (via DoctorDetailModal's online toggle,
+  the orphaned components/enhancements/Teleconsultation.jsx calling a non-existent
+  /api/teleconsultation/* path is dead code, not reachable), voice booking, and WhatsApp chatbot —
+  plus both Doctor Portal (doctor_schedule.py) and Staff Portal (diagyn_staff/schedule.py)
+  block-creation paths. Both block-creation paths derive `doctor_id` identically and are consistent.
+- ROOT CAUSE FOUND (confirmed via code + runtime test in preview, cleaned up after): `chatbot_api.py`'s
+  `GET /api/chatbot/slots` and `GET /api/chatbot/slots-text` never checked
+  `doctor_schedules.blocked_dates`/`blocked_sessions` — only every OTHER slot-listing endpoint did.
+  Server-side booking rejection (`assert_slot_not_blocked`) was always correct on ALL 8 booking
+  source endpoints (standard_booking, guest_booking, reschedule, follow_up, chatbot, walk_in,
+  voice_command, teleconsultation) — no invalid bookings were ever created; only the chatbot's
+  slot LISTING was stale, causing confusing "available then rejected" UX for WhatsApp users.
+- FIX (Phase 2, approved + implemented): both chatbot slot-listing functions now call the existing
+  `get_doctor_schedule_by_name()` helper (same one every correct endpoint uses) and exclude
+  full-day/session-blocked slots via a new small `_slot_in_blocked_session()` helper. No other files
+  touched; booking enforcement unchanged.
+- Verified via testing_agent (iteration_405): 16/16 tests passed (full-day block, session block,
+  doctor/clinic isolation, existing-appointment exclusion, server-side rejection unchanged, JSON/text
+  consistency, clean DB state after). New regression suite: `/app/backend/tests/test_chatbot_slots_blocking.py`.
+- Deployed to production (user-approved) on Oct 2026.
+
 ## Pending/Backlog
 - Push notifications for status updates (P2 backlog).
 - Light Mode: DISABLED APP-WIDE (Sep 2026) per user request — styling wasn't fixed, user asked to stop spending credits on it. `ThemeLanguageContext.jsx` now hardcodes `isDarkMode=true`, toggle button removed from `ServiceHeader.jsx`. Do NOT re-introduce light mode toggle unless explicitly asked.
