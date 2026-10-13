@@ -34,6 +34,23 @@ def get_ist_now():
     return datetime.now(ist)
 
 
+def _slot_in_blocked_session(slot_value: str, blocked_sessions_today: list) -> bool:
+    """Check if a 24h 'HH:MM' slot value falls inside any blocked session time range for the date."""
+    try:
+        slot_t = datetime.strptime(slot_value, "%H:%M")
+    except ValueError:
+        return False
+    for session in blocked_sessions_today:
+        try:
+            s = datetime.strptime(session["start_time"], "%H:%M")
+            e = datetime.strptime(session["end_time"], "%H:%M")
+            if s <= slot_t < e:
+                return True
+        except (ValueError, KeyError):
+            continue
+    return False
+
+
 # ============ Models ============
 
 class ChatbotBookingRequest(BaseModel):
@@ -120,6 +137,24 @@ async def get_available_slots(
     # Reserved slots (doctor prep time) — not bookable by patients
     reserved_slots = {"11:00", "11:15"}
 
+    # Doctor leave / blocked sessions (set via Doctor Portal or Staff Portal)
+    from routes.appointment_routes import get_doctor_schedule_by_name
+    doctor_schedule = await get_doctor_schedule_by_name(db, doctor)
+    blocked_sessions_today = []
+    if doctor_schedule:
+        for blocked_date in doctor_schedule.get("blocked_dates", []):
+            if blocked_date.get("date") == date:
+                return {
+                    "success": True,
+                    "doctor": doctor,
+                    "date": date,
+                    "clinic": clinic,
+                    "available_slots": [],
+                    "available_count": 0,
+                    "message": f"{doctor} is on leave on {date} ({blocked_date.get('reason', 'Leave')})"
+                }
+        blocked_sessions_today = [s for s in doctor_schedule.get("blocked_sessions", []) if s.get("date") == date]
+
     ist_now = get_ist_now()
     current_date_str = ist_now.strftime("%Y-%m-%d")
     is_today = (date == current_date_str)
@@ -130,6 +165,8 @@ async def get_available_slots(
         slot_data = get_slots_for_doctor_clinic_date(doctor, c, date, session_filter=None)
         for s in slot_data.get("all", []):
             if s["value"] not in booked_times and s["display"] not in booked_times and s["value"] not in reserved_slots:
+                if _slot_in_blocked_session(s["value"], blocked_sessions_today):
+                    continue
                 if is_today:
                     parts = s["value"].split(":")
                     slot_minutes = int(parts[0]) * 60 + int(parts[1])
@@ -194,6 +231,16 @@ async def get_available_slots_text(
     # Reserved slots (doctor prep time) — not bookable by patients
     reserved_slots = {"11:00", "11:15"}
 
+    # Doctor leave / blocked sessions (set via Doctor Portal or Staff Portal)
+    from routes.appointment_routes import get_doctor_schedule_by_name
+    doctor_schedule = await get_doctor_schedule_by_name(db, doctor)
+    blocked_sessions_today = []
+    if doctor_schedule:
+        for blocked_date in doctor_schedule.get("blocked_dates", []):
+            if blocked_date.get("date") == date:
+                return PlainTextResponse(f"{doctor} is on leave on {date} ({blocked_date.get('reason', 'Leave')}).")
+        blocked_sessions_today = [s for s in doctor_schedule.get("blocked_sessions", []) if s.get("date") == date]
+
     # Check if requested date is today — to filter past slots
     ist_now = get_ist_now()
     current_date_str = ist_now.strftime("%Y-%m-%d")
@@ -216,10 +263,12 @@ async def get_available_slots_text(
         morning_available = [
             s["display"] for s in slot_data.get("morning", [])
             if is_future_slot(s) and s["value"] not in booked_times and s["display"] not in booked_times and s["value"] not in reserved_slots
+            and not _slot_in_blocked_session(s["value"], blocked_sessions_today)
         ]
         evening_available = [
             s["display"] for s in slot_data.get("evening", [])
             if is_future_slot(s) and s["value"] not in booked_times and s["display"] not in booked_times
+            and not _slot_in_blocked_session(s["value"], blocked_sessions_today)
         ]
         
         if morning_available or evening_available:
